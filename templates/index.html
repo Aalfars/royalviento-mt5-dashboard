@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoyalViento — Serif Analytics on Warm Paper</title>
+  <title>ROYALVIENTO // BRUTALIST TRADING ENGINE</title>
 
-  <!-- Google Fonts: Source Serif 4 (Signifier alternative) + Inter (Söhne alternative) + JetBrains Mono -->
+  <!-- Google Fonts: Anton (Monument Display), Inter (Die Grotesk B substitute), IBM Plex Mono (Technical Metadata) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;430;450;480;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -18,219 +18,268 @@
 
   <style>
     :root {
-      /* Steep Design Tokens */
-      --color-ink-black: #17191c;
-      --color-paper-white: #ffffff;
-      --color-mist-gray: #f2f2f3;
-      --color-fog-white: #fafafb;
-      --color-slate-gray: #777b86;
-      --color-ash-gray: #979799;
-      --color-smoke-gray: #a3a6af;
-      --color-blush-peach: #fbe1d1;
-      --color-sienna-brown: #5d2a1a;
-      --color-hairline: #ececec;
+      /* Dylanbrouwer Style Tokens */
+      --color-ember-orange: #ff6436;
+      --color-onyx: #161616;
+      --color-onyx-deep: #0f0f10;
+      --color-onyx-card: #1a1a1c;
+      --color-onyx-card-elevated: #222225;
+      --color-graphite: #3c3a3e;
+      --color-stone: #7b7a7c;
+      --color-ash: #a2a2a2;
+      --color-silver-mist: #c9c7cc;
+      --color-border-subtle: rgba(201, 199, 204, 0.14);
+      --color-fog: #f1f1f1;
+      --color-paper: #f8f8f8;
+      --color-pure-white: #ffffff;
 
       /* Typography */
-      --font-signifier: 'Source Serif 4', Georgia, -apple-system, serif;
-      --font-sohne: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-
-      /* Shadows */
-      --shadow-subtle: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 4px 20px 0 rgba(0, 0, 0, 0.05);
-      --shadow-artifact: 0 0 0 1px rgba(4, 23, 43, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      --font-display: 'Anton', 'Impact', sans-serif;
+      --font-grotesk: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     body {
-      background-color: var(--color-paper-white);
-      color: var(--color-ink-black);
-      font-family: var(--font-sohne);
+      background-color: var(--color-onyx-deep);
+      color: var(--color-fog);
+      font-family: var(--font-grotesk);
+      font-weight: 500;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       margin: 0;
       padding: 0;
     }
 
-    .font-serif {
-      font-family: var(--font-signifier);
-      font-weight: 400;
+    .font-display {
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      line-height: 0.85;
     }
 
-    .font-sans {
-      font-family: var(--font-sohne);
+    .font-grotesk {
+      font-family: var(--font-grotesk);
+      font-weight: 500;
     }
 
     .font-mono {
       font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
     }
 
-    /* Headings tracking */
-    .tracking-signifier-display { letter-spacing: -2.25px; }
-    .tracking-signifier-lg { letter-spacing: -0.96px; }
-    .tracking-signifier-md { letter-spacing: -0.66px; }
-    .tracking-signifier-sm { letter-spacing: -0.23px; }
-
-    /* Steep Cards & Artifacts */
-    .steep-card-neutral {
-      background-color: var(--color-mist-gray);
-      border-radius: 24px;
-      border: none;
+    /* Typographic Gradient Headline */
+    .headline-fade {
+      background: linear-gradient(180deg, #ffffff 0%, #c9c7cc 45%, #7b7a7c 80%, #3c3a3e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 0.82;
     }
 
-    .steep-card-peach {
-      background-color: var(--color-blush-peach);
-      color: var(--color-sienna-brown);
-      border-radius: 24px;
-      border: none;
-    }
-
-    .steep-artifact {
-      background-color: var(--color-paper-white);
-      border-radius: 20px;
-      box-shadow: var(--shadow-artifact);
-    }
-
-    /* Steep Pill Buttons */
-    .pill-btn-filled {
-      background-color: var(--color-ink-black);
-      color: var(--color-paper-white);
-      border: 1px solid var(--color-ink-black);
+    /* Brutalist Pill Elements (9999px radius) */
+    .pill-nav {
+      background-color: transparent;
+      border: 1px solid rgba(201, 199, 204, 0.22);
       border-radius: 9999px;
-      padding: 10px 22px;
-      font-size: 15px;
-      font-weight: 450;
+      padding: 6px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-fog);
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.15s ease;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
+      text-transform: uppercase;
     }
-    .pill-btn-filled:hover {
-      background-color: #000000;
+    .pill-nav:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+      border-color: var(--color-fog);
+    }
+
+    .pill-action-ember {
+      background-color: var(--color-ember-orange);
+      color: #000000;
+      border: 1px solid var(--color-ember-orange);
+      border-radius: 9999px;
+      padding: 8px 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .pill-action-ember:hover {
+      background-color: #ff7e57;
       transform: translateY(-1px);
     }
 
-    .pill-btn-ghost {
-      background-color: transparent;
-      color: var(--color-ink-black);
-      border: 1px solid var(--color-ink-black);
+    .pill-action-white {
+      background-color: var(--color-pure-white);
+      color: var(--color-onyx);
+      border: 1px solid var(--color-pure-white);
       border-radius: 9999px;
-      padding: 10px 22px;
-      font-size: 15px;
-      font-weight: 450;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.15s ease;
-      cursor: pointer;
-    }
-    .pill-btn-ghost:hover {
-      background-color: var(--color-mist-gray);
-    }
-
-    .pill-btn-subtle {
-      background-color: var(--color-mist-gray);
-      color: var(--color-ink-black);
-      border: 1px solid transparent;
-      border-radius: 9999px;
-      padding: 7px 16px;
+      padding: 8px 20px;
+      font-family: var(--font-mono);
       font-size: 13px;
-      font-weight: 450;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.15s ease;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
+      text-transform: uppercase;
     }
-    .pill-btn-subtle:hover {
-      background-color: #e5e5e7;
+    .pill-action-white:hover {
+      background-color: var(--color-fog);
+      transform: translateY(-1px);
     }
 
-    /* Text link with arrow */
-    .steep-arrow-link {
-      color: var(--color-ink-black);
-      font-size: 15px;
-      font-weight: 450;
+    .pill-action-ghost {
+      background-color: transparent;
+      color: var(--color-fog);
+      border: 1px solid rgba(201, 199, 204, 0.28);
+      border-radius: 9999px;
+      padding: 8px 18px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      text-decoration: none;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
-      transition: opacity 0.15s ease;
+      text-transform: uppercase;
     }
-    .steep-arrow-link:hover {
-      text-decoration: underline;
-      text-underline-offset: 4px;
+    .pill-action-ghost:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      border-color: var(--color-fog);
+    }
+
+    /* Brutalist 0px Sharp Panels */
+    .brutalist-card {
+      background-color: var(--color-onyx);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 0px;
+    }
+
+    .brutalist-card-elevated {
+      background-color: var(--color-onyx-card);
+      border: 1px solid rgba(201, 199, 204, 0.18);
+      border-radius: 0px;
+    }
+
+    /* Ember Live Dot */
+    .ember-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-ember-orange);
+      display: inline-block;
+      box-shadow: 0 0 10px rgba(255, 100, 54, 0.6);
+      animation: pulse-ember 2s infinite ease-in-out;
+    }
+    @keyframes pulse-ember {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    /* Ghost Glass Tag */
+    .tag-mono {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--color-ash);
+      border-radius: 0px;
+    }
+
+    .tag-mono-ember {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      background-color: rgba(255, 100, 54, 0.12);
+      border: 1px solid rgba(255, 100, 54, 0.4);
+      color: var(--color-ember-orange);
+      border-radius: 0px;
     }
 
     /* Inputs */
-    .steep-input {
-      background-color: var(--color-paper-white);
-      border: 1px solid var(--color-hairline);
-      border-radius: 16px;
-      padding: 12px 18px;
-      color: var(--color-ink-black);
-      font-size: 15px;
+    .brutalist-input {
+      background-color: #0b0b0c;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 0px;
+      padding: 12px 16px;
+      color: var(--color-pure-white);
+      font-family: var(--font-mono);
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: border-color 0.2s ease;
     }
-    .steep-input:focus {
-      border-color: var(--color-ink-black);
-    }
-    .steep-input::placeholder {
-      color: var(--color-smoke-gray);
+    .brutalist-input:focus {
+      border-color: var(--color-ember-orange);
     }
 
-    /* Subtle pulsing indicator */
-    @keyframes pulse-gentle {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.92); }
-    }
-    .pulse-live {
-      animation: pulse-gentle 2.5s infinite ease-in-out;
-    }
-
-    /* Clean scrollbars */
+    /* Scrollbars */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
     }
     ::-webkit-scrollbar-track {
-      background: #f8f8f9;
+      background: #111112;
     }
     ::-webkit-scrollbar-thumb {
-      background: #d4d4d8;
-      border-radius: 9999px;
+      background: #3c3a3e;
+      border-radius: 0px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-ember-orange);
     }
   </style>
 </head>
-<body class="min-h-screen selection:bg-[#fbe1d1] selection:text-[#5d2a1a]">
+<body class="min-h-screen selection:bg-[#ff6436] selection:text-black">
 
-  <!-- PIN LOGIN MODAL (Steep Style: Paper White Card over soft overlay) -->
-  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/35 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-[24px] max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ececec] text-center">
-      <div class="w-12 h-12 rounded-full bg-[#fbe1d1] text-[#5d2a1a] flex items-center justify-center mx-auto mb-4 text-xl">
-        <i class="fa-solid fa-lock"></i>
+  <!-- PIN LOGIN MODAL (Brutalist Dark Foundry Box) -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-8 text-left shadow-2xl relative">
+      <div class="absolute -top-3 left-6 px-3 bg-[#ff6436] text-black font-mono text-[10px] font-bold tracking-widest uppercase">
+        AUTH_GATEWAY // v2.04
       </div>
-      <h2 class="font-serif text-3xl text-[#17191c] tracking-tight mb-2">Akses Terminal</h2>
-      <p class="text-sm text-[#777b86] mb-6">Masukkan PIN keamanan untuk membuka dashboard kendali MT5.</p>
       
-      <div class="mb-5 text-left">
-        <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1.5 pl-1">Security PIN</label>
+      <div class="flex items-center justify-between mb-6 pt-2">
+        <div>
+          <h2 class="font-display text-3xl text-white tracking-wider">TERMINAL ACCESS</h2>
+          <p class="font-mono text-xs text-[#a2a2a2] mt-1">ROYALVIENTO // PRIVATE MT5 DESK</p>
+        </div>
+        <span class="ember-dot"></span>
+      </div>
+
+      <div class="mb-6 space-y-2">
+        <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider">SECURITY PIN // 4 DIGIT</label>
         <input type="password" id="pinInput" maxlength="12" placeholder="••••"
-               class="steep-input w-full text-center text-2xl tracking-[0.3em] font-mono font-medium"
+               class="brutalist-input w-full text-center text-3xl font-mono tracking-[0.4em] text-white"
                onkeypress="if(event.key==='Enter') doLogin()">
-        <p id="loginError" class="text-xs text-[#5d2a1a] bg-[#fbe1d1]/80 px-3 py-1.5 rounded-xl mt-2.5 hidden">
-          <i class="fa-solid fa-circle-exclamation mr-1"></i> PIN yang Anda masukkan salah.
+        <p id="loginError" class="font-mono text-xs text-[#ff6436] mt-2 hidden">
+          [!] ACCESS DENIED: PIN INCORRECT
         </p>
       </div>
 
-      <button onclick="doLogin()" class="pill-btn-filled w-full">
-        Buka Dashboard →
+      <button onclick="doLogin()" class="pill-action-white w-full justify-center">
+        AUTHENTICATE TERMINAL &rarr;
       </button>
-      <div class="mt-4 text-center">
-        <span class="text-xs text-[#979799]">RoyalViento EA · trading.aranya.my.id</span>
+
+      <div class="mt-6 pt-4 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] text-[#7b7a7c]">
+        <span>HOST: trading.aranya.my.id</span>
+        <span>SSL // ENCRYPTED</span>
       </div>
     </div>
   </div>
@@ -238,414 +287,429 @@
   <!-- MAIN DASHBOARD CONTENT -->
   <div id="mainDashboard" class="hidden">
     
-    <!-- TOP NAVIGATION (Whisper-quiet, transparent, logo left, nav & pills right) -->
-    <header class="w-full bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#ececec]">
-      <div class="max-w-[1200px] mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+    <!-- TOP NAVIGATION (Floating Brutalist Strip) -->
+    <header class="w-full bg-[#161616] border-b border-[#2a2a2c] sticky top-0 z-40">
+      <div class="max-w-[1240px] mx-auto px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
         
-        <!-- Left: Brand / Logo in Signifier Serif -->
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full bg-[#17191c] text-white flex items-center justify-center font-serif text-base italic shadow-sm">
-            R
+        <!-- Left: Brand / Foundry Monogram -->
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-[#ff6436]"></span>
+            <span class="font-display text-2xl tracking-wider text-white">ROYALVIENTO</span>
           </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="font-serif text-xl text-[#17191c] tracking-tight font-normal">RoyalViento</span>
-              <span class="text-xs text-[#979799] tracking-normal font-sans">v2.04 IDR Safe</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Center: Ghost Typographic Tags -->
-        <div class="hidden md:flex items-center gap-6 text-xs text-[#777b86]">
-          <span id="headerAccount">Account: &mdash;</span>
-          <span class="text-[#ececec]">•</span>
-          <span id="headerServer">Server: &mdash;</span>
-          <span class="text-[#ececec]">•</span>
-          <span class="flex items-center gap-1.5 text-[#17191c]">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#17191c] pulse-live"></span>
-            Ping SG ~1ms
+          <span class="tag-mono hidden sm:inline-block">EA_V2.04_IDR</span>
+          <span class="font-mono text-xs text-[#7b7a7c] hidden lg:inline">
+            // TERMINAL CLOUD
           </span>
         </div>
 
-        <!-- Right: Control Pills & Settings -->
+        <!-- Center: Live Telemetry Metadata -->
+        <div class="hidden md:flex items-center gap-5 font-mono text-xs text-[#a2a2a2]">
+          <span id="headerAccount">ACC: 10012687831</span>
+          <span class="text-[#3c3a3e]">//</span>
+          <span id="headerServer">SRV: MetaQuotes-Demo</span>
+          <span class="text-[#3c3a3e]">//</span>
+          <span class="flex items-center gap-2 text-white">
+            <span class="ember-dot"></span>
+            LATENCY ~1MS
+          </span>
+        </div>
+
+        <!-- Right: Status Pills & Actions -->
         <div class="flex items-center gap-2.5 flex-wrap">
-          <!-- MT5 Service Status Pill -->
-          <div class="pill-btn-subtle" title="Status Service MT5 Wine">
-            <span class="w-2 h-2 rounded-full bg-[#17191c]" id="dotMt5"></span>
-            <span class="text-[#979799]">MT5:</span>
-            <span id="badgeMt5" class="font-medium text-[#17191c]">ACTIVE</span>
+          <!-- MT5 Service Status -->
+          <div class="pill-nav" title="Status Service MT5 Wine">
+            <span class="w-2 h-2 rounded-full bg-[#ff6436]" id="dotMt5"></span>
+            <span class="text-[#7b7a7c]">MT5:</span>
+            <span id="badgeMt5" class="text-white font-semibold">ACTIVE</span>
           </div>
 
-          <!-- Algo Trading Toggle Pill -->
-          <button onclick="toggleAlgo()" class="pill-btn-ghost py-1 px-3.5 text-xs hover:bg-[#f2f2f3]" title="Klik untuk Toggle Algo Trading">
-            <span class="w-2 h-2 rounded-full bg-[#17191c]" id="dotAlgo"></span>
-            <span>Algo:</span>
-            <strong id="badgeAlgo" class="font-medium">ENABLED</strong>
-            <i class="fa-solid fa-power-off text-[10px] ml-0.5 opacity-60"></i>
+          <!-- Algo Trading Toggle -->
+          <button onclick="toggleAlgo()" class="pill-nav hover:border-[#ff6436]" title="Klik untuk Toggle Algo Trading">
+            <span class="w-2 h-2 rounded-full bg-[#ff6436]" id="dotAlgo"></span>
+            <span class="text-[#7b7a7c]">ALGO:</span>
+            <span id="badgeAlgo" class="text-white font-semibold">ENABLED</span>
+            <i class="fa-solid fa-power-off text-[9px] text-[#ff6436] ml-0.5"></i>
           </button>
 
-          <!-- Domain / Custom Host Pill -->
-          <a href="https://trading.aranya.my.id" target="_blank" class="hidden sm:inline-flex pill-btn-subtle text-xs text-[#777b86] hover:text-[#17191c]" title="Custom Domain Cloudflare">
-            <i class="fa-solid fa-globe text-[11px] opacity-70"></i>
-            <span id="domainBadgeText">trading.aranya.my.id</span>
+          <!-- Domain Host -->
+          <a href="https://trading.aranya.my.id" target="_blank" class="hidden sm:inline-flex pill-nav text-[#a2a2a2] hover:text-white" title="Custom Cloudflare Domain">
+            <span>trading.aranya.my.id</span>
           </a>
 
-          <!-- Quick Settings Button -->
-          <button onclick="openSettingsModal()" class="w-9 h-9 rounded-full border border-[#ececec] flex items-center justify-center text-[#17191c] hover:bg-[#f2f2f3] transition" title="Pengaturan">
-            <i class="fa-solid fa-gear text-sm"></i>
+          <!-- Settings -->
+          <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full border border-[rgba(201,199,204,0.22)] flex items-center justify-center text-[#a2a2a2] hover:text-white hover:border-white transition" title="Pengaturan">
+            <i class="fa-solid fa-sliders text-xs"></i>
           </button>
         </div>
+
       </div>
     </header>
 
-    <!-- CONTAINER 1200px CENTERED -->
-    <main class="max-w-[1200px] mx-auto px-6 py-10 space-y-12">
+    <!-- CONTAINER 1240px CENTERED -->
+    <main class="max-w-[1240px] mx-auto px-6 py-8 space-y-8">
 
-      <!-- HERO SECTION (Editorial headline + subhead + paired pill buttons) -->
-      <section class="space-y-6 pt-2">
-        <div class="space-y-3">
-          <div class="text-xs uppercase tracking-widest text-[#979799] font-medium">Algorithmic Trading & Telemetry</div>
-          <h1 class="font-serif text-4xl sm:text-5xl lg:text-[54px] text-[#17191c] leading-[1.15] tracking-signifier-md font-normal max-w-3xl">
-            Precision automated execution, <span class="italic">monitored on warm paper.</span>
-          </h1>
-          <p class="text-[17px] text-[#777b86] max-w-2xl leading-relaxed">
-            Live balance telemetry, basket risk hedging, dan kontrol seketika untuk MetaTrader 5 di VPS Linux.
-          </p>
-        </div>
+      <!-- MONUMENT HERO SECTION (Typographic Statement with Gradient Fade) -->
+      <section class="border-b border-[#2a2a2c] pb-8 pt-2">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <span class="ember-dot"></span>
+              <span class="font-mono text-xs text-[#a2a2a2] tracking-widest uppercase">REAL-TIME EXECUTION ENGINE // LIVE MONITORING</span>
+            </div>
+            
+            <!-- Monument Typography in Anton -->
+            <h1 class="font-display text-5xl sm:text-7xl lg:text-[88px] headline-fade tracking-wide">
+              AUTONOMOUS TRADING
+            </h1>
+            
+            <p class="font-grotesk text-sm sm:text-base text-[#a2a2a2] max-w-2xl leading-relaxed">
+              Real-time balance telemetry, dynamic basket exposure, and high-frequency risk controls for MetaTrader 5 on Linux VPS.
+            </p>
+          </div>
 
-        <!-- ACTION BUTTON PAIR ON BASELINE -->
-        <div class="flex flex-wrap items-center gap-3 pt-2">
-          <!-- Primary Filled Pill Button -->
-          <button id="btnPauseResume" onclick="togglePauseResume()" class="pill-btn-filled">
-            <i class="fa-solid fa-pause text-xs" id="iconPauseResume"></i>
-            <span id="textPauseResume">Pause EA Trading</span>
-          </button>
+          <!-- ACTION BUTTON CLUSTER (Compact, Brutalist) -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button id="btnPauseResume" onclick="togglePauseResume()" class="pill-action-ember">
+              <i class="fa-solid fa-pause text-xs" id="iconPauseResume"></i>
+              <span id="textPauseResume">PAUSE EA</span>
+            </button>
 
-          <!-- Paired Ghost Pill Button -->
-          <button onclick="openTargetModal()" class="pill-btn-ghost">
-            <i class="fa-solid fa-bullseye text-xs opacity-70"></i>
-            <span>Atur Target Harian ($)</span>
-          </button>
+            <button onclick="openTargetModal()" class="pill-action-white">
+              <i class="fa-solid fa-bullseye text-xs"></i>
+              <span>SET TARGET</span>
+            </button>
 
-          <span class="text-[#ececec] mx-1 hidden sm:inline">|</span>
+            <button onclick="confirmCloseAll()" class="pill-action-ghost text-[#ff6436] hover:text-white hover:border-[#ff6436]">
+              <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+              <span>CLOSE ALL</span>
+            </button>
 
-          <!-- Inline Text Links with Arrow -->
-          <button onclick="confirmCloseAll()" class="steep-arrow-link text-sm text-[#777b86] hover:text-[#5d2a1a] transition">
-            Tutup Semua Posisi →
-          </button>
+            <button onclick="restartMT5()" class="pill-action-ghost">
+              <i class="fa-solid fa-rotate text-xs"></i>
+              <span>RESTART MT5</span>
+            </button>
+          </div>
 
-          <button onclick="restartMT5()" class="steep-arrow-link text-sm text-[#777b86] hover:text-[#17191c] transition">
-            Restart MT5 →
-          </button>
         </div>
       </section>
 
-      <!-- METRICS GRID (Features 1 Accent Blush Peach Card + 3 Neutral/Artifact Cards) -->
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- METRICS GRID (4 Sharp Brutalist Cards - Zero Radius, Hairline Borders) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        <!-- CARD 1: THE ACCENT PEACH CARD (Editorial Spotlight - Daily Target) -->
-        <div class="steep-card-peach p-6 flex flex-col justify-between relative overflow-hidden transition">
+        <!-- CARD 1: DAILY TARGET & PROFIT SPOTLIGHT (Ember Highlight) -->
+        <div class="brutalist-card p-5 relative overflow-hidden flex flex-col justify-between border-l-2 border-l-[#ff6436]">
           <div>
-            <div class="flex items-center justify-between text-xs text-[#5d2a1a]/80 font-medium mb-2">
-              <span class="uppercase tracking-wider">Target & Profit Harian</span>
-              <span id="targetBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#ffffff]/60 text-[#5d2a1a]">TARGET: $50.00</span>
+            <div class="flex items-center justify-between text-[11px] mb-2 font-mono">
+              <span class="text-[#a2a2a2]">// DAILY_PROFIT</span>
+              <span id="targetBadge" class="tag-mono-ember">TARGET: $50.00</span>
             </div>
             
             <div class="flex items-baseline gap-2 mt-1">
-              <div class="font-serif text-3xl lg:text-4xl text-[#5d2a1a] font-normal" id="valDailyProfit">+$0.00</div>
-              <span class="text-xs text-[#5d2a1a]/70 font-mono" id="valTargetPercent">(0%)</span>
+              <div class="font-display text-4xl text-white tracking-wide" id="valDailyProfit">+$19.37</div>
+              <span class="font-mono text-xs text-[#ff6436]" id="valTargetPercent">(38%)</span>
             </div>
           </div>
 
-          <!-- Gestural Progress Line in Sienna Brown -->
-          <div class="mt-5 pt-3 border-t border-[#5d2a1a]/15">
-            <div class="w-full bg-[#5d2a1a]/15 h-1.5 rounded-full overflow-hidden">
-              <div id="targetProgressBar" class="bg-[#5d2a1a] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          <!-- Ember Orange Gestural Line Progress -->
+          <div class="mt-4 pt-3 border-t border-[#2a2a2c]">
+            <div class="w-full bg-[#2a2a2c] h-1 overflow-hidden">
+              <div id="targetProgressBar" class="bg-[#ff6436] h-1 transition-all duration-500" style="width: 38.7%"></div>
             </div>
-            <div class="flex justify-between items-center text-[11px] text-[#5d2a1a]/70 mt-2 font-mono">
-              <span>Baseline: $0.00</span>
-              <span id="targetRemainingText">Menuju target</span>
+            <div class="flex justify-between items-center font-mono text-[10px] text-[#7b7a7c] mt-2">
+              <span>BASE: $0.00</span>
+              <span id="targetRemainingText">$30.63 TO TARGET</span>
             </div>
           </div>
         </div>
 
-        <!-- CARD 2: SALDO AKUN (BALANCE) -->
-        <div class="steep-card-neutral p-6 flex flex-col justify-between">
+        <!-- CARD 2: ACCOUNT BALANCE -->
+        <div class="brutalist-card p-5 flex flex-col justify-between">
           <div>
-            <div class="text-xs uppercase tracking-wider text-[#979799] font-medium mb-2">
-              Saldo Akun (Balance)
+            <div class="flex items-center justify-between text-[11px] mb-2 font-mono text-[#a2a2a2]">
+              <span>// CAPITAL_BALANCE</span>
+              <span class="tag-mono">USD</span>
             </div>
-            <div class="font-serif text-3xl lg:text-4xl text-[#17191c] font-normal" id="valBalance">
-              $0.00
+            <div class="font-display text-4xl text-white tracking-wide" id="valBalance">
+              $99,815.97
             </div>
           </div>
-          <div class="mt-5 pt-3 border-t border-[#ececec] flex items-center justify-between text-xs text-[#777b86]">
-            <span>Free Margin:</span>
-            <span class="font-mono font-medium text-[#17191c]" id="valFreeMargin">$0.00</span>
+          <div class="mt-4 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[11px] text-[#7b7a7c]">
+            <span>FREE MARGIN:</span>
+            <span class="text-white font-medium" id="valFreeMargin">$99,815.97</span>
           </div>
         </div>
 
-        <!-- CARD 3: EQUITY & FLOATING P/L (Floating Artifact) -->
-        <div class="steep-artifact p-6 flex flex-col justify-between">
+        <!-- CARD 3: VALUATION & FLOATING P/L -->
+        <div class="brutalist-card p-5 flex flex-col justify-between">
           <div>
-            <div class="text-xs uppercase tracking-wider text-[#979799] font-medium mb-2">
-              Equity & Floating P/L
+            <div class="flex items-center justify-between text-[11px] mb-2 font-mono text-[#a2a2a2]">
+              <span>// NET_EQUITY</span>
+              <span class="flex items-center gap-1.5 text-white">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#ff6436]"></span>
+                LIVE
+              </span>
             </div>
-            <div class="font-serif text-3xl lg:text-4xl text-[#17191c] font-normal" id="valEquity">
-              $0.00
+            <div class="font-display text-4xl text-white tracking-wide" id="valEquity">
+              $99,815.97
             </div>
           </div>
-          <div class="mt-5 pt-3 border-t border-[#ececec] flex items-center justify-between text-xs">
-            <span class="text-[#777b86]">Floating Net:</span>
-            <span class="font-mono font-semibold text-[#17191c]" id="valFloating">$0.00</span>
+          <div class="mt-4 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[11px]">
+            <span class="text-[#7b7a7c]">FLOATING NET:</span>
+            <span class="text-white font-semibold" id="valFloating">+$0.00</span>
           </div>
         </div>
 
-        <!-- CARD 4: ACTIVE POSITIONS & EXPOSURE -->
-        <div class="steep-card-neutral p-6 flex flex-col justify-between">
+        <!-- CARD 4: ACTIVE POSITIONS & LOT EXPOSURE -->
+        <div class="brutalist-card p-5 flex flex-col justify-between">
           <div>
-            <div class="text-xs uppercase tracking-wider text-[#979799] font-medium mb-2">
-              Posisi Terbuka
+            <div class="flex items-center justify-between text-[11px] mb-2 font-mono text-[#a2a2a2]">
+              <span>// ACTIVE_ORDERS</span>
+              <span class="tag-mono" id="posCountBadge">0 POSITIONS</span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <div class="font-serif text-3xl lg:text-4xl text-[#17191c] font-normal" id="valPositionsTotal">
-                0
-              </div>
-              <span class="text-xs text-[#777b86]">order aktif</span>
+            <div class="font-display text-4xl text-white tracking-wide" id="valPositionsTotal">
+              0
             </div>
           </div>
-          <div class="mt-5 pt-3 border-t border-[#ececec] flex items-center justify-between text-xs text-[#777b86] font-mono">
-            <span>BUY: <strong class="text-[#17191c] font-medium" id="valBuyLots">0.00 L</strong></span>
-            <span>SELL: <strong class="text-[#17191c] font-medium" id="valSellLots">0.00 L</strong></span>
+          <div class="mt-4 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[11px] text-[#7b7a7c]">
+            <span>BUY: <strong class="text-white" id="valBuyLots">0.00 L</strong></span>
+            <span>SELL: <strong class="text-[#ff6436]" id="valSellLots">0.00 L</strong></span>
           </div>
         </div>
 
       </section>
 
-      <!-- TARGET HIT EDITORIAL NOTIFICATION (If Daily Target is Hit) -->
-      <div id="targetHitBanner" class="hidden steep-card-peach p-6 flex flex-wrap items-center justify-between gap-4 border border-[#5d2a1a]/20">
+      <!-- TARGET HIT ALERT BANNER (If Target is Reached) -->
+      <div id="targetHitBanner" class="hidden brutalist-card p-5 border-l-4 border-l-[#ff6436] bg-[#1c1c1f] flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-[#5d2a1a] text-[#fbe1d1] flex items-center justify-center text-lg">
+          <div class="w-10 h-10 bg-[#ff6436] text-black flex items-center justify-center text-lg font-bold">
             <i class="fa-solid fa-trophy"></i>
           </div>
           <div>
-            <h3 class="font-serif text-xl text-[#5d2a1a] font-normal">Target Profit Harian Telah Tercapai!</h3>
-            <p class="text-xs text-[#5d2a1a]/80 mt-0.5">
-              Robot otomatis menghentikan transaksi baru untuk mengunci perolehan profit hari ini.
+            <h3 class="font-display text-2xl text-white tracking-wide">DAILY TARGET ACHIEVED</h3>
+            <p class="font-mono text-xs text-[#a2a2a2] mt-0.5">
+              ALL POSITIONS SECURED. NEW ENTRIES ARE TEMPORARILY LOCKED TO PRESERVE PROFIT.
             </p>
           </div>
         </div>
-        <button onclick="resumeTrading()" class="pill-btn-filled text-xs py-2 px-5">
-          Lanjutkan Trading Lagi →
+        <button onclick="resumeTrading()" class="pill-action-white text-xs">
+          RESUME TRADING NOW &rarr;
         </button>
       </div>
 
-      <!-- MAIN SPLIT: FLOATING PRODUCT ARTIFACTS (TABLE & LIVE SCREENSHOT) -->
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- MAIN SPLIT: MONITOR MOCKUP & LIVE POSITIONS TABLE -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- ARTIFACT 1: LIVE POSITIONS TABLE (7 Cols) -->
-        <div class="lg:col-span-7 steep-artifact p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between pb-4 border-b border-[#ececec] mb-4">
-              <div class="flex items-center gap-2.5">
-                <h3 class="font-serif text-2xl text-[#17191c] font-normal">Daftar Posisi Terbuka</h3>
-                <span id="posCountBadge" class="text-xs text-[#979799] font-mono">0 posisi</span>
-              </div>
-              <button onclick="fetchStatus()" class="pill-btn-subtle text-xs py-1 px-3" title="Perbarui Data">
-                <i class="fa-solid fa-rotate text-[10px]"></i>
-                <span>Refresh</span>
-              </button>
+        <!-- LEFT (7 COLS): LIVE POSITIONS TABLE -->
+        <div class="lg:col-span-7 brutalist-card p-5 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-[#2a2a2c]">
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 bg-[#ff6436]"></span>
+              <h3 class="font-mono text-sm tracking-wider text-white font-semibold">// LIVE_POSITIONS_STREAM</h3>
             </div>
-
-            <!-- Table -->
-            <div class="overflow-x-auto min-h-[200px]">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="border-b border-[#ececec] text-[#979799] text-[11px] uppercase tracking-wider">
-                    <th class="py-2.5 px-2 font-medium">Tiket</th>
-                    <th class="py-2.5 px-2 font-medium">Symbol</th>
-                    <th class="py-2.5 px-2 font-medium">Tipe</th>
-                    <th class="py-2.5 px-2 font-medium">Lot</th>
-                    <th class="py-2.5 px-2 font-medium">Open Price</th>
-                    <th class="py-2.5 px-2 font-medium">Current</th>
-                    <th class="py-2.5 px-2 font-medium">SL</th>
-                    <th class="py-2.5 px-2 font-medium text-right">Profit ($)</th>
-                    <th class="py-2.5 px-2 font-medium text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="positionsTableBody" class="divide-y divide-[#f2f2f3] font-mono text-[13px]">
-                  <tr>
-                    <td colspan="9" class="py-12 text-center text-[#979799] font-sans">
-                      <div class="w-10 h-10 rounded-full bg-[#f2f2f3] text-[#777b86] flex items-center justify-center mx-auto mb-2 text-base">
-                        <i class="fa-regular fa-folder-open"></i>
-                      </div>
-                      Tidak ada posisi terbuka saat ini
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <button onclick="fetchStatus()" class="pill-nav text-[11px] py-1 px-3">
+              <i class="fa-solid fa-rotate text-[9px]"></i>
+              <span>SYNC NOW</span>
+            </button>
           </div>
 
-          <div class="pt-4 border-t border-[#ececec] flex items-center justify-between text-xs text-[#979799]">
-            <span>Sinkronisasi otomatis setiap 2 detik via MQL5 WebBridge</span>
-            <button onclick="confirmCloseAll()" class="text-[#5d2a1a] hover:underline font-sans text-xs">
-              Tutup Semua Posisi
+          <!-- Table Container -->
+          <div class="overflow-x-auto min-h-[220px]">
+            <table class="w-full text-left font-mono text-xs">
+              <thead>
+                <tr class="border-b border-[#2a2a2c] text-[#7b7a7c] text-[11px]">
+                  <th class="py-2.5 px-2 font-normal">TICKET</th>
+                  <th class="py-2.5 px-2 font-normal">SYMBOL</th>
+                  <th class="py-2.5 px-2 font-normal">SIDE</th>
+                  <th class="py-2.5 px-2 font-normal">LOT</th>
+                  <th class="py-2.5 px-2 font-normal">ENTRY</th>
+                  <th class="py-2.5 px-2 font-normal">CURRENT</th>
+                  <th class="py-2.5 px-2 font-normal">SL</th>
+                  <th class="py-2.5 px-2 font-normal text-right">P/L ($)</th>
+                  <th class="py-2.5 px-2 font-normal text-center">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="positionsTableBody" class="divide-y divide-[#222224] text-[12px]">
+                <tr>
+                  <td colspan="9" class="py-14 text-center text-[#7b7a7c]">
+                    <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">
+                      [ NO ACTIVE POSITIONS CURRENTLY ]
+                    </div>
+                    <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
+                      SYSTEM WAITING FOR EMA & STOCHASTIC BREAKOUT SIGNALS
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] text-[#7b7a7c]">
+            <span>MQL5 WEBBRIDGE // SYNC INTERVAL: 2S</span>
+            <button onclick="confirmCloseAll()" class="text-[#ff6436] hover:underline uppercase">
+              [ EMERGENCY CLOSE ALL ]
             </button>
           </div>
         </div>
 
-        <!-- ARTIFACT 2: LIVE MT5 CHART & EA PREVIEW (5 Cols) -->
-        <div class="lg:col-span-5 steep-artifact p-6 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between pb-4 border-b border-[#ececec] mb-4">
-              <div>
-                <h3 class="font-serif text-2xl text-[#17191c] font-normal">Layar MT5 Live</h3>
-                <p class="text-xs text-[#979799] mt-0.5">Tampilan terminal grafik & panel EA</p>
-              </div>
-              <div class="flex items-center gap-2">
-                <button onclick="refreshScreen()" class="pill-btn-subtle text-xs py-1 px-3">
-                  <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
-                  <span>Refresh</span>
-                </button>
-                <button onclick="openFullImage()" class="w-8 h-8 rounded-full border border-[#ececec] flex items-center justify-center text-[#17191c] hover:bg-[#f2f2f3] transition" title="Perbesar Layar">
-                  <i class="fa-solid fa-expand text-xs"></i>
-                </button>
-              </div>
+        <!-- RIGHT (5 COLS): INDUSTRIAL MONITOR MOCKUP FRAME -->
+        <div class="lg:col-span-5 brutalist-card p-5 space-y-4">
+          <!-- Monitor Header Strip -->
+          <div class="flex items-center justify-between pb-3 border-b border-[#2a2a2c]">
+            <div class="flex items-center gap-2">
+              <span class="ember-dot"></span>
+              <h3 class="font-mono text-xs tracking-wider text-white font-semibold">VIEWPORT // DISPLAY:99</h3>
             </div>
-
-            <!-- Screenshot Viewport -->
-            <div class="relative w-full rounded-[14px] overflow-hidden border border-[#ececec] bg-[#f2f2f3] flex items-center justify-center min-h-[220px] group">
-              <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Live Screen" 
-                   class="w-full h-auto object-contain cursor-pointer transition group-hover:scale-[1.01]" 
-                   onclick="openFullImage()">
-              
-              <div id="screenLoading" class="absolute inset-0 bg-white/70 backdrop-blur-xs flex items-center justify-center text-xs text-[#17191c] hidden">
-                <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Mengambil screenshot live...
-              </div>
+            <div class="flex items-center gap-2">
+              <button onclick="refreshScreen()" class="pill-nav text-[11px] py-1 px-3">
+                <i class="fa-solid fa-arrows-rotate text-[9px]"></i>
+                <span>REFRESH</span>
+              </button>
+              <button onclick="openFullImage()" class="pill-nav text-[11px] py-1 px-2.5" title="Expand Viewport">
+                <i class="fa-solid fa-expand text-[10px]"></i>
+              </button>
             </div>
           </div>
 
-          <div class="pt-4 border-t border-[#ececec] text-center text-xs text-[#979799]">
-            Layar diperbarui otomatis setiap 5 detik · Klik gambar untuk zoom
+          <!-- Monitor Bezel & Screen -->
+          <div class="relative w-full bg-[#0a0a0c] border border-[#2a2a2c] flex items-center justify-center min-h-[220px] overflow-hidden group">
+            <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Terminal Preview" 
+                 class="w-full h-auto object-contain cursor-pointer transition opacity-95 group-hover:opacity-100" 
+                 onclick="openFullImage()">
+
+            <!-- Loading overlay -->
+            <div id="screenLoading" class="absolute inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center font-mono text-xs text-[#a2a2a2] hidden">
+              <i class="fa-solid fa-circle-notch fa-spin mr-2 text-[#ff6436]"></i> CAPTURING FRAME...
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] text-[#7b7a7c]">
+            <span>XVFB & WINE 64-BIT // TERMINAL64.EXE</span>
+            <span class="text-white">AUTO 5S</span>
           </div>
         </div>
 
       </section>
 
-      <!-- LOGS SECTION (Mist Gray Card with White Monospace Drawer) -->
-      <section class="steep-card-neutral p-7 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <h3 class="font-serif text-2xl text-[#17191c] font-normal">Log Aktivitas Sistem</h3>
-            
-            <!-- Tab switches as quiet pills -->
-            <div class="inline-flex rounded-full bg-white p-1 border border-[#ececec] text-xs">
-              <button id="tabEa" onclick="switchLogTab('ea')" class="px-4 py-1 rounded-full bg-[#17191c] text-white font-medium transition">
-                EA RoyalViento
+      <!-- SYSTEM LOG CONSOLE (Industrial Terminal Drawer) -->
+      <section class="brutalist-card p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-[#2a2a2c]">
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 bg-white"></span>
+              <h3 class="font-mono text-xs tracking-wider text-white font-semibold">// SYSTEM_CONSOLE_LOGS</h3>
+            </div>
+
+            <!-- Tab Switcher (Monospace Pills) -->
+            <div class="inline-flex gap-1 bg-[#101012] p-1 border border-[#2a2a2c]">
+              <button id="tabEa" onclick="switchLogTab('ea')" class="px-3 py-1 font-mono text-[11px] bg-white text-black font-semibold transition">
+                EA_ROYALVIENTO.LOG
               </button>
-              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-4 py-1 rounded-full text-[#777b86] hover:text-[#17191c] font-medium transition">
-                Terminal MT5
+              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-3 py-1 font-mono text-[11px] text-[#7b7a7c] hover:text-white transition">
+                TERMINAL64.LOG
               </button>
             </div>
           </div>
 
-          <button onclick="fetchLogs()" class="pill-btn-subtle text-xs bg-white border border-[#ececec]">
-            <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
-            <span>Refresh Log</span>
+          <button onclick="fetchLogs()" class="pill-nav text-[11px] py-1 px-3">
+            <i class="fa-solid fa-arrows-rotate text-[9px]"></i>
+            <span>REFRESH LOG</span>
           </button>
         </div>
 
-        <!-- Log Content Container (White artifact background for maximum readability) -->
-        <div class="bg-white rounded-[16px] p-5 border border-[#ececec] font-mono text-[12px] h-52 overflow-y-auto leading-relaxed select-text shadow-xs" id="logContent">
-          <div class="text-[#979799] italic">Memuat log aktivitas...</div>
+        <!-- Terminal Output Window -->
+        <div class="bg-[#0b0b0d] p-4 border border-[#222224] font-mono text-[11px] h-48 overflow-y-auto leading-relaxed select-text text-[#c9c7cc]" id="logContent">
+          <div class="text-[#7b7a7c] italic">[ CONNECTING TO LOG STREAM... ]</div>
         </div>
       </section>
 
       <!-- FOOTER -->
-      <footer class="pt-6 pb-12 border-t border-[#ececec] flex flex-wrap items-center justify-between text-xs text-[#979799] gap-4">
-        <div>
-          <span class="font-serif text-sm text-[#17191c]">RoyalViento</span> · MT5 Web Control System & Real-Time Monitoring
+      <footer class="pt-6 pb-12 border-t border-[#2a2a2c] flex flex-wrap items-center justify-between font-mono text-[11px] text-[#7b7a7c] gap-4">
+        <div class="flex items-center gap-3">
+          <span class="text-white font-semibold">ROYALVIENTO MT5</span>
+          <span>//</span>
+          <span>AUTONOMOUS DESK</span>
         </div>
-        <div class="flex items-center gap-6">
-          <a href="https://github.com/Aalfars/royalviento-mt5-dashboard" target="_blank" class="hover:text-[#17191c] transition flex items-center gap-1.5">
-            <i class="fa-brands fa-github text-sm"></i>
-            <span>GitHub Repository</span>
+        <div class="flex items-center gap-5">
+          <a href="https://github.com/Aalfars/royalviento-mt5-dashboard" target="_blank" class="hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-brands fa-github"></i>
+            <span>GITHUB_REPO</span>
           </a>
-          <span>Domain: <strong class="text-[#17191c]">trading.aranya.my.id</strong></span>
+          <span>DOMAIN: <strong class="text-white">trading.aranya.my.id</strong></span>
         </div>
       </footer>
 
     </main>
   </div>
 
-  <!-- TARGET MODAL (Steep Style Paper White Card) -->
-  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/35 backdrop-blur-sm p-4 hidden">
-    <div class="bg-white rounded-[24px] max-w-sm w-full p-7 shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ececec]">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-serif text-2xl text-[#17191c] font-normal">Atur Target Harian</h3>
-        <button onclick="closeTargetModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-[#979799] hover:bg-[#f2f2f3] hover:text-[#17191c] transition">
-          <i class="fa-solid fa-xmark text-sm"></i>
+  <!-- TARGET MODAL (Brutalist Dusk Box) -->
+  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-7 text-left shadow-2xl relative">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#2a2a2c]">
+        <h3 class="font-display text-2xl text-white tracking-wider">SET DAILY TARGET</h3>
+        <button onclick="closeTargetModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm">
+          [✕]
         </button>
       </div>
 
-      <p class="text-xs text-[#777b86] mb-5 leading-relaxed">
-        Saat total profit harian mencapai target ini, robot otomatis menutup semua posisi dan berhenti entry hingga sesi berikutnya.
+      <p class="font-mono text-xs text-[#a2a2a2] mb-5 leading-relaxed">
+        SPECIFY DAILY USD TARGET. ON REACH, ENGINE FORCES BASKET CLOSURE AND LOCKS NEW TRADES UNTIL NEXT SESSION.
       </p>
 
-      <div class="mb-5">
-        <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1.5 pl-1">Target Nominal (USD $)</label>
+      <div class="mb-5 space-y-2">
+        <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider">TARGET AMOUNT // USD ($)</label>
         <div class="relative">
-          <span class="absolute left-4 top-3 text-[#979799] font-serif text-lg">$</span>
+          <span class="absolute left-4 top-3 text-[#7b7a7c] font-mono text-lg">$</span>
           <input type="number" step="1" min="1" id="inputTargetValue" placeholder="50.00"
-                 class="steep-input w-full pl-8 font-mono text-xl font-medium">
+                 class="brutalist-input w-full pl-9 font-mono text-2xl font-bold text-white">
         </div>
 
-        <!-- Quick preset buttons as ghost pills -->
+        <!-- Preset Buttons -->
         <div class="grid grid-cols-4 gap-2 mt-3">
-          <button onclick="setQuickTarget(25)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$25</button>
-          <button onclick="setQuickTarget(50)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$50</button>
-          <button onclick="setQuickTarget(100)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$100</button>
-          <button onclick="setQuickTarget(200)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$200</button>
+          <button onclick="setQuickTarget(25)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$25</button>
+          <button onclick="setQuickTarget(50)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$50</button>
+          <button onclick="setQuickTarget(100)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$100</button>
+          <button onclick="setQuickTarget(200)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$200</button>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-3 pt-2">
-        <button onclick="closeTargetModal()" class="pill-btn-ghost text-xs py-2 px-4 border-[#ececec] text-[#777b86]">
-          Batal
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#2a2a2c]">
+        <button onclick="closeTargetModal()" class="pill-action-ghost text-xs py-2 px-4">
+          CANCEL
         </button>
-        <button onclick="saveDailyTarget()" class="pill-btn-filled text-xs py-2 px-5">
-          Simpan Target →
+        <button onclick="saveDailyTarget()" class="pill-action-white text-xs py-2 px-5">
+          SAVE TARGET &rarr;
         </button>
       </div>
     </div>
   </div>
 
-  <!-- SETTINGS MODAL (Steep Style Paper White Card) -->
-  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/35 backdrop-blur-sm p-4 hidden">
-    <div class="bg-white rounded-[24px] max-w-sm w-full p-7 shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ececec]">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-serif text-2xl text-[#17191c] font-normal">Pengaturan</h3>
-        <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-[#979799] hover:bg-[#f2f2f3] hover:text-[#17191c] transition">
-          <i class="fa-solid fa-xmark text-sm"></i>
+  <!-- SETTINGS MODAL (Brutalist Dusk Box) -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-7 text-left shadow-2xl relative">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#2a2a2c]">
+        <h3 class="font-display text-2xl text-white tracking-wider">SETTINGS</h3>
+        <button onclick="closeSettingsModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm">
+          [✕]
         </button>
       </div>
 
       <div class="space-y-5">
         <div>
-          <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1.5 pl-1">Ganti PIN Keamanan</label>
-          <input type="password" id="inputNewPin" placeholder="PIN Baru (minimal 4 digit)"
-                 class="steep-input w-full text-sm font-mono">
-          <button onclick="changePin()" class="pill-btn-ghost w-full mt-2.5 text-xs py-2">
-            Simpan PIN Baru
+          <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider mb-2">UPDATE SECURITY PIN</label>
+          <input type="password" id="inputNewPin" placeholder="NEW PIN (MIN 4 DIGIT)"
+                 class="brutalist-input w-full text-sm font-mono">
+          <button onclick="changePin()" class="pill-action-ghost w-full mt-3 text-xs justify-center">
+            SAVE NEW PIN
           </button>
         </div>
 
-        <div class="border-t border-[#ececec] pt-4">
-          <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1 pl-1">Reset Statistik Harian</label>
-          <p class="text-xs text-[#777b86] mb-3">Mengatur ulang baseline profit hari ini kembali ke 0.00.</p>
-          <button onclick="resetDailyStats()" class="w-full py-2.5 rounded-full bg-[#fbe1d1] text-[#5d2a1a] hover:bg-[#f7d3bd] font-medium text-xs transition">
-            Reset Profit Hari Ini
+        <div class="border-t border-[#2a2a2c] pt-4">
+          <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider mb-1">RESET DAILY ACCUMULATION</label>
+          <p class="font-mono text-[10px] text-[#a2a2a2] mb-3">RESETS TODAY'S PROFIT BASELINE BACK TO $0.00.</p>
+          <button onclick="resetDailyStats()" class="w-full py-2.5 border border-[#ff6436] text-[#ff6436] hover:bg-[#ff6436] hover:text-black font-mono font-semibold text-xs transition uppercase">
+            RESET TODAY PROFIT
           </button>
         </div>
       </div>
@@ -653,11 +717,11 @@
   </div>
 
   <!-- FULLSCREEN IMAGE ZOOM MODAL -->
-  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/80 backdrop-blur-sm p-4 hidden" onclick="closeFullImage()">
-    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[92vh] object-contain rounded-[16px] shadow-2xl border border-white/20">
+  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/92 backdrop-blur-md p-4 hidden" onclick="closeFullImage()">
+    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[92vh] object-contain border border-[#3c3a3e] shadow-2xl">
   </div>
 
-  <!-- JAVASCRIPT LOGIC & API HOOKS -->
+  <!-- JAVASCRIPT ENGINE & API HOOKS -->
   <script>
     let currentLogTab = 'ea';
     let eaLogsCache = [];
@@ -699,11 +763,11 @@
         if (data.success) {
           showDashboard();
         } else {
-          errEl.textContent = data.message || "PIN Salah!";
+          errEl.textContent = `[!] ${data.message || "ACCESS DENIED: PIN INCORRECT"}`;
           errEl.classList.remove('hidden');
         }
       } catch (e) {
-        errEl.textContent = "Gagal terhubung ke server";
+        errEl.textContent = "[!] CONNECTION ERROR TO VPS SERVER";
         errEl.classList.remove('hidden');
       }
     }
@@ -736,21 +800,21 @@
     function renderStatus(data) {
       if (!data) return;
 
-      // Header labels
-      document.getElementById('headerAccount').textContent = `Account: ${data.account || '---'}`;
-      document.getElementById('headerServer').textContent = `Server: ${data.server || 'MetaQuotes-Demo'}`;
+      // Header Meta
+      document.getElementById('headerAccount').textContent = `ACC: ${data.account || '10012687831'}`;
+      document.getElementById('headerServer').textContent = `SRV: ${data.server || 'MetaQuotes-Demo'}`;
 
       // MT5 Service badge
       const isRunning = data.mt5_running;
       document.getElementById('badgeMt5').textContent = isRunning ? "ACTIVE" : "STOPPED";
-      document.getElementById('badgeMt5').className = isRunning ? "font-medium text-[#17191c]" : "font-medium text-[#5d2a1a]";
-      document.getElementById('dotMt5').className = isRunning ? "w-2 h-2 rounded-full bg-[#17191c]" : "w-2 h-2 rounded-full bg-[#5d2a1a]";
+      document.getElementById('badgeMt5').className = isRunning ? "text-white font-semibold" : "text-[#ff6436] font-semibold";
+      document.getElementById('dotMt5').className = isRunning ? "w-2 h-2 rounded-full bg-[#ff6436]" : "w-2 h-2 rounded-full bg-[#7b7a7c]";
 
       // Algo Trading badge
       const isAlgo = data.algo_trading;
       document.getElementById('badgeAlgo').textContent = isAlgo ? "ENABLED" : "DISABLED";
-      document.getElementById('badgeAlgo').className = isAlgo ? "font-medium text-[#17191c]" : "font-medium text-[#777b86]";
-      document.getElementById('dotAlgo').className = isAlgo ? "w-2 h-2 rounded-full bg-[#17191c]" : "w-2 h-2 rounded-full bg-[#979799]";
+      document.getElementById('badgeAlgo').className = isAlgo ? "text-white font-semibold" : "text-[#7b7a7c] font-semibold";
+      document.getElementById('dotAlgo').className = isAlgo ? "w-2 h-2 rounded-full bg-[#ff6436]" : "w-2 h-2 rounded-full bg-[#7b7a7c]";
 
       // Metrics
       document.getElementById('valBalance').textContent = `$${formatNum(data.balance || 0)}`;
@@ -761,9 +825,9 @@
       const floating = data.floating_profit || 0;
       const floatEl = document.getElementById('valFloating');
       floatEl.textContent = `${floating >= 0 ? '+' : ''}$${formatNum(floating)}`;
-      floatEl.className = `font-mono font-medium ${floating >= 0 ? 'text-[#17191c]' : 'text-[#5d2a1a]'}`;
+      floatEl.className = `font-mono font-semibold ${floating >= 0 ? 'text-white' : 'text-[#ff6436]'}`;
 
-      // Daily Profit & Target (The Peach Spotlight Card)
+      // Daily Profit & Target Spotlight
       const dailyProfit = data.daily_profit || 0;
       const targetUSD = data.daily_target_usd || data.configured_target_usd || 50;
       const profitEl = document.getElementById('valDailyProfit');
@@ -778,9 +842,9 @@
       const remain = targetUSD - dailyProfit;
       const remainEl = document.getElementById('targetRemainingText');
       if (remain <= 0) {
-        remainEl.textContent = "Target tercapai";
+        remainEl.textContent = "TARGET COMPLETED // LOCKED";
       } else {
-        remainEl.textContent = `$${formatNum(remain)} lagi menuju target`;
+        remainEl.textContent = `$${formatNum(remain)} REMAINING`;
       }
 
       // Target Hit Banner
@@ -793,7 +857,7 @@
 
       // Positions Stats
       document.getElementById('valPositionsTotal').textContent = data.positions_total || 0;
-      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} posisi terbuka`;
+      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} POSITIONS`;
       document.getElementById('valBuyLots').textContent = `${(data.buy_lots || 0).toFixed(2)} L`;
       document.getElementById('valSellLots').textContent = `${(data.sell_lots || 0).toFixed(2)} L`;
 
@@ -803,10 +867,10 @@
       const pauseText = document.getElementById('textPauseResume');
       if (isPaused) {
         pauseIcon.className = "fa-solid fa-play text-xs";
-        pauseText.textContent = "Resume EA Trading";
+        pauseText.textContent = "RESUME EA";
       } else {
         pauseIcon.className = "fa-solid fa-pause text-xs";
-        pauseText.textContent = "Pause EA Trading";
+        pauseText.textContent = "PAUSE EA";
       }
 
       // Render Positions Table
@@ -818,11 +882,13 @@
       if (!positions || positions.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="9" class="py-12 text-center text-[#979799] font-sans">
-              <div class="w-10 h-10 rounded-full bg-[#f2f2f3] text-[#777b86] flex items-center justify-center mx-auto mb-2 text-base">
-                <i class="fa-regular fa-folder-open"></i>
+            <td colspan="9" class="py-14 text-center text-[#7b7a7c]">
+              <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">
+                [ NO ACTIVE POSITIONS CURRENTLY ]
               </div>
-              Tidak ada posisi terbuka saat ini
+              <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
+                SYSTEM WAITING FOR EMA & STOCHASTIC BREAKOUT SIGNALS
+              </div>
             </td>
           </tr>
         `;
@@ -833,24 +899,24 @@
       positions.forEach(p => {
         const isBuy = p.type === 'BUY';
         const typeBadge = isBuy
-          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-medium bg-[#f2f2f3] text-[#17191c]">BUY</span>`
-          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-medium bg-[#fbe1d1] text-[#5d2a1a]">SELL</span>`;
+          ? `<span class="px-2 py-0.5 font-mono text-[10px] font-bold bg-white text-black">BUY</span>`
+          : `<span class="px-2 py-0.5 font-mono text-[10px] font-bold bg-[#ff6436] text-black">SELL</span>`;
         
-        const pColor = p.profit >= 0 ? 'text-[#17191c]' : 'text-[#5d2a1a] font-semibold';
+        const pColor = p.profit >= 0 ? 'text-white' : 'text-[#ff6436] font-bold';
 
         rows += `
-          <tr class="hover:bg-[#fafafb] transition">
-            <td class="py-3 px-2 text-[#777b86]">#${p.ticket}</td>
-            <td class="py-3 px-2 font-medium text-[#17191c]">${p.symbol}</td>
+          <tr class="hover:bg-[#1a1a1d] transition">
+            <td class="py-3 px-2 text-[#7b7a7c]">#${p.ticket}</td>
+            <td class="py-3 px-2 font-semibold text-white">${p.symbol}</td>
             <td class="py-3 px-2">${typeBadge}</td>
-            <td class="py-3 px-2 text-[#17191c]">${p.lots.toFixed(2)}</td>
-            <td class="py-3 px-2 text-[#777b86]">${p.open_price.toFixed(2)}</td>
-            <td class="py-3 px-2 text-[#17191c]">${p.current_price.toFixed(2)}</td>
-            <td class="py-3 px-2 text-[#979799]">${p.sl > 0 ? p.sl.toFixed(2) : '—'}</td>
+            <td class="py-3 px-2 text-white">${p.lots.toFixed(2)}</td>
+            <td class="py-3 px-2 text-[#a2a2a2]">${p.open_price.toFixed(2)}</td>
+            <td class="py-3 px-2 text-white font-medium">${p.current_price.toFixed(2)}</td>
+            <td class="py-3 px-2 text-[#7b7a7c]">${p.sl > 0 ? p.sl.toFixed(2) : '—'}</td>
             <td class="py-3 px-2 text-right ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</td>
             <td class="py-3 px-2 text-center">
-              <button onclick="closeSingleTicket(${p.ticket})" class="w-6 h-6 rounded-full border border-[#ececec] text-[#777b86] hover:bg-[#fbe1d1] hover:text-[#5d2a1a] transition" title="Tutup Posisi Ini">
-                <i class="fa-solid fa-xmark text-[10px]"></i>
+              <button onclick="closeSingleTicket(${p.ticket})" class="px-2 py-0.5 border border-[#3c3a3e] text-[#a2a2a2] hover:border-[#ff6436] hover:text-[#ff6436] text-[10px] font-mono transition" title="Tutup Posisi">
+                ✕
               </button>
             </td>
           </tr>
@@ -893,7 +959,7 @@
         alert(d.message);
         fetchStatus();
       } catch (e) {
-        alert("Gagal mengirim perintah");
+        alert("Command dispatch error");
       }
     }
 
@@ -907,12 +973,12 @@
         const d = await res.json();
         setTimeout(fetchStatus, 1500);
       } catch (e) {
-        alert("Gagal toggle Algo Trading");
+        alert("Failed to toggle Algo Trading");
       }
     }
 
     async function confirmCloseAll() {
-      if (confirm("PERINGATAN: Apakah Anda yakin ingin MENUTUP SEMUA POSISI sekarang?")) {
+      if (confirm("CRITICAL WARNING: CLOSE ALL ACTIVE POSITIONS IMMEDIATELY?")) {
         try {
           const res = await fetch('/api/command', {
             method: 'POST',
@@ -923,13 +989,13 @@
           alert(d.message);
           setTimeout(fetchStatus, 1000);
         } catch (e) {
-          alert("Gagal mengirim perintah tutup semua");
+          alert("Failed to close all positions");
         }
       }
     }
 
     async function closeSingleTicket(ticket) {
-      if (confirm(`Tutup posisi #${ticket}?`)) {
+      if (confirm(`CLOSE ORDER #${ticket}?`)) {
         try {
           const res = await fetch('/api/command', {
             method: 'POST',
@@ -939,7 +1005,7 @@
           const d = await res.json();
           setTimeout(fetchStatus, 1000);
         } catch (e) {
-          alert("Gagal menutup order");
+          alert("Failed to close ticket");
         }
       }
     }
@@ -952,15 +1018,15 @@
           body: JSON.stringify({ action: "resume" })
         });
         const d = await res.json();
-        alert("Trading dilanjutkan! Status target telah di-reset.");
+        alert("TRADING RESUMED. TARGET STATE UNLOCKED.");
         fetchStatus();
       } catch (e) {
-        alert("Gagal resume trading");
+        alert("Failed to resume");
       }
     }
 
     async function restartMT5() {
-      if (confirm("Restart layanan MetaTrader 5 di server?")) {
+      if (confirm("RESTART METATRADER 5 PROCESS ON SERVER?")) {
         try {
           const res = await fetch('/api/server', {
             method: 'POST',
@@ -971,7 +1037,7 @@
           alert(d.message);
           setTimeout(fetchStatus, 4000);
         } catch (e) {
-          alert("Gagal restart MT5");
+          alert("Failed to restart MT5");
         }
       }
     }
@@ -989,7 +1055,7 @@
     async function saveDailyTarget() {
       const val = parseFloat(document.getElementById('inputTargetValue').value);
       if (!val || val <= 0) {
-        alert("Masukkan angka target yang valid!");
+        alert("Enter valid target amount!");
         return;
       }
       try {
@@ -1003,7 +1069,7 @@
         closeTargetModal();
         fetchStatus();
       } catch (e) {
-        alert("Gagal menyimpan target");
+        alert("Failed to save target");
       }
     }
 
@@ -1017,7 +1083,7 @@
     async function changePin() {
       const pin = document.getElementById('inputNewPin').value;
       if (pin.length < 4) {
-        alert("PIN minimal 4 karakter");
+        alert("PIN requires at least 4 digits");
         return;
       }
       try {
@@ -1030,11 +1096,11 @@
         alert(d.message);
         closeSettingsModal();
       } catch (e) {
-        alert("Gagal mengganti PIN");
+        alert("Failed to update PIN");
       }
     }
     async function resetDailyStats() {
-      if (confirm("Reset statistik profit hari ini ke nol?")) {
+      if (confirm("RESET TODAY'S PROFIT BASELINE TO $0.00?")) {
         try {
           const res = await fetch('/api/command', {
             method: 'POST',
@@ -1046,7 +1112,7 @@
           closeSettingsModal();
           fetchStatus();
         } catch (e) {
-          alert("Gagal reset statistik");
+          alert("Failed to reset daily statistics");
         }
       }
     }
@@ -1069,11 +1135,11 @@
       const bEa = document.getElementById('tabEa');
       const bTerm = document.getElementById('tabTerm');
       if (tab === 'ea') {
-        bEa.className = "px-4 py-1 rounded-full bg-[#17191c] text-white font-medium transition";
-        bTerm.className = "px-4 py-1 rounded-full text-[#777b86] hover:text-[#17191c] font-medium transition";
+        bEa.className = "px-3 py-1 font-mono text-[11px] bg-white text-black font-semibold transition";
+        bTerm.className = "px-3 py-1 font-mono text-[11px] text-[#7b7a7c] hover:text-white transition";
       } else {
-        bTerm.className = "px-4 py-1 rounded-full bg-[#17191c] text-white font-medium transition";
-        bEa.className = "px-4 py-1 rounded-full text-[#777b86] hover:text-[#17191c] font-medium transition";
+        bTerm.className = "px-3 py-1 font-mono text-[11px] bg-white text-black font-semibold transition";
+        bEa.className = "px-3 py-1 font-mono text-[11px] text-[#7b7a7c] hover:text-white transition";
       }
       renderLogs();
     }
@@ -1082,14 +1148,14 @@
       const container = document.getElementById('logContent');
       const lines = currentLogTab === 'ea' ? eaLogsCache : termLogsCache;
       if (!lines || lines.length === 0) {
-        container.innerHTML = '<div class="text-[#979799] italic">Belum ada data log...</div>';
+        container.innerHTML = '<div class="text-[#7b7a7c] italic">[ NO RECENT LOG STREAM AVAILABLE ]</div>';
         return;
       }
       container.innerHTML = lines.map(l => {
-        let col = "text-[#17191c]";
-        if (l.includes("Order") || l.includes("deal") || l.includes("buy") || l.includes("sell")) col = "text-[#17191c] font-medium";
-        if (l.includes("GAGAL") || l.includes("error") || l.includes("disabled")) col = "text-[#5d2a1a] font-medium";
-        if (l.includes("TARGET")) col = "text-[#5d2a1a] font-semibold bg-[#fbe1d1]/50 px-1 rounded";
+        let col = "text-[#c9c7cc]";
+        if (l.includes("Order") || l.includes("deal") || l.includes("buy") || l.includes("sell")) col = "text-white font-medium";
+        if (l.includes("GAGAL") || l.includes("error") || l.includes("disabled")) col = "text-[#ff6436] font-semibold";
+        if (l.includes("TARGET")) col = "text-black bg-[#ff6436] px-1 font-bold";
         return `<div class="${col} py-0.5">${escapeHtml(l)}</div>`;
       }).join('');
       container.scrollTop = container.scrollHeight;
