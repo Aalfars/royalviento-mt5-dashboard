@@ -584,62 +584,126 @@
           </div>
         </div>
 
-        <!-- OPEN POSITIONS STREAM (Cards on mobile, Table on desktop) -->
+        <!-- TRADING STREAM (Open Positions & Order History Tabs) -->
         <div class="lg:col-span-7 brutalist-card p-4 sm:p-5 space-y-3 sm:space-y-4 lg:order-1">
-          <div class="flex items-center justify-between pb-2.5 sm:pb-3 border-b border-[#2a2a2c]">
-            <div class="flex items-center gap-2 sm:gap-3">
-              <span class="w-2 h-2 bg-[#ff6436]"></span>
-              <h3 class="font-mono text-xs sm:text-sm tracking-wider text-white font-semibold">// LIVE_POSITIONS_STREAM</h3>
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 sm:pb-3 border-b border-[#2a2a2c]">
+            <!-- Tab Switcher -->
+            <div class="inline-flex gap-1 bg-[#101012] p-1 border border-[#2a2a2c]">
+              <button id="btnTabPositions" onclick="switchTradeTab('positions')" 
+                      class="px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] bg-white text-black font-semibold transition flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 bg-[#ff6436]"></span>
+                <span>OPEN_POSITIONS</span>
+                <span id="tabBadgePositions" class="ml-1 opacity-75 font-normal">(0)</span>
+              </button>
+              <button id="btnTabHistory" onclick="switchTradeTab('history')" 
+                      class="px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] hover:text-white transition flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 bg-[#7b7a7c]"></span>
+                <span>ORDER_HISTORY</span>
+                <span id="tabBadgeHistory" class="ml-1 opacity-75 font-normal">(0)</span>
+              </button>
             </div>
-            <button onclick="fetchStatus()" class="pill-nav text-[10px] sm:text-[11px] py-1 px-2.5 sm:px-3">
-              <i class="fa-solid fa-rotate text-[9px]"></i>
-              <span>SYNC NOW</span>
-            </button>
-          </div>
 
-          <!-- Mobile Cards Container (< sm) -->
-          <div id="positionsMobileContainer" class="sm:hidden space-y-2 min-h-[100px]">
-            <div class="py-8 text-center text-[#7b7a7c] font-mono text-[11px]">
-              [ NO ACTIVE POSITIONS CURRENTLY ]
+            <div class="flex items-center gap-2">
+              <span id="historyProfitSummaryBadge" class="hidden font-mono text-[10px] sm:text-[11px] px-2 py-0.5 border border-[#3c3a3e] text-[#a2a2a2]">
+                SUM: <strong id="valHistoryProfitSum" class="text-white">$0.00</strong>
+              </span>
+              <button onclick="fetchStatus()" class="pill-nav text-[10px] sm:text-[11px] py-1 px-2.5 sm:px-3">
+                <i class="fa-solid fa-rotate text-[9px]"></i>
+                <span>SYNC</span>
+              </button>
             </div>
           </div>
 
-          <!-- Desktop Table (>= sm) -->
-          <div class="hidden sm:block overflow-x-auto min-h-[200px]">
-            <table class="w-full text-left font-mono text-xs">
-              <thead>
-                <tr class="border-b border-[#2a2a2c] text-[#7b7a7c] text-[11px]">
-                  <th class="py-2.5 px-2 font-normal">TICKET</th>
-                  <th class="py-2.5 px-2 font-normal">SYMBOL</th>
-                  <th class="py-2.5 px-2 font-normal">SIDE</th>
-                  <th class="py-2.5 px-2 font-normal">LOT</th>
-                  <th class="py-2.5 px-2 font-normal">ENTRY</th>
-                  <th class="py-2.5 px-2 font-normal">CURRENT</th>
-                  <th class="py-2.5 px-2 font-normal">SL</th>
-                  <th class="py-2.5 px-2 font-normal text-right">P/L ($)</th>
-                  <th class="py-2.5 px-2 font-normal text-center">ACTION</th>
-                </tr>
-              </thead>
-              <tbody id="positionsTableBody" class="divide-y divide-[#222224] text-[12px]">
-                <tr>
-                  <td colspan="9" class="py-14 text-center text-[#7b7a7c]">
-                    <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">
-                      [ NO ACTIVE POSITIONS CURRENTLY ]
-                    </div>
-                    <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
-                      SYSTEM WAITING FOR BREAKOUT SIGNALS
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- TAB 1: OPEN POSITIONS -->
+          <div id="viewOpenPositions">
+            <!-- Mobile Cards Container (< sm) -->
+            <div id="positionsMobileContainer" class="sm:hidden space-y-2 min-h-[100px]">
+              <div class="py-8 text-center text-[#7b7a7c] font-mono text-[11px]">
+                [ NO ACTIVE POSITIONS CURRENTLY ]
+              </div>
+            </div>
+
+            <!-- Desktop Table (>= sm) -->
+            <div class="hidden sm:block overflow-x-auto min-h-[200px]">
+              <table class="w-full text-left font-mono text-xs">
+                <thead>
+                  <tr class="border-b border-[#2a2a2c] text-[#7b7a7c] text-[11px]">
+                    <th class="py-2.5 px-2 font-normal">TICKET</th>
+                    <th class="py-2.5 px-2 font-normal">SYMBOL</th>
+                    <th class="py-2.5 px-2 font-normal">SIDE</th>
+                    <th class="py-2.5 px-2 font-normal">LOT</th>
+                    <th class="py-2.5 px-2 font-normal">ENTRY</th>
+                    <th class="py-2.5 px-2 font-normal">CURRENT</th>
+                    <th class="py-2.5 px-2 font-normal">SL</th>
+                    <th class="py-2.5 px-2 font-normal text-right">P/L ($)</th>
+                    <th class="py-2.5 px-2 font-normal text-center">ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="positionsTableBody" class="divide-y divide-[#222224] text-[12px]">
+                  <tr>
+                    <td colspan="9" class="py-14 text-center text-[#7b7a7c]">
+                      <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">
+                        [ NO ACTIVE POSITIONS CURRENTLY ]
+                      </div>
+                      <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
+                        SYSTEM WAITING FOR BREAKOUT SIGNALS
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pt-2.5 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] sm:text-[10px] text-[#7b7a7c]">
+              <span>MQL5 WEBBRIDGE // SYNC: 2S</span>
+              <button onclick="confirmCloseAll()" class="text-[#ff6436] hover:underline uppercase">
+                [ EMERGENCY CLOSE ALL ]
+              </button>
+            </div>
           </div>
 
-          <div class="pt-2.5 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] sm:text-[10px] text-[#7b7a7c]">
-            <span>MQL5 WEBBRIDGE // SYNC: 2S</span>
-            <button onclick="confirmCloseAll()" class="text-[#ff6436] hover:underline uppercase">
-              [ EMERGENCY CLOSE ALL ]
-            </button>
+          <!-- TAB 2: ORDER HISTORY -->
+          <div id="viewOrderHistory" class="hidden">
+            <!-- Mobile Cards Container (< sm) -->
+            <div id="historyMobileContainer" class="sm:hidden space-y-2 min-h-[100px] max-h-[380px] overflow-y-auto">
+              <div class="py-8 text-center text-[#7b7a7c] font-mono text-[11px]">
+                [ NO CLOSED ORDER HISTORY YET ]
+              </div>
+            </div>
+
+            <!-- Desktop Table (>= sm) -->
+            <div class="hidden sm:block overflow-x-auto min-h-[200px] max-h-[420px] overflow-y-auto">
+              <table class="w-full text-left font-mono text-xs">
+                <thead class="sticky top-0 bg-[#161616] z-10">
+                  <tr class="border-b border-[#2a2a2c] text-[#7b7a7c] text-[11px]">
+                    <th class="py-2.5 px-2 font-normal">DEAL #</th>
+                    <th class="py-2.5 px-2 font-normal">TIME (GMT+7)</th>
+                    <th class="py-2.5 px-2 font-normal">SYMBOL</th>
+                    <th class="py-2.5 px-2 font-normal">SIDE</th>
+                    <th class="py-2.5 px-2 font-normal">LOT</th>
+                    <th class="py-2.5 px-2 font-normal">PRICE</th>
+                    <th class="py-2.5 px-2 font-normal text-right">PROFIT ($)</th>
+                  </tr>
+                </thead>
+                <tbody id="historyTableBody" class="divide-y divide-[#222224] text-[12px]">
+                  <tr>
+                    <td colspan="7" class="py-14 text-center text-[#7b7a7c]">
+                      <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">
+                        [ NO CLOSED ORDER HISTORY YET ]
+                      </div>
+                      <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
+                        DEALS FROM LAST 7 DAYS WILL APPEAR HERE
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pt-2.5 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] sm:text-[10px] text-[#7b7a7c]">
+              <span>MQL5 HISTORY SELECT // LAST 7 DAYS (MAX 50)</span>
+              <span id="historyWinLossSummary" class="text-white font-medium">WIN: 0 | LOSS: 0</span>
+            </div>
           </div>
         </div>
 
@@ -930,8 +994,151 @@
         pauseText.textContent = "PAUSE EA";
       }
 
-      // Render Positions Table & Mobile Cards
+      // Update Tab Badges
+      const posCount = data.positions_total !== undefined ? data.positions_total : (data.positions ? data.positions.length : 0);
+      const histCount = data.history_total !== undefined ? data.history_total : (data.history ? data.history.length : 0);
+      const elPosBadge = document.getElementById('tabBadgePositions');
+      const elHistBadge = document.getElementById('tabBadgeHistory');
+      if (elPosBadge) elPosBadge.textContent = `(${posCount})`;
+      if (elHistBadge) elHistBadge.textContent = `(${histCount})`;
+
+      // Render Positions & Order History
       renderPositions(data.positions || []);
+      renderHistory(data.history || [], data.history_profit_sum);
+    }
+
+    let currentTradeTab = 'positions';
+
+    function switchTradeTab(tab) {
+      currentTradeTab = tab;
+      const btnPos = document.getElementById('btnTabPositions');
+      const btnHist = document.getElementById('btnTabHistory');
+      const viewPos = document.getElementById('viewOpenPositions');
+      const viewHist = document.getElementById('viewOrderHistory');
+      const badgeProfit = document.getElementById('historyProfitSummaryBadge');
+
+      if (tab === 'positions') {
+        btnPos.className = "px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] bg-white text-black font-semibold transition flex items-center gap-1.5";
+        btnPos.querySelector('span:first-child').className = "w-1.5 h-1.5 bg-[#ff6436]";
+        btnHist.className = "px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] hover:text-white transition flex items-center gap-1.5";
+        btnHist.querySelector('span:first-child').className = "w-1.5 h-1.5 bg-[#7b7a7c]";
+        viewPos.classList.remove('hidden');
+        viewHist.classList.add('hidden');
+        if (badgeProfit) badgeProfit.classList.add('hidden');
+      } else {
+        btnHist.className = "px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] bg-white text-black font-semibold transition flex items-center gap-1.5";
+        btnHist.querySelector('span:first-child').className = "w-1.5 h-1.5 bg-[#ff6436]";
+        btnPos.className = "px-2.5 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] hover:text-white transition flex items-center gap-1.5";
+        btnPos.querySelector('span:first-child').className = "w-1.5 h-1.5 bg-[#7b7a7c]";
+        viewPos.classList.add('hidden');
+        viewHist.classList.remove('hidden');
+        if (badgeProfit) badgeProfit.classList.remove('hidden');
+      }
+    }
+
+    function renderHistory(history, profitSum) {
+      const tbody = document.getElementById('historyTableBody');
+      const mobileContainer = document.getElementById('historyMobileContainer');
+      const sumEl = document.getElementById('valHistoryProfitSum');
+      const winLossEl = document.getElementById('historyWinLossSummary');
+
+      if (profitSum !== undefined && profitSum !== null && sumEl) {
+        const pColor = profitSum >= 0 ? 'text-white' : 'text-[#ff6436]';
+        sumEl.className = `font-bold ${pColor}`;
+        sumEl.textContent = `${profitSum >= 0 ? '+' : ''}$${formatNum(profitSum)}`;
+      }
+
+      if (!history || history.length === 0) {
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-12 text-center text-[#7b7a7c]">
+                <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">[ NO CLOSED ORDER HISTORY YET ]</div>
+                <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">DEALS FROM LAST 7 DAYS WILL APPEAR HERE</div>
+              </td>
+            </tr>
+          `;
+        }
+        if (mobileContainer) {
+          mobileContainer.innerHTML = `
+            <div class="py-8 text-center text-[#7b7a7c] font-mono text-[11px]">
+              [ NO CLOSED ORDER HISTORY YET ]
+            </div>
+          `;
+        }
+        if (winLossEl) winLossEl.textContent = "WIN: 0 | LOSS: 0";
+        return;
+      }
+
+      let tableRows = '';
+      let mobileCards = '';
+      let winCount = 0;
+      let lossCount = 0;
+
+      history.forEach(h => {
+        const pVal = Number(h.profit || 0);
+        if (pVal > 0) winCount++;
+        else if (pVal < 0) lossCount++;
+
+        const isBuy = h.type === 'BUY';
+        const typeBadge = isBuy
+          ? `<span class="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-white text-black">BUY</span>`
+          : (h.type === 'SELL'
+             ? `<span class="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-[#ff6436] text-black">SELL</span>`
+             : `<span class="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-[#3c3a3e] text-white">${h.type || 'DEAL'}</span>`);
+
+        const pColor = pVal >= 0 ? 'text-white' : 'text-[#ff6436] font-bold';
+        
+        let timeStr = '—';
+        if (h.time) {
+          const d = new Date(h.time * 1000);
+          const pad = (n) => String(n).padStart(2, '0');
+          timeStr = `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+
+        // Desktop Row
+        tableRows += `
+          <tr class="hover:bg-[#1a1a1d] transition">
+            <td class="py-2.5 px-2 text-[#7b7a7c]">
+              <span>#${h.ticket}</span>
+              ${h.order ? `<span class="block text-[9px] text-[#555] opacity-75">ORD #${h.order}</span>` : ''}
+            </td>
+            <td class="py-2.5 px-2 text-[#a2a2a2] text-[11px] whitespace-nowrap">${timeStr}</td>
+            <td class="py-2.5 px-2 font-semibold text-white">${h.symbol || 'XAUUSD'}</td>
+            <td class="py-2.5 px-2">${typeBadge}</td>
+            <td class="py-2.5 px-2 text-white">${(h.lots || 0).toFixed(2)}</td>
+            <td class="py-2.5 px-2 text-white">${(h.price || 0).toFixed(2)}</td>
+            <td class="py-2.5 px-2 text-right ${pColor}">${pVal >= 0 ? '+' : ''}$${pVal.toFixed(2)}</td>
+          </tr>
+        `;
+
+        // Mobile Card View
+        mobileCards += `
+          <div class="p-3 bg-[#111113] border border-[#262629] flex flex-col gap-2 font-mono">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] text-[#7b7a7c]">#${h.ticket}</span>
+                <span class="font-bold text-xs text-white">${h.symbol || 'XAUUSD'}</span>
+                ${typeBadge}
+                <span class="text-[10px] text-[#a2a2a2]">${(h.lots || 0).toFixed(2)}L</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-sm ${pColor}">${pVal >= 0 ? '+' : ''}$${pVal.toFixed(2)}</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-[#7b7a7c] pt-2 border-t border-[#1e1e21]">
+              <div>CLOSE: <span class="text-white">${(h.price || 0).toFixed(2)}</span></div>
+              <div class="text-[10px] text-[#a2a2a2]">${timeStr}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      if (tbody) tbody.innerHTML = tableRows;
+      if (mobileContainer) mobileContainer.innerHTML = mobileCards;
+      if (winLossEl) {
+        winLossEl.innerHTML = `WIN: <strong class="text-white">${winCount}</strong> | LOSS: <strong class="text-[#ff6436]">${lossCount}</strong>`;
+      }
     }
 
     function renderPositions(positions) {

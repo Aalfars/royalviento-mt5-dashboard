@@ -42,6 +42,7 @@ void WebBridge_ExportStatus()
    int buyCount = 0;
    int sellCount = 0;
 
+   // 1. Open Positions JSON
    string posJson = "[";
    bool first = true;
 
@@ -50,8 +51,7 @@ void WebBridge_ExportStatus()
       ulong ticket = PositionGetTicket(i);
       if(ticket == 0) continue;
       
-      long magic = PositionGetInteger(POSITION_MAGIC);
-      // include all or EA magic
+      long magic    = PositionGetInteger(POSITION_MAGIC);
       string symbol = PositionGetString(POSITION_SYMBOL);
       long posType  = PositionGetInteger(POSITION_TYPE);
       double lots   = PositionGetDouble(POSITION_VOLUME);
@@ -75,6 +75,52 @@ void WebBridge_ExportStatus()
       posJson += p;
    }
    posJson += "]";
+
+   // 2. Order History (Deals / Closed Positions)
+   datetime histFrom = TimeCurrent() - 7 * 86400; // 7 hari terakhir
+   HistorySelect(histFrom, TimeCurrent() + 86400);
+   int totalDeals = HistoryDealsTotal();
+   
+   string histJson = "[";
+   bool firstHist = true;
+   int exportedDeals = 0;
+   double historyProfitSum = 0;
+
+   for(int i = totalDeals - 1; i >= 0 && exportedDeals < 50; i--)
+   {
+      ulong dTicket = HistoryDealGetTicket(i);
+      if(dTicket == 0) continue;
+
+      long entry     = HistoryDealGetInteger(dTicket, DEAL_ENTRY);
+      double dProfit = HistoryDealGetDouble(dTicket, DEAL_PROFIT);
+      string dSymbol = HistoryDealGetString(dTicket, DEAL_SYMBOL);
+
+      // Hanya ambil deal exit (penutupan posisi) atau deal yang memiliki profit riil
+      if(entry != DEAL_ENTRY_OUT && entry != DEAL_ENTRY_INOUT && dProfit == 0.0)
+         continue;
+      if(StringLen(dSymbol) == 0 && dProfit == 0.0)
+         continue;
+
+      long dType    = HistoryDealGetInteger(dTicket, DEAL_TYPE);
+      double dLots  = HistoryDealGetDouble(dTicket, DEAL_VOLUME);
+      double dPrice = HistoryDealGetDouble(dTicket, DEAL_PRICE);
+      datetime dTime= (datetime)HistoryDealGetInteger(dTicket, DEAL_TIME);
+      ulong dOrder  = (ulong)HistoryDealGetInteger(dTicket, DEAL_ORDER);
+
+      historyProfitSum += dProfit;
+
+      string typeStr = (dType == DEAL_TYPE_BUY ? "BUY" : (dType == DEAL_TYPE_SELL ? "SELL" : "CLOSE"));
+
+      if(!firstHist) histJson += ",";
+      firstHist = false;
+      exportedDeals++;
+
+      string h = StringFormat("{\"ticket\":%I64u,\"order\":%I64u,\"symbol\":\"%s\",\"type\":\"%s\",\"lots\":%.2f,\"price\":%.2f,\"profit\":%.2f,\"time\":%I64d}",
+                              dTicket, dOrder, (StringLen(dSymbol) > 0 ? dSymbol : "BALANCE"),
+                              typeStr, dLots, dPrice, dProfit, (long)dTime);
+      histJson += h;
+   }
+   histJson += "]";
 
    string json = StringFormat(
       "{\n"
@@ -101,6 +147,9 @@ void WebBridge_ExportStatus()
       "  \"sell_lots\": %.2f,\n"
       "  \"positions_total\": %d,\n"
       "  \"positions\": %s,\n"
+      "  \"history_total\": %d,\n"
+      "  \"history_profit_sum\": %.2f,\n"
+      "  \"history\": %s,\n"
       "  \"updated_at\": %I64d\n"
       "}",
       login, server, currency,
@@ -113,7 +162,9 @@ void WebBridge_ExportStatus()
       (g_webPaused ? "true" : "false"),
       (TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) ? "true" : "false"),
       buyCount, totalBuyLots, sellCount, totalSellLots,
-      totalPos, posJson, (long)TimeCurrent()
+      totalPos, posJson,
+      exportedDeals, historyProfitSum, histJson,
+      (long)TimeCurrent()
    );
 
    int h = FileOpen("web_status.json", FILE_WRITE|FILE_TXT|FILE_ANSI);
