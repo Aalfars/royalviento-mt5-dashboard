@@ -2,7 +2,11 @@
 <html lang="id" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#161616">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
   <title>ROYALVIENTO // BRUTALIST TRADING ENGINE</title>
 
   <!-- Google Fonts: Anton (Monument Display), Inter (Die Grotesk B substitute), IBM Plex Mono (Technical Metadata) -->
@@ -48,6 +52,7 @@
       -moz-osx-font-smoothing: grayscale;
       margin: 0;
       padding: 0;
+      touch-action: manipulation;
     }
 
     .font-display {
@@ -76,22 +81,30 @@
       line-height: 0.82;
     }
 
-    /* Brutalist Pill Elements (9999px radius) */
+    /* Brutalist Pill Elements (9999px radius, touch friendly) */
     .pill-nav {
       background-color: transparent;
       border: 1px solid rgba(201, 199, 204, 0.22);
       border-radius: 9999px;
-      padding: 6px 14px;
+      padding: 5px 11px;
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       color: var(--color-fog);
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
       text-transform: uppercase;
+      user-select: none;
+    }
+    @media (min-width: 640px) {
+      .pill-nav {
+        padding: 6px 14px;
+        font-size: 12px;
+        gap: 6px;
+      }
     }
     .pill-nav:hover {
       background-color: rgba(255, 255, 255, 0.08);
@@ -103,20 +116,28 @@
       color: #000000;
       border: 1px solid var(--color-ember-orange);
       border-radius: 9999px;
-      padding: 8px 20px;
+      padding: 9px 16px;
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 6px;
       transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
       text-transform: uppercase;
+      user-select: none;
     }
-    .pill-action-ember:hover {
-      background-color: #ff7e57;
-      transform: translateY(-1px);
+    @media (min-width: 640px) {
+      .pill-action-ember {
+        padding: 8px 20px;
+        font-size: 13px;
+        gap: 8px;
+      }
+    }
+    .pill-action-ember:active {
+      transform: scale(0.98);
     }
 
     .pill-action-white {
@@ -124,20 +145,28 @@
       color: var(--color-onyx);
       border: 1px solid var(--color-pure-white);
       border-radius: 9999px;
-      padding: 8px 20px;
+      padding: 9px 16px;
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 6px;
       transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
       text-transform: uppercase;
+      user-select: none;
     }
-    .pill-action-white:hover {
-      background-color: var(--color-fog);
-      transform: translateY(-1px);
+    @media (min-width: 640px) {
+      .pill-action-white {
+        padding: 8px 20px;
+        font-size: 13px;
+        gap: 8px;
+      }
+    }
+    .pill-action-white:active {
+      transform: scale(0.98);
     }
 
     .pill-action-ghost {
@@ -145,20 +174,32 @@
       color: var(--color-fog);
       border: 1px solid rgba(201, 199, 204, 0.28);
       border-radius: 9999px;
-      padding: 8px 18px;
+      padding: 9px 14px;
       font-family: var(--font-mono);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 6px;
       transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
       cursor: pointer;
       text-transform: uppercase;
+      user-select: none;
+    }
+    @media (min-width: 640px) {
+      .pill-action-ghost {
+        padding: 8px 18px;
+        font-size: 13px;
+        gap: 8px;
+      }
     }
     .pill-action-ghost:hover {
       background-color: rgba(255, 255, 255, 0.06);
       border-color: var(--color-fog);
+    }
+    .pill-action-ghost:active {
+      transform: scale(0.98);
     }
 
     /* Brutalist 0px Sharp Panels */
@@ -168,20 +209,14 @@
       border-radius: 0px;
     }
 
-    .brutalist-card-elevated {
-      background-color: var(--color-onyx-card);
-      border: 1px solid rgba(201, 199, 204, 0.18);
-      border-radius: 0px;
-    }
-
     /* Ember Live Dot */
     .ember-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background-color: var(--color-ember-orange);
       display: inline-block;
-      box-shadow: 0 0 10px rgba(255, 100, 54, 0.6);
+      box-shadow: 0 0 8px rgba(255, 100, 54, 0.7);
       animation: pulse-ember 2s infinite ease-in-out;
     }
     @keyframes pulse-ember {
@@ -192,10 +227,10 @@
     /* Ghost Glass Tag */
     .tag-mono {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
-      padding: 2px 7px;
+      padding: 2px 6px;
       background-color: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: var(--color-ash);
@@ -204,10 +239,10 @@
 
     .tag-mono-ember {
       font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       text-transform: uppercase;
-      padding: 2px 7px;
+      padding: 2px 6px;
       background-color: rgba(255, 100, 54, 0.12);
       border: 1px solid rgba(255, 100, 54, 0.4);
       color: var(--color-ember-orange);
@@ -224,6 +259,7 @@
       font-family: var(--font-mono);
       outline: none;
       transition: border-color 0.2s ease;
+      font-size: 16px; /* Prevents auto-zoom on iOS Safari */
     }
     .brutalist-input:focus {
       border-color: var(--color-ember-orange);
@@ -246,38 +282,38 @@
     }
   </style>
 </head>
-<body class="min-h-screen selection:bg-[#ff6436] selection:text-black">
+<body class="min-h-screen selection:bg-[#ff6436] selection:text-black antialiased">
 
-  <!-- PIN LOGIN MODAL (Brutalist Dark Foundry Box) -->
-  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-8 text-left shadow-2xl relative">
-      <div class="absolute -top-3 left-6 px-3 bg-[#ff6436] text-black font-mono text-[10px] font-bold tracking-widest uppercase">
+  <!-- PIN LOGIN MODAL -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-6 sm:p-8 text-left shadow-2xl relative">
+      <div class="absolute -top-3 left-6 px-2.5 py-0.5 bg-[#ff6436] text-black font-mono text-[9px] font-bold tracking-widest uppercase">
         AUTH_GATEWAY // v2.04
       </div>
       
-      <div class="flex items-center justify-between mb-6 pt-2">
+      <div class="flex items-center justify-between mb-5 pt-1">
         <div>
-          <h2 class="font-display text-3xl text-white tracking-wider">TERMINAL ACCESS</h2>
-          <p class="font-mono text-xs text-[#a2a2a2] mt-1">ROYALVIENTO // PRIVATE MT5 DESK</p>
+          <h2 class="font-display text-2xl sm:text-3xl text-white tracking-wider">TERMINAL ACCESS</h2>
+          <p class="font-mono text-[11px] text-[#a2a2a2] mt-0.5">ROYALVIENTO // PRIVATE MT5</p>
         </div>
         <span class="ember-dot"></span>
       </div>
 
-      <div class="mb-6 space-y-2">
-        <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider">SECURITY PIN // 4 DIGIT</label>
+      <div class="mb-5 space-y-2">
+        <label class="block font-mono text-[10px] text-[#7b7a7c] tracking-wider">SECURITY PIN // 4 DIGIT</label>
         <input type="password" id="pinInput" maxlength="12" placeholder="••••"
-               class="brutalist-input w-full text-center text-3xl font-mono tracking-[0.4em] text-white"
+               class="brutalist-input w-full text-center text-2xl sm:text-3xl font-mono tracking-[0.4em] text-white py-3"
                onkeypress="if(event.key==='Enter') doLogin()">
         <p id="loginError" class="font-mono text-xs text-[#ff6436] mt-2 hidden">
           [!] ACCESS DENIED: PIN INCORRECT
         </p>
       </div>
 
-      <button onclick="doLogin()" class="pill-action-white w-full justify-center">
+      <button onclick="doLogin()" class="pill-action-white w-full justify-center py-3">
         AUTHENTICATE TERMINAL &rarr;
       </button>
 
-      <div class="mt-6 pt-4 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] text-[#7b7a7c]">
+      <div class="mt-5 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] text-[#7b7a7c]">
         <span>HOST: trading.aranya.my.id</span>
         <span>SSL // ENCRYPTED</span>
       </div>
@@ -287,106 +323,116 @@
   <!-- MAIN DASHBOARD CONTENT -->
   <div id="mainDashboard" class="hidden">
     
-    <!-- TOP NAVIGATION (Floating Brutalist Strip) -->
+    <!-- TOP NAVIGATION (Compact & Touch-Friendly) -->
     <header class="w-full bg-[#161616] border-b border-[#2a2a2c] sticky top-0 z-40">
-      <div class="max-w-[1240px] mx-auto px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="max-w-[1240px] mx-auto px-4 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-3">
         
-        <!-- Left: Brand / Foundry Monogram -->
-        <div class="flex items-center gap-4">
+        <!-- Left: Brand / Logo -->
+        <div class="flex items-center gap-2.5 sm:gap-4">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 bg-[#ff6436]"></span>
-            <span class="font-display text-2xl tracking-wider text-white">ROYALVIENTO</span>
+            <span class="font-display text-xl sm:text-2xl tracking-wider text-white">ROYALVIENTO</span>
           </div>
-          <span class="tag-mono hidden sm:inline-block">EA_V2.04_IDR</span>
-          <span class="font-mono text-xs text-[#7b7a7c] hidden lg:inline">
-            // TERMINAL CLOUD
-          </span>
+          <span class="tag-mono hidden xs:inline-block">V2.04</span>
         </div>
 
-        <!-- Center: Live Telemetry Metadata -->
-        <div class="hidden md:flex items-center gap-5 font-mono text-xs text-[#a2a2a2]">
+        <!-- Center: Live Telemetry Metadata (Desktop) -->
+        <div class="hidden md:flex items-center gap-4 font-mono text-xs text-[#a2a2a2]">
           <span id="headerAccount">ACC: 10012687831</span>
           <span class="text-[#3c3a3e]">//</span>
           <span id="headerServer">SRV: MetaQuotes-Demo</span>
           <span class="text-[#3c3a3e]">//</span>
-          <span class="flex items-center gap-2 text-white">
+          <span class="flex items-center gap-1.5 text-white">
             <span class="ember-dot"></span>
-            LATENCY ~1MS
+            SG ~1MS
           </span>
         </div>
 
-        <!-- Right: Status Pills & Actions -->
-        <div class="flex items-center gap-2.5 flex-wrap">
+        <!-- Right: Status Pills & Action Badges -->
+        <div class="flex items-center gap-2 sm:gap-2.5">
           <!-- MT5 Service Status -->
           <div class="pill-nav" title="Status Service MT5 Wine">
             <span class="w-2 h-2 rounded-full bg-[#ff6436]" id="dotMt5"></span>
-            <span class="text-[#7b7a7c]">MT5:</span>
-            <span id="badgeMt5" class="text-white font-semibold">ACTIVE</span>
+            <span class="text-[#7b7a7c] hidden xs:inline">MT5:</span>
+            <span id="badgeMt5" class="text-white font-semibold">ACT</span>
           </div>
 
           <!-- Algo Trading Toggle -->
           <button onclick="toggleAlgo()" class="pill-nav hover:border-[#ff6436]" title="Klik untuk Toggle Algo Trading">
             <span class="w-2 h-2 rounded-full bg-[#ff6436]" id="dotAlgo"></span>
-            <span class="text-[#7b7a7c]">ALGO:</span>
-            <span id="badgeAlgo" class="text-white font-semibold">ENABLED</span>
+            <span class="text-[#7b7a7c] hidden xs:inline">ALGO:</span>
+            <span id="badgeAlgo" class="text-white font-semibold">ON</span>
             <i class="fa-solid fa-power-off text-[9px] text-[#ff6436] ml-0.5"></i>
           </button>
 
-          <!-- Domain Host -->
-          <a href="https://trading.aranya.my.id" target="_blank" class="hidden sm:inline-flex pill-nav text-[#a2a2a2] hover:text-white" title="Custom Cloudflare Domain">
+          <!-- Domain Host (Desktop) -->
+          <a href="https://trading.aranya.my.id" target="_blank" class="hidden lg:inline-flex pill-nav text-[#a2a2a2] hover:text-white" title="Custom Cloudflare Domain">
             <span>trading.aranya.my.id</span>
           </a>
 
           <!-- Settings -->
-          <button onclick="openSettingsModal()" class="w-8 h-8 rounded-full border border-[rgba(201,199,204,0.22)] flex items-center justify-center text-[#a2a2a2] hover:text-white hover:border-white transition" title="Pengaturan">
+          <button onclick="openSettingsModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[rgba(201,199,204,0.22)] flex items-center justify-center text-[#a2a2a2] hover:text-white hover:border-white transition" title="Pengaturan">
             <i class="fa-solid fa-sliders text-xs"></i>
           </button>
         </div>
 
       </div>
+
+      <!-- MOBILE TELEMETRY SUB-BAR (Visible only on mobile screens) -->
+      <div class="md:hidden border-t border-[#222224] bg-[#121214] px-4 py-1.5 flex items-center justify-between font-mono text-[10px] text-[#7b7a7c] overflow-x-auto whitespace-nowrap gap-3">
+        <span id="headerAccountMobile" class="text-white font-medium">ACC: 10012687831</span>
+        <span>•</span>
+        <span id="headerServerMobile">DEMO</span>
+        <span>•</span>
+        <span class="flex items-center gap-1 text-white">
+          <span class="ember-dot"></span> SG ~1MS
+        </span>
+        <span>•</span>
+        <span>trading.aranya.my.id</span>
+      </div>
     </header>
 
-    <!-- CONTAINER 1240px CENTERED -->
-    <main class="max-w-[1240px] mx-auto px-6 py-8 space-y-8">
+    <!-- MAIN WRAPPER (Fluid with 1240px max) -->
+    <main class="max-w-[1240px] mx-auto px-4 sm:px-6 py-5 sm:py-8 space-y-6 sm:space-y-8">
 
-      <!-- MONUMENT HERO SECTION (Typographic Statement with Gradient Fade) -->
-      <section class="border-b border-[#2a2a2c] pb-8 pt-2">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+      <!-- MONUMENT HERO SECTION (Responsive & Ergonomic) -->
+      <section class="border-b border-[#2a2a2c] pb-6 sm:pb-8 pt-1">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-5 sm:gap-6">
           
-          <div class="space-y-3">
-            <div class="flex items-center gap-3">
+          <div class="space-y-2 sm:space-y-3">
+            <div class="flex items-center gap-2.5">
               <span class="ember-dot"></span>
-              <span class="font-mono text-xs text-[#a2a2a2] tracking-widest uppercase">REAL-TIME EXECUTION ENGINE // LIVE MONITORING</span>
+              <span class="font-mono text-[10px] sm:text-xs text-[#a2a2a2] tracking-widest uppercase">REAL-TIME EXECUTION ENGINE // LIVE MONITORING</span>
             </div>
             
-            <!-- Monument Typography in Anton -->
-            <h1 class="font-display text-5xl sm:text-7xl lg:text-[88px] headline-fade tracking-wide">
+            <!-- Monument Typography in Anton (scales gracefully from 36px to 88px) -->
+            <h1 class="font-display text-4xl sm:text-6xl lg:text-[88px] headline-fade tracking-wide">
               AUTONOMOUS TRADING
             </h1>
             
-            <p class="font-grotesk text-sm sm:text-base text-[#a2a2a2] max-w-2xl leading-relaxed">
-              Real-time balance telemetry, dynamic basket exposure, and high-frequency risk controls for MetaTrader 5 on Linux VPS.
+            <p class="font-grotesk text-xs sm:text-sm text-[#a2a2a2] max-w-2xl leading-relaxed">
+              Real-time balance telemetry, dynamic basket averaging, and high-frequency risk controls for MetaTrader 5 on Linux VPS.
             </p>
           </div>
 
-          <!-- ACTION BUTTON CLUSTER (Compact, Brutalist) -->
-          <div class="flex flex-wrap items-center gap-2.5">
-            <button id="btnPauseResume" onclick="togglePauseResume()" class="pill-action-ember">
+          <!-- ACTION BUTTON CLUSTER (Mobile: 2x2 Clean Grid / Desktop: Inline Row) -->
+          <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5 w-full lg:w-auto">
+            <button id="btnPauseResume" onclick="togglePauseResume()" class="pill-action-ember w-full sm:w-auto">
               <i class="fa-solid fa-pause text-xs" id="iconPauseResume"></i>
               <span id="textPauseResume">PAUSE EA</span>
             </button>
 
-            <button onclick="openTargetModal()" class="pill-action-white">
+            <button onclick="openTargetModal()" class="pill-action-white w-full sm:w-auto">
               <i class="fa-solid fa-bullseye text-xs"></i>
               <span>SET TARGET</span>
             </button>
 
-            <button onclick="confirmCloseAll()" class="pill-action-ghost text-[#ff6436] hover:text-white hover:border-[#ff6436]">
+            <button onclick="confirmCloseAll()" class="pill-action-ghost w-full sm:w-auto text-[#ff6436] hover:text-white hover:border-[#ff6436]">
               <i class="fa-solid fa-triangle-exclamation text-xs"></i>
               <span>CLOSE ALL</span>
             </button>
 
-            <button onclick="restartMT5()" class="pill-action-ghost">
+            <button onclick="restartMT5()" class="pill-action-ghost w-full sm:w-auto">
               <i class="fa-solid fa-rotate text-xs"></i>
               <span>RESTART MT5</span>
             </button>
@@ -395,127 +441,171 @@
         </div>
       </section>
 
-      <!-- METRICS GRID (4 Sharp Brutalist Cards - Zero Radius, Hairline Borders) -->
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- METRICS GRID (2x2 ON MOBILE, 4-COLS ON DESKTOP) -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         
-        <!-- CARD 1: DAILY TARGET & PROFIT SPOTLIGHT (Ember Highlight) -->
-        <div class="brutalist-card p-5 relative overflow-hidden flex flex-col justify-between border-l-2 border-l-[#ff6436]">
+        <!-- CARD 1: DAILY TARGET & PROFIT SPOTLIGHT -->
+        <div class="brutalist-card p-3.5 sm:p-5 relative overflow-hidden flex flex-col justify-between border-l-2 border-l-[#ff6436]">
           <div>
-            <div class="flex items-center justify-between text-[11px] mb-2 font-mono">
-              <span class="text-[#a2a2a2]">// DAILY_PROFIT</span>
-              <span id="targetBadge" class="tag-mono-ember">TARGET: $50.00</span>
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] mb-1.5 sm:mb-2 font-mono">
+              <span class="text-[#a2a2a2]">// PROFIT</span>
+              <span id="targetBadge" class="tag-mono-ember text-[9px] sm:text-[10px]">TGT: $50</span>
             </div>
             
-            <div class="flex items-baseline gap-2 mt-1">
-              <div class="font-display text-4xl text-white tracking-wide" id="valDailyProfit">+$19.37</div>
-              <span class="font-mono text-xs text-[#ff6436]" id="valTargetPercent">(38%)</span>
+            <div class="flex items-baseline gap-1.5 mt-0.5">
+              <div class="font-display text-2xl sm:text-4xl text-white tracking-wide" id="valDailyProfit">+$19.37</div>
+              <span class="font-mono text-[10px] sm:text-xs text-[#ff6436]" id="valTargetPercent">(38%)</span>
             </div>
           </div>
 
-          <!-- Ember Orange Gestural Line Progress -->
-          <div class="mt-4 pt-3 border-t border-[#2a2a2c]">
+          <!-- Progress Bar -->
+          <div class="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-[#2a2a2c]">
             <div class="w-full bg-[#2a2a2c] h-1 overflow-hidden">
               <div id="targetProgressBar" class="bg-[#ff6436] h-1 transition-all duration-500" style="width: 38.7%"></div>
             </div>
-            <div class="flex justify-between items-center font-mono text-[10px] text-[#7b7a7c] mt-2">
-              <span>BASE: $0.00</span>
-              <span id="targetRemainingText">$30.63 TO TARGET</span>
+            <div class="flex justify-between items-center font-mono text-[9px] sm:text-[10px] text-[#7b7a7c] mt-1.5">
+              <span class="hidden xs:inline">BASE: $0</span>
+              <span id="targetRemainingText" class="truncate">$30.63 TO TARGET</span>
             </div>
           </div>
         </div>
 
-        <!-- CARD 2: ACCOUNT BALANCE -->
-        <div class="brutalist-card p-5 flex flex-col justify-between">
+        <!-- CARD 2: CAPITAL BALANCE -->
+        <div class="brutalist-card p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between text-[11px] mb-2 font-mono text-[#a2a2a2]">
-              <span>// CAPITAL_BALANCE</span>
-              <span class="tag-mono">USD</span>
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] mb-1.5 sm:mb-2 font-mono text-[#a2a2a2]">
+              <span>// BALANCE</span>
+              <span class="tag-mono text-[9px] sm:text-[10px]">USD</span>
             </div>
-            <div class="font-display text-4xl text-white tracking-wide" id="valBalance">
+            <div class="font-display text-2xl sm:text-4xl text-white tracking-wide" id="valBalance">
               $99,815.97
             </div>
           </div>
-          <div class="mt-4 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[11px] text-[#7b7a7c]">
-            <span>FREE MARGIN:</span>
-            <span class="text-white font-medium" id="valFreeMargin">$99,815.97</span>
+          <div class="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] sm:text-[11px] text-[#7b7a7c]">
+            <span class="hidden xs:inline">FREE:</span>
+            <span class="text-white font-medium truncate" id="valFreeMargin">$99,815.97</span>
           </div>
         </div>
 
         <!-- CARD 3: VALUATION & FLOATING P/L -->
-        <div class="brutalist-card p-5 flex flex-col justify-between">
+        <div class="brutalist-card p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between text-[11px] mb-2 font-mono text-[#a2a2a2]">
-              <span>// NET_EQUITY</span>
-              <span class="flex items-center gap-1.5 text-white">
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] mb-1.5 sm:mb-2 font-mono text-[#a2a2a2]">
+              <span>// EQUITY</span>
+              <span class="flex items-center gap-1 text-white text-[10px]">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#ff6436]"></span>
                 LIVE
               </span>
             </div>
-            <div class="font-display text-4xl text-white tracking-wide" id="valEquity">
+            <div class="font-display text-2xl sm:text-4xl text-white tracking-wide" id="valEquity">
               $99,815.97
             </div>
           </div>
-          <div class="mt-4 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[11px]">
-            <span class="text-[#7b7a7c]">FLOATING NET:</span>
-            <span class="text-white font-semibold" id="valFloating">+$0.00</span>
+          <div class="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] sm:text-[11px]">
+            <span class="text-[#7b7a7c]">P/L:</span>
+            <span class="text-white font-semibold truncate" id="valFloating">+$0.00</span>
           </div>
         </div>
 
         <!-- CARD 4: ACTIVE POSITIONS & LOT EXPOSURE -->
-        <div class="brutalist-card p-5 flex flex-col justify-between">
+        <div class="brutalist-card p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between text-[11px] mb-2 font-mono text-[#a2a2a2]">
-              <span>// ACTIVE_ORDERS</span>
-              <span class="tag-mono" id="posCountBadge">0 POSITIONS</span>
+            <div class="flex items-center justify-between text-[10px] sm:text-[11px] mb-1.5 sm:mb-2 font-mono text-[#a2a2a2]">
+              <span>// ORDERS</span>
+              <span class="tag-mono text-[9px] sm:text-[10px]" id="posCountBadge">0 POS</span>
             </div>
-            <div class="font-display text-4xl text-white tracking-wide" id="valPositionsTotal">
+            <div class="font-display text-2xl sm:text-4xl text-white tracking-wide" id="valPositionsTotal">
               0
             </div>
           </div>
-          <div class="mt-4 pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[11px] text-[#7b7a7c]">
-            <span>BUY: <strong class="text-white" id="valBuyLots">0.00 L</strong></span>
-            <span>SELL: <strong class="text-[#ff6436]" id="valSellLots">0.00 L</strong></span>
+          <div class="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] sm:text-[11px] text-[#7b7a7c]">
+            <span>B: <strong class="text-white" id="valBuyLots">0.00L</strong></span>
+            <span>S: <strong class="text-[#ff6436]" id="valSellLots">0.00L</strong></span>
           </div>
         </div>
 
       </section>
 
-      <!-- TARGET HIT ALERT BANNER (If Target is Reached) -->
-      <div id="targetHitBanner" class="hidden brutalist-card p-5 border-l-4 border-l-[#ff6436] bg-[#1c1c1f] flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 bg-[#ff6436] text-black flex items-center justify-center text-lg font-bold">
+      <!-- TARGET HIT ALERT BANNER -->
+      <div id="targetHitBanner" class="hidden brutalist-card p-4 sm:p-5 border-l-4 border-l-[#ff6436] bg-[#1c1c1f] flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-[#ff6436] text-black flex items-center justify-center text-base sm:text-lg font-bold shrink-0">
             <i class="fa-solid fa-trophy"></i>
           </div>
           <div>
-            <h3 class="font-display text-2xl text-white tracking-wide">DAILY TARGET ACHIEVED</h3>
-            <p class="font-mono text-xs text-[#a2a2a2] mt-0.5">
-              ALL POSITIONS SECURED. NEW ENTRIES ARE TEMPORARILY LOCKED TO PRESERVE PROFIT.
+            <h3 class="font-display text-xl sm:text-2xl text-white tracking-wide">DAILY TARGET ACHIEVED</h3>
+            <p class="font-mono text-[10px] sm:text-xs text-[#a2a2a2]">
+              ALL POSITIONS SECURED. NEW ENTRIES ARE LOCKED.
             </p>
           </div>
         </div>
-        <button onclick="resumeTrading()" class="pill-action-white text-xs">
-          RESUME TRADING NOW &rarr;
+        <button onclick="resumeTrading()" class="pill-action-white text-xs w-full sm:w-auto">
+          RESUME TRADING &rarr;
         </button>
       </div>
 
-      <!-- MAIN SPLIT: MONITOR MOCKUP & LIVE POSITIONS TABLE -->
-      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- MAIN SPLIT: MONITOR VIEWPORT & OPEN POSITIONS (Responsive Flow) -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
-        <!-- LEFT (7 COLS): LIVE POSITIONS TABLE -->
-        <div class="lg:col-span-7 brutalist-card p-5 space-y-4">
-          <div class="flex items-center justify-between pb-3 border-b border-[#2a2a2c]">
-            <div class="flex items-center gap-3">
-              <span class="w-2 h-2 bg-[#ff6436]"></span>
-              <h3 class="font-mono text-sm tracking-wider text-white font-semibold">// LIVE_POSITIONS_STREAM</h3>
+        <!-- MT5 MONITOR VIEWPORT (Placed first on mobile for immediate visual confirmation!) -->
+        <div class="lg:col-span-5 brutalist-card p-4 sm:p-5 space-y-3 sm:space-y-4 lg:order-2">
+          <!-- Monitor Header Strip -->
+          <div class="flex items-center justify-between pb-2.5 sm:pb-3 border-b border-[#2a2a2c]">
+            <div class="flex items-center gap-2">
+              <span class="ember-dot"></span>
+              <h3 class="font-mono text-[11px] sm:text-xs tracking-wider text-white font-semibold">VIEWPORT // DISPLAY:99</h3>
             </div>
-            <button onclick="fetchStatus()" class="pill-nav text-[11px] py-1 px-3">
+            <div class="flex items-center gap-2">
+              <button onclick="refreshScreen()" class="pill-nav text-[10px] sm:text-[11px] py-1 px-2.5 sm:px-3">
+                <i class="fa-solid fa-arrows-rotate text-[9px]"></i>
+                <span>REFRESH</span>
+              </button>
+              <button onclick="openFullImage()" class="pill-nav text-[10px] sm:text-[11px] py-1 px-2 sm:px-2.5" title="Expand Viewport">
+                <i class="fa-solid fa-expand text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Monitor Bezel & Screen -->
+          <div class="relative w-full bg-[#0a0a0c] border border-[#2a2a2c] flex items-center justify-center min-h-[190px] sm:min-h-[220px] overflow-hidden group">
+            <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Terminal Preview" 
+                 class="w-full h-auto object-contain cursor-pointer transition opacity-95 group-hover:opacity-100" 
+                 onclick="openFullImage()">
+
+            <!-- Loading overlay -->
+            <div id="screenLoading" class="absolute inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center font-mono text-xs text-[#a2a2a2] hidden">
+              <i class="fa-solid fa-circle-notch fa-spin mr-2 text-[#ff6436]"></i> CAPTURING FRAME...
+            </div>
+          </div>
+
+          <div class="pt-2.5 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] sm:text-[10px] text-[#7b7a7c]">
+            <span>WINE 64 // TERMINAL64.EXE</span>
+            <span class="text-white">AUTO 5S</span>
+          </div>
+        </div>
+
+        <!-- OPEN POSITIONS STREAM (Cards on mobile, Table on desktop) -->
+        <div class="lg:col-span-7 brutalist-card p-4 sm:p-5 space-y-3 sm:space-y-4 lg:order-1">
+          <div class="flex items-center justify-between pb-2.5 sm:pb-3 border-b border-[#2a2a2c]">
+            <div class="flex items-center gap-2 sm:gap-3">
+              <span class="w-2 h-2 bg-[#ff6436]"></span>
+              <h3 class="font-mono text-xs sm:text-sm tracking-wider text-white font-semibold">// LIVE_POSITIONS_STREAM</h3>
+            </div>
+            <button onclick="fetchStatus()" class="pill-nav text-[10px] sm:text-[11px] py-1 px-2.5 sm:px-3">
               <i class="fa-solid fa-rotate text-[9px]"></i>
               <span>SYNC NOW</span>
             </button>
           </div>
 
-          <!-- Table Container -->
-          <div class="overflow-x-auto min-h-[220px]">
+          <!-- Mobile Cards Container (< sm) -->
+          <div id="positionsMobileContainer" class="sm:hidden space-y-2 min-h-[100px]">
+            <div class="py-8 text-center text-[#7b7a7c] font-mono text-[11px]">
+              [ NO ACTIVE POSITIONS CURRENTLY ]
+            </div>
+          </div>
+
+          <!-- Desktop Table (>= sm) -->
+          <div class="hidden sm:block overflow-x-auto min-h-[200px]">
             <table class="w-full text-left font-mono text-xs">
               <thead>
                 <tr class="border-b border-[#2a2a2c] text-[#7b7a7c] text-[11px]">
@@ -537,7 +627,7 @@
                       [ NO ACTIVE POSITIONS CURRENTLY ]
                     </div>
                     <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
-                      SYSTEM WAITING FOR EMA & STOCHASTIC BREAKOUT SIGNALS
+                      SYSTEM WAITING FOR BREAKOUT SIGNALS
                     </div>
                   </td>
                 </tr>
@@ -545,136 +635,99 @@
             </table>
           </div>
 
-          <div class="pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] text-[#7b7a7c]">
-            <span>MQL5 WEBBRIDGE // SYNC INTERVAL: 2S</span>
+          <div class="pt-2.5 sm:pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[9px] sm:text-[10px] text-[#7b7a7c]">
+            <span>MQL5 WEBBRIDGE // SYNC: 2S</span>
             <button onclick="confirmCloseAll()" class="text-[#ff6436] hover:underline uppercase">
               [ EMERGENCY CLOSE ALL ]
             </button>
           </div>
         </div>
 
-        <!-- RIGHT (5 COLS): INDUSTRIAL MONITOR MOCKUP FRAME -->
-        <div class="lg:col-span-5 brutalist-card p-5 space-y-4">
-          <!-- Monitor Header Strip -->
-          <div class="flex items-center justify-between pb-3 border-b border-[#2a2a2c]">
-            <div class="flex items-center gap-2">
-              <span class="ember-dot"></span>
-              <h3 class="font-mono text-xs tracking-wider text-white font-semibold">VIEWPORT // DISPLAY:99</h3>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="refreshScreen()" class="pill-nav text-[11px] py-1 px-3">
-                <i class="fa-solid fa-arrows-rotate text-[9px]"></i>
-                <span>REFRESH</span>
-              </button>
-              <button onclick="openFullImage()" class="pill-nav text-[11px] py-1 px-2.5" title="Expand Viewport">
-                <i class="fa-solid fa-expand text-[10px]"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Monitor Bezel & Screen -->
-          <div class="relative w-full bg-[#0a0a0c] border border-[#2a2a2c] flex items-center justify-center min-h-[220px] overflow-hidden group">
-            <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Terminal Preview" 
-                 class="w-full h-auto object-contain cursor-pointer transition opacity-95 group-hover:opacity-100" 
-                 onclick="openFullImage()">
-
-            <!-- Loading overlay -->
-            <div id="screenLoading" class="absolute inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center font-mono text-xs text-[#a2a2a2] hidden">
-              <i class="fa-solid fa-circle-notch fa-spin mr-2 text-[#ff6436]"></i> CAPTURING FRAME...
-            </div>
-          </div>
-
-          <div class="pt-3 border-t border-[#2a2a2c] flex items-center justify-between font-mono text-[10px] text-[#7b7a7c]">
-            <span>XVFB & WINE 64-BIT // TERMINAL64.EXE</span>
-            <span class="text-white">AUTO 5S</span>
-          </div>
-        </div>
-
       </section>
 
-      <!-- SYSTEM LOG CONSOLE (Industrial Terminal Drawer) -->
-      <section class="brutalist-card p-5 space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-[#2a2a2c]">
-          <div class="flex items-center gap-4">
+      <!-- SYSTEM LOG CONSOLE -->
+      <section class="brutalist-card p-4 sm:p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-2.5 sm:pb-3 border-b border-[#2a2a2c]">
+          <div class="flex items-center gap-3">
             <div class="flex items-center gap-2">
               <span class="w-2 h-2 bg-white"></span>
-              <h3 class="font-mono text-xs tracking-wider text-white font-semibold">// SYSTEM_CONSOLE_LOGS</h3>
+              <h3 class="font-mono text-[11px] sm:text-xs tracking-wider text-white font-semibold">// SYSTEM_LOGS</h3>
             </div>
 
-            <!-- Tab Switcher (Monospace Pills) -->
+            <!-- Tab Switcher -->
             <div class="inline-flex gap-1 bg-[#101012] p-1 border border-[#2a2a2c]">
-              <button id="tabEa" onclick="switchLogTab('ea')" class="px-3 py-1 font-mono text-[11px] bg-white text-black font-semibold transition">
-                EA_ROYALVIENTO.LOG
+              <button id="tabEa" onclick="switchLogTab('ea')" class="px-2 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] bg-white text-black font-semibold transition">
+                EA.LOG
               </button>
-              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-3 py-1 font-mono text-[11px] text-[#7b7a7c] hover:text-white transition">
-                TERMINAL64.LOG
+              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-2 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] hover:text-white transition">
+                TERMINAL.LOG
               </button>
             </div>
           </div>
 
-          <button onclick="fetchLogs()" class="pill-nav text-[11px] py-1 px-3">
+          <button onclick="fetchLogs()" class="pill-nav text-[10px] sm:text-[11px] py-1 px-2.5 sm:px-3">
             <i class="fa-solid fa-arrows-rotate text-[9px]"></i>
-            <span>REFRESH LOG</span>
+            <span>REFRESH</span>
           </button>
         </div>
 
-        <!-- Terminal Output Window -->
-        <div class="bg-[#0b0b0d] p-4 border border-[#222224] font-mono text-[11px] h-48 overflow-y-auto leading-relaxed select-text text-[#c9c7cc]" id="logContent">
+        <!-- Terminal Output Window (Optimized height for mobile) -->
+        <div class="bg-[#0b0b0d] p-3 sm:p-4 border border-[#222224] font-mono text-[10px] sm:text-[11px] h-36 sm:h-48 overflow-y-auto leading-relaxed select-text text-[#c9c7cc]" id="logContent">
           <div class="text-[#7b7a7c] italic">[ CONNECTING TO LOG STREAM... ]</div>
         </div>
       </section>
 
       <!-- FOOTER -->
-      <footer class="pt-6 pb-12 border-t border-[#2a2a2c] flex flex-wrap items-center justify-between font-mono text-[11px] text-[#7b7a7c] gap-4">
-        <div class="flex items-center gap-3">
+      <footer class="pt-4 pb-10 border-t border-[#2a2a2c] flex flex-wrap items-center justify-between font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] gap-3">
+        <div class="flex items-center gap-2">
           <span class="text-white font-semibold">ROYALVIENTO MT5</span>
           <span>//</span>
           <span>AUTONOMOUS DESK</span>
         </div>
-        <div class="flex items-center gap-5">
-          <a href="https://github.com/Aalfars/royalviento-mt5-dashboard" target="_blank" class="hover:text-white transition flex items-center gap-1.5">
+        <div class="flex items-center gap-4">
+          <a href="https://github.com/Aalfars/royalviento-mt5-dashboard" target="_blank" class="hover:text-white transition flex items-center gap-1">
             <i class="fa-brands fa-github"></i>
-            <span>GITHUB_REPO</span>
+            <span>GITHUB</span>
           </a>
-          <span>DOMAIN: <strong class="text-white">trading.aranya.my.id</strong></span>
+          <span>HOST: <strong class="text-white">trading.aranya.my.id</strong></span>
         </div>
       </footer>
 
     </main>
   </div>
 
-  <!-- TARGET MODAL (Brutalist Dusk Box) -->
-  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
-    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-7 text-left shadow-2xl relative">
-      <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#2a2a2c]">
-        <h3 class="font-display text-2xl text-white tracking-wider">SET DAILY TARGET</h3>
-        <button onclick="closeTargetModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm">
+  <!-- TARGET MODAL -->
+  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 hidden">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-6 sm:p-7 text-left shadow-2xl relative">
+      <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#2a2a2c]">
+        <h3 class="font-display text-xl sm:text-2xl text-white tracking-wider">SET DAILY TARGET</h3>
+        <button onclick="closeTargetModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm p-1">
           [✕]
         </button>
       </div>
 
-      <p class="font-mono text-xs text-[#a2a2a2] mb-5 leading-relaxed">
-        SPECIFY DAILY USD TARGET. ON REACH, ENGINE FORCES BASKET CLOSURE AND LOCKS NEW TRADES UNTIL NEXT SESSION.
+      <p class="font-mono text-[11px] text-[#a2a2a2] mb-4 leading-relaxed">
+        SPECIFY DAILY USD TARGET. ON REACH, ENGINE FORCES BASKET CLOSURE AND LOCKS NEW TRADES.
       </p>
 
-      <div class="mb-5 space-y-2">
-        <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider">TARGET AMOUNT // USD ($)</label>
+      <div class="mb-4 space-y-2">
+        <label class="block font-mono text-[10px] text-[#7b7a7c] tracking-wider">TARGET AMOUNT // USD ($)</label>
         <div class="relative">
           <span class="absolute left-4 top-3 text-[#7b7a7c] font-mono text-lg">$</span>
           <input type="number" step="1" min="1" id="inputTargetValue" placeholder="50.00"
-                 class="brutalist-input w-full pl-9 font-mono text-2xl font-bold text-white">
+                 class="brutalist-input w-full pl-9 font-mono text-xl sm:text-2xl font-bold text-white">
         </div>
 
-        <!-- Preset Buttons -->
-        <div class="grid grid-cols-4 gap-2 mt-3">
-          <button onclick="setQuickTarget(25)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$25</button>
-          <button onclick="setQuickTarget(50)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$50</button>
-          <button onclick="setQuickTarget(100)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$100</button>
-          <button onclick="setQuickTarget(200)" class="py-1.5 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$200</button>
+        <!-- Preset Buttons (Large touch targets) -->
+        <div class="grid grid-cols-4 gap-2 mt-2.5">
+          <button onclick="setQuickTarget(25)" class="py-2 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$25</button>
+          <button onclick="setQuickTarget(50)" class="py-2 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$50</button>
+          <button onclick="setQuickTarget(100)" class="py-2 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$100</button>
+          <button onclick="setQuickTarget(200)" class="py-2 border border-[#2a2a2c] hover:border-[#ff6436] font-mono text-xs text-white transition">$200</button>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-3 pt-3 border-t border-[#2a2a2c]">
+      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-[#2a2a2c]">
         <button onclick="closeTargetModal()" class="pill-action-ghost text-xs py-2 px-4">
           CANCEL
         </button>
@@ -685,29 +738,29 @@
     </div>
   </div>
 
-  <!-- SETTINGS MODAL (Brutalist Dusk Box) -->
-  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 hidden">
-    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-7 text-left shadow-2xl relative">
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 hidden">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-sm w-full p-6 sm:p-7 text-left shadow-2xl relative">
       <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#2a2a2c]">
-        <h3 class="font-display text-2xl text-white tracking-wider">SETTINGS</h3>
-        <button onclick="closeSettingsModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm">
+        <h3 class="font-display text-xl sm:text-2xl text-white tracking-wider">SETTINGS</h3>
+        <button onclick="closeSettingsModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm p-1">
           [✕]
         </button>
       </div>
 
-      <div class="space-y-5">
+      <div class="space-y-4">
         <div>
-          <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider mb-2">UPDATE SECURITY PIN</label>
+          <label class="block font-mono text-[10px] text-[#7b7a7c] tracking-wider mb-1.5">UPDATE SECURITY PIN</label>
           <input type="password" id="inputNewPin" placeholder="NEW PIN (MIN 4 DIGIT)"
-                 class="brutalist-input w-full text-sm font-mono">
-          <button onclick="changePin()" class="pill-action-ghost w-full mt-3 text-xs justify-center">
+                 class="brutalist-input w-full text-sm font-mono py-2.5">
+          <button onclick="changePin()" class="pill-action-ghost w-full mt-2.5 text-xs justify-center py-2.5">
             SAVE NEW PIN
           </button>
         </div>
 
-        <div class="border-t border-[#2a2a2c] pt-4">
-          <label class="block font-mono text-[11px] text-[#7b7a7c] tracking-wider mb-1">RESET DAILY ACCUMULATION</label>
-          <p class="font-mono text-[10px] text-[#a2a2a2] mb-3">RESETS TODAY'S PROFIT BASELINE BACK TO $0.00.</p>
+        <div class="border-t border-[#2a2a2c] pt-3.5">
+          <label class="block font-mono text-[10px] text-[#7b7a7c] tracking-wider mb-1">RESET DAILY ACCUMULATION</label>
+          <p class="font-mono text-[10px] text-[#a2a2a2] mb-2.5">RESETS TODAY'S PROFIT BASELINE TO $0.00.</p>
           <button onclick="resetDailyStats()" class="w-full py-2.5 border border-[#ff6436] text-[#ff6436] hover:bg-[#ff6436] hover:text-black font-mono font-semibold text-xs transition uppercase">
             RESET TODAY PROFIT
           </button>
@@ -717,8 +770,8 @@
   </div>
 
   <!-- FULLSCREEN IMAGE ZOOM MODAL -->
-  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/92 backdrop-blur-md p-4 hidden" onclick="closeFullImage()">
-    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[92vh] object-contain border border-[#3c3a3e] shadow-2xl">
+  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-2 sm:p-4 hidden" onclick="closeFullImage()">
+    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[94vh] object-contain border border-[#3c3a3e] shadow-2xl">
   </div>
 
   <!-- JAVASCRIPT ENGINE & API HOOKS -->
@@ -801,18 +854,22 @@
       if (!data) return;
 
       // Header Meta
-      document.getElementById('headerAccount').textContent = `ACC: ${data.account || '10012687831'}`;
-      document.getElementById('headerServer').textContent = `SRV: ${data.server || 'MetaQuotes-Demo'}`;
+      const accText = `ACC: ${data.account || '10012687831'}`;
+      const srvText = `SRV: ${data.server || 'MetaQuotes-Demo'}`;
+      document.getElementById('headerAccount').textContent = accText;
+      document.getElementById('headerServer').textContent = srvText;
+      document.getElementById('headerAccountMobile').textContent = accText;
+      document.getElementById('headerServerMobile').textContent = (data.server || 'DEMO').replace('MetaQuotes-', '');
 
       // MT5 Service badge
       const isRunning = data.mt5_running;
-      document.getElementById('badgeMt5').textContent = isRunning ? "ACTIVE" : "STOPPED";
+      document.getElementById('badgeMt5').textContent = isRunning ? "ACT" : "OFF";
       document.getElementById('badgeMt5').className = isRunning ? "text-white font-semibold" : "text-[#ff6436] font-semibold";
       document.getElementById('dotMt5').className = isRunning ? "w-2 h-2 rounded-full bg-[#ff6436]" : "w-2 h-2 rounded-full bg-[#7b7a7c]";
 
       // Algo Trading badge
       const isAlgo = data.algo_trading;
-      document.getElementById('badgeAlgo').textContent = isAlgo ? "ENABLED" : "DISABLED";
+      document.getElementById('badgeAlgo').textContent = isAlgo ? "ON" : "OFF";
       document.getElementById('badgeAlgo').className = isAlgo ? "text-white font-semibold" : "text-[#7b7a7c] font-semibold";
       document.getElementById('dotAlgo').className = isAlgo ? "w-2 h-2 rounded-full bg-[#ff6436]" : "w-2 h-2 rounded-full bg-[#7b7a7c]";
 
@@ -833,7 +890,7 @@
       const profitEl = document.getElementById('valDailyProfit');
       profitEl.textContent = `${dailyProfit >= 0 ? '+' : ''}$${formatNum(dailyProfit)}`;
 
-      document.getElementById('targetBadge').textContent = `TARGET: $${formatNum(targetUSD)}`;
+      document.getElementById('targetBadge').textContent = `TGT: $${formatNum(targetUSD)}`;
       
       const pct = targetUSD > 0 ? Math.min(100, Math.max(0, (dailyProfit / targetUSD) * 100)) : 0;
       document.getElementById('valTargetPercent').textContent = `(${pct.toFixed(0)}%)`;
@@ -842,9 +899,9 @@
       const remain = targetUSD - dailyProfit;
       const remainEl = document.getElementById('targetRemainingText');
       if (remain <= 0) {
-        remainEl.textContent = "TARGET COMPLETED // LOCKED";
+        remainEl.textContent = "TARGET LOCKED";
       } else {
-        remainEl.textContent = `$${formatNum(remain)} REMAINING`;
+        remainEl.textContent = `$${formatNum(remain)} TO GO`;
       }
 
       // Target Hit Banner
@@ -857,9 +914,9 @@
 
       // Positions Stats
       document.getElementById('valPositionsTotal').textContent = data.positions_total || 0;
-      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} POSITIONS`;
-      document.getElementById('valBuyLots').textContent = `${(data.buy_lots || 0).toFixed(2)} L`;
-      document.getElementById('valSellLots').textContent = `${(data.sell_lots || 0).toFixed(2)} L`;
+      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} POS`;
+      document.getElementById('valBuyLots').textContent = `${(data.buy_lots || 0).toFixed(2)}L`;
+      document.getElementById('valSellLots').textContent = `${(data.sell_lots || 0).toFixed(2)}L`;
 
       // Pause / Resume state
       isPaused = data.web_paused;
@@ -873,56 +930,89 @@
         pauseText.textContent = "PAUSE EA";
       }
 
-      // Render Positions Table
-      renderPositionsTable(data.positions || []);
+      // Render Positions Table & Mobile Cards
+      renderPositions(data.positions || []);
     }
 
-    function renderPositionsTable(positions) {
+    function renderPositions(positions) {
       const tbody = document.getElementById('positionsTableBody');
+      const mobileContainer = document.getElementById('positionsMobileContainer');
+
       if (!positions || positions.length === 0) {
+        const emptyHtml = `
+          <div class="py-8 sm:py-12 text-center text-[#7b7a7c] font-mono text-[11px]">
+            <div class="text-[#a2a2a2] uppercase tracking-wider">[ NO ACTIVE POSITIONS CURRENTLY ]</div>
+            <div class="text-[10px] text-[#7b7a7c] mt-1">SYSTEM WAITING FOR BREAKOUT SIGNALS</div>
+          </div>
+        `;
         tbody.innerHTML = `
           <tr>
-            <td colspan="9" class="py-14 text-center text-[#7b7a7c]">
-              <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">
-                [ NO ACTIVE POSITIONS CURRENTLY ]
-              </div>
-              <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">
-                SYSTEM WAITING FOR EMA & STOCHASTIC BREAKOUT SIGNALS
-              </div>
+            <td colspan="9" class="py-12 text-center text-[#7b7a7c]">
+              <div class="font-mono text-xs uppercase tracking-widest text-[#a2a2a2]">[ NO ACTIVE POSITIONS CURRENTLY ]</div>
+              <div class="text-[10px] text-[#7b7a7c] mt-1 font-mono">SYSTEM WAITING FOR BREAKOUT SIGNALS</div>
             </td>
           </tr>
         `;
+        mobileContainer.innerHTML = emptyHtml;
         return;
       }
 
-      let rows = '';
+      let tableRows = '';
+      let mobileCards = '';
+
       positions.forEach(p => {
         const isBuy = p.type === 'BUY';
         const typeBadge = isBuy
-          ? `<span class="px-2 py-0.5 font-mono text-[10px] font-bold bg-white text-black">BUY</span>`
-          : `<span class="px-2 py-0.5 font-mono text-[10px] font-bold bg-[#ff6436] text-black">SELL</span>`;
+          ? `<span class="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-white text-black">BUY</span>`
+          : `<span class="px-1.5 py-0.5 font-mono text-[10px] font-bold bg-[#ff6436] text-black">SELL</span>`;
         
         const pColor = p.profit >= 0 ? 'text-white' : 'text-[#ff6436] font-bold';
 
-        rows += `
+        // Table row (Desktop)
+        tableRows += `
           <tr class="hover:bg-[#1a1a1d] transition">
-            <td class="py-3 px-2 text-[#7b7a7c]">#${p.ticket}</td>
-            <td class="py-3 px-2 font-semibold text-white">${p.symbol}</td>
-            <td class="py-3 px-2">${typeBadge}</td>
-            <td class="py-3 px-2 text-white">${p.lots.toFixed(2)}</td>
-            <td class="py-3 px-2 text-[#a2a2a2]">${p.open_price.toFixed(2)}</td>
-            <td class="py-3 px-2 text-white font-medium">${p.current_price.toFixed(2)}</td>
-            <td class="py-3 px-2 text-[#7b7a7c]">${p.sl > 0 ? p.sl.toFixed(2) : '—'}</td>
-            <td class="py-3 px-2 text-right ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</td>
-            <td class="py-3 px-2 text-center">
+            <td class="py-2.5 px-2 text-[#7b7a7c]">#${p.ticket}</td>
+            <td class="py-2.5 px-2 font-semibold text-white">${p.symbol}</td>
+            <td class="py-2.5 px-2">${typeBadge}</td>
+            <td class="py-2.5 px-2 text-white">${p.lots.toFixed(2)}</td>
+            <td class="py-2.5 px-2 text-[#a2a2a2]">${p.open_price.toFixed(2)}</td>
+            <td class="py-2.5 px-2 text-white font-medium">${p.current_price.toFixed(2)}</td>
+            <td class="py-2.5 px-2 text-[#7b7a7c]">${p.sl > 0 ? p.sl.toFixed(2) : '—'}</td>
+            <td class="py-2.5 px-2 text-right ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</td>
+            <td class="py-2.5 px-2 text-center">
               <button onclick="closeSingleTicket(${p.ticket})" class="px-2 py-0.5 border border-[#3c3a3e] text-[#a2a2a2] hover:border-[#ff6436] hover:text-[#ff6436] text-[10px] font-mono transition" title="Tutup Posisi">
                 ✕
               </button>
             </td>
           </tr>
         `;
+
+        // Mobile Card View (< sm)
+        mobileCards += `
+          <div class="p-3 bg-[#111113] border border-[#262629] flex flex-col gap-2 font-mono">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] text-[#7b7a7c]">#${p.ticket}</span>
+                <span class="font-bold text-xs text-white">${p.symbol}</span>
+                ${typeBadge}
+                <span class="text-[10px] text-[#a2a2a2]">${p.lots.toFixed(2)}L</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-sm ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-[#7b7a7c] pt-2 border-t border-[#1e1e21]">
+              <div>IN: <span class="text-white">${p.open_price.toFixed(2)}</span> &rarr; NOW: <span class="text-white">${p.current_price.toFixed(2)}</span></div>
+              <button onclick="closeSingleTicket(${p.ticket})" class="px-2.5 py-1 border border-[#ff6436]/50 text-[#ff6436] hover:bg-[#ff6436] hover:text-black text-[10px] font-semibold transition">
+                ✕ CLOSE
+              </button>
+            </div>
+          </div>
+        `;
       });
-      tbody.innerHTML = rows;
+
+      tbody.innerHTML = tableRows;
+      mobileContainer.innerHTML = mobileCards;
     }
 
     function formatNum(n) {
@@ -1135,11 +1225,11 @@
       const bEa = document.getElementById('tabEa');
       const bTerm = document.getElementById('tabTerm');
       if (tab === 'ea') {
-        bEa.className = "px-3 py-1 font-mono text-[11px] bg-white text-black font-semibold transition";
-        bTerm.className = "px-3 py-1 font-mono text-[11px] text-[#7b7a7c] hover:text-white transition";
+        bEa.className = "px-2 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] bg-white text-black font-semibold transition";
+        bTerm.className = "px-2 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] hover:text-white transition";
       } else {
-        bTerm.className = "px-3 py-1 font-mono text-[11px] bg-white text-black font-semibold transition";
-        bEa.className = "px-3 py-1 font-mono text-[11px] text-[#7b7a7c] hover:text-white transition";
+        bTerm.className = "px-2 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] bg-white text-black font-semibold transition";
+        bEa.className = "px-2 sm:px-3 py-1 font-mono text-[10px] sm:text-[11px] text-[#7b7a7c] hover:text-white transition";
       }
       renderLogs();
     }
