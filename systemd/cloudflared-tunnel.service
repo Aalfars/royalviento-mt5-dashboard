@@ -1,0 +1,13 @@
+[Unit]
+Description=Cloudflare Tunnel for MT5 Dashboard
+After=network.target mt5-dashboard.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/cloudflared tunnel --url http://127.0.0.1:5000 --logfile /root/dashboard/cloudflared.log
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

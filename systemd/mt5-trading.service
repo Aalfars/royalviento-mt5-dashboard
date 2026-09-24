@@ -1,0 +1,14 @@
+[Unit]
+Description=MetaTrader 5 24/7 Automated Trading Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/bin/bash /root/start_mt5_trading.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

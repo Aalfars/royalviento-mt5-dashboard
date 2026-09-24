@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoyalViento MT5 Trading Dashboard</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card { background: rgba(22, 30, 49, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.06); }
+    .glow-green { box-shadow: 0 0 15px rgba(16, 185, 129, 0.25); }
+    .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.25); }
+    .glow-red { box-shadow: 0 0 15px rgba(239, 68, 68, 0.25); }
+    @keyframes pulse-subtle { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .pulse-dot { animation: pulse-subtle 2s infinite; }
+  </style>
+</head>
+<body class="text-gray-100 min-h-screen">
+
+  <!-- PIN LOGIN MODAL -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md">
+    <div class="glass p-8 rounded-2xl max-w-sm w-full mx-4 shadow-2xl text-center border border-indigo-500/30">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 class="text-2xl font-bold mb-1">Trading Terminal</h2>
+      <p class="text-xs text-gray-400 mb-6">Masukkan PIN keamanan untuk mengakses dashboard</p>
+      
+      <div class="mb-5">
+        <input type="password" id="pinInput" maxlength="12" placeholder="PIN Akses (default: 1234)"
+               class="w-full text-center text-2xl tracking-widest px-4 py-3 bg-gray-900/90 border border-gray-700 rounded-xl focus:outline-none focus:border-indigo-500 text-white transition font-mono"
+               onkeypress="if(event.key==='Enter') doLogin()">
+        <p id="loginError" class="text-rose-400 text-xs mt-2 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i>PIN Salah!</p>
+      </div>
+
+      <button onclick="doLogin()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 font-semibold rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+        <i class="fa-solid fa-lock-open"></i> Buka Dashboard
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <div id="mainDashboard" class="hidden">
+    <!-- TOP NAVIGATION -->
+    <header class="glass sticky top-0 z-40 border-b border-gray-800 px-4 lg:px-8 py-3.5">
+      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-md">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-bold text-lg tracking-tight">RoyalViento EA</h1>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-medium">v2.04 IDR Safe</span>
+            </div>
+            <p class="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
+              <span id="headerAccount">Account: ...</span> &bull; 
+              <span id="headerServer">Server: ...</span> &bull; 
+              <span class="text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-bolt text-[10px]"></i> Ping SG: ~1 ms</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Badges & Statuses -->
+        <div class="flex items-center gap-3 flex-wrap">
+          <!-- MT5 Process Status -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-800/80 border border-gray-700/60 text-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot" id="dotMt5"></span>
+            <span class="text-gray-300">MT5 Service:</span>
+            <strong id="badgeMt5" class="text-emerald-400">ACTIVE</strong>
+          </div>
+
+          <!-- Algo Trading Status -->
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-800/80 border border-gray-700/60 text-xs cursor-pointer hover:border-gray-500 transition" onclick="toggleAlgo()" title="Klik untuk On/Off Algo Trading">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" id="dotAlgo"></span>
+            <span class="text-gray-300">Algo Trading:</span>
+            <strong id="badgeAlgo" class="text-emerald-400">ENABLED</strong>
+            <i class="fa-solid fa-power-off text-xs text-gray-400 ml-1"></i>
+          </div>
+
+          <!-- Cloudflare Badge -->
+          <div id="cfBadgeContainer" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-400">
+            <i class="fa-solid fa-cloud"></i>
+            <span id="cfUrlText" class="truncate max-w-[150px]">Tunnel Active</span>
+            <button onclick="copyCfUrl()" class="hover:text-white" title="Copy Tunnel URL"><i class="fa-regular fa-copy"></i></button>
+          </div>
+
+          <!-- Settings Button -->
+          <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition" title="Pengaturan">
+            <i class="fa-solid fa-gear"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+
+      <!-- TOP METRIC CARDS GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- CARD 1: ACCOUNT BALANCE -->
+        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition">
+          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
+            <span>SALDO AKUN (BALANCE)</span>
+            <i class="fa-solid fa-wallet text-indigo-400 text-sm"></i>
+          </div>
+          <div class="text-2xl font-black text-white" id="valBalance">$0.00</div>
+          <div class="mt-3 flex items-center justify-between text-xs text-gray-400 border-t border-gray-800/80 pt-2.5">
+            <span>Free Margin:</span>
+            <span class="font-medium text-gray-200" id="valFreeMargin">$0.00</span>
+          </div>
+        </div>
+
+        <!-- CARD 2: ACCOUNT EQUITY & FLOATING -->
+        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition">
+          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
+            <span>EQUITY & FLOATING</span>
+            <i class="fa-solid fa-scale-balanced text-cyan-400 text-sm"></i>
+          </div>
+          <div class="text-2xl font-black text-white" id="valEquity">$0.00</div>
+          <div class="mt-3 flex items-center justify-between text-xs border-t border-gray-800/80 pt-2.5">
+            <span class="text-gray-400">Floating P/L:</span>
+            <span class="font-bold" id="valFloating">$0.00</span>
+          </div>
+        </div>
+
+        <!-- CARD 3: TODAY'S PROFIT & TARGET -->
+        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition relative overflow-hidden">
+          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
+            <span>PROFIT HARI INI</span>
+            <span id="targetBadge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/20 text-blue-400">TARGET: $50.00</span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <div class="text-2xl font-black text-emerald-400" id="valDailyProfit">+$0.00</div>
+            <span class="text-xs text-gray-400" id="valTargetPercent">(0%)</span>
+          </div>
+          <!-- Progress Bar -->
+          <div class="w-full bg-gray-800 h-2 rounded-full mt-3 overflow-hidden">
+            <div id="targetProgressBar" class="bg-gradient-to-r from-emerald-500 to-cyan-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- CARD 4: ACTIVE POSITIONS STATS -->
+        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition">
+          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
+            <span>POSISI AKTIF</span>
+            <i class="fa-solid fa-layer-group text-amber-400 text-sm"></i>
+          </div>
+          <div class="flex items-baseline gap-3">
+            <div class="text-2xl font-black text-white" id="valPositionsTotal">0</div>
+            <span class="text-xs text-gray-400">Order Terbuka</span>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-xs text-gray-400 border-t border-gray-800/80 pt-2.5">
+            <span>BUY: <strong class="text-emerald-400" id="valBuyLots">0.00 L</strong></span>
+            <span>SELL: <strong class="text-rose-400" id="valSellLots">0.00 L</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TARGET BANNER IF REACHED -->
+      <div id="targetHitBanner" class="hidden p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 to-teal-950/80 border border-emerald-500/40 glow-green flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-base">TARGET HARIAN TERCAPAI! 🎯</h3>
+            <p class="text-xs text-emerald-300">Robot telah otomatis menghentikan entry baru sesuai target yang Anda atur untuk mengamankan profit.</p>
+          </div>
+        </div>
+        <button onclick="resumeTrading()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition shadow">
+          Lanjutkan Trading Lagi
+        </button>
+      </div>
+
+      <!-- CONTROL ACTIONS BAR -->
+      <div class="glass p-5 rounded-2xl border border-gray-800 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="font-bold text-sm text-gray-200 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-indigo-400"></i> Kontrol Cepat Trading
+          </h2>
+          <p class="text-xs text-gray-400 mt-0.5">Kelola aktivitas robot, atur target harian, dan kontrol darurat</p>
+        </div>
+
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <!-- Pause / Resume EA Button -->
+          <button id="btnPauseResume" onclick="togglePauseResume()" class="px-4 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold transition flex items-center gap-2">
+            <i class="fa-solid fa-pause"></i> <span id="textPauseResume">Pause EA Trading</span>
+          </button>
+
+          <!-- Set Target Quick Modal Trigger -->
+          <button onclick="openTargetModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-xs font-semibold transition flex items-center gap-2">
+            <i class="fa-solid fa-bullseye"></i> Atur Target ($)
+          </button>
+
+          <!-- Emergency Close All -->
+          <button onclick="confirmCloseAll()" class="px-4 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold transition flex items-center gap-2">
+            <i class="fa-solid fa-triangle-exclamation"></i> Tutup Semua Posisi
+          </button>
+
+          <!-- Restart MT5 -->
+          <button onclick="restartMT5()" class="px-3.5 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition flex items-center gap-1.5" title="Restart Service MT5">
+            <i class="fa-solid fa-rotate"></i> Restart MT5
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN SPLIT: POSITIONS TABLE & LIVE SCREENSHOT -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- POSITIONS TABLE (7 Cols) -->
+        <div class="lg:col-span-7 glass rounded-2xl border border-gray-800 overflow-hidden flex flex-col">
+          <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+            <h3 class="font-bold text-sm text-gray-200 flex items-center gap-2">
+              <i class="fa-solid fa-table-list text-cyan-400"></i> Daftar Posisi Terbuka (Live)
+            </h3>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-gray-800 text-gray-400 font-mono" id="posCountBadge">0 Posisi</span>
+          </div>
+
+          <div class="p-0 overflow-x-auto flex-1 min-h-[220px]">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-gray-900/60 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
+                <tr>
+                  <th class="py-3 px-4">Tiket</th>
+                  <th class="py-3 px-3">Symbol</th>
+                  <th class="py-3 px-3">Tipe</th>
+                  <th class="py-3 px-3">Lot</th>
+                  <th class="py-3 px-3">Open Price</th>
+                  <th class="py-3 px-3">Current</th>
+                  <th class="py-3 px-3">SL</th>
+                  <th class="py-3 px-3 text-right">Profit ($)</th>
+                  <th class="py-3 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="positionsTableBody" class="divide-y divide-gray-800/60 font-mono">
+                <!-- Dynamically populated -->
+                <tr>
+                  <td colspan="9" class="py-12 text-center text-gray-500 font-sans">
+                    <i class="fa-solid fa-inbox text-3xl mb-2 block opacity-40"></i>
+                    Belum ada posisi terbuka saat ini
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LIVE MT5 PREVIEW SCREEN (5 Cols) -->
+        <div class="lg:col-span-5 glass rounded-2xl border border-gray-800 overflow-hidden flex flex-col">
+          <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+            <h3 class="font-bold text-sm text-gray-200 flex items-center gap-2">
+              <i class="fa-solid fa-display text-emerald-400"></i> Layar MT5 Chart & EA Live
+            </h3>
+            <div class="flex items-center gap-2">
+              <button onclick="refreshScreen()" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition flex items-center gap-1">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh
+              </button>
+              <button onclick="openFullImage()" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition" title="Perbesar Layar">
+                <i class="fa-solid fa-expand"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="p-4 flex-1 flex flex-col justify-center items-center bg-black/40">
+            <div class="relative w-full rounded-xl overflow-hidden border border-gray-800 bg-gray-950 flex items-center justify-center min-h-[220px]">
+              <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Live Screen" class="w-full h-auto object-contain cursor-pointer rounded-lg hover:opacity-95 transition" onclick="openFullImage()">
+              <div id="screenLoading" class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center text-xs text-gray-300 hidden">
+                <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Mengambil screenshot live...
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-2 text-center">
+              Layar MT5 berjalan 24/7 di server. Gambar diperbarui secara real-time.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- LOGS DRAWER -->
+      <div class="glass rounded-2xl border border-gray-800 overflow-hidden">
+        <div class="p-4 border-b border-gray-800 flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <h3 class="font-bold text-sm text-gray-200 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-purple-400"></i> Log Aktivitas Trading
+            </h3>
+            <!-- Tabs -->
+            <div class="flex items-center bg-gray-900 rounded-lg p-0.5 text-xs">
+              <button id="tabEa" onclick="switchLogTab('ea')" class="px-3 py-1 rounded-md bg-indigo-600 text-white font-medium">EA RoyalViento</button>
+              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-3 py-1 rounded-md text-gray-400 hover:text-white font-medium">Terminal MT5</button>
+            </div>
+          </div>
+          <button onclick="fetchLogs()" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition">
+            <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh Log
+          </button>
+        </div>
+
+        <div class="p-4 bg-gray-950/70 font-mono text-[11px] h-48 overflow-y-auto leading-relaxed select-text" id="logContent">
+          <div class="text-gray-500 italic">Memuat log...</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- TARGET MODAL -->
+  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass p-6 rounded-2xl max-w-sm w-full mx-4 border border-indigo-500/30">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg text-white flex items-center gap-2">
+          <i class="fa-solid fa-bullseye text-indigo-400"></i> Atur Target Harian
+        </h3>
+        <button onclick="closeTargetModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p class="text-xs text-gray-400 mb-4">
+        Jika profit hari ini mencapai angka ini, robot otomatis <strong>menutup posisi dan berhenti entry</strong> sampai besok atau Anda resume.
+      </p>
+
+      <div class="mb-5">
+        <label class="block text-xs font-semibold text-gray-300 mb-1.5">Target Profit Harian (USD $)</label>
+        <div class="relative">
+          <span class="absolute left-4 top-3 text-gray-400 text-base font-bold">$</span>
+          <input type="number" step="1" min="1" id="inputTargetValue" placeholder="50.00"
+                 class="w-full pl-9 pr-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-indigo-500 text-white font-mono font-bold text-lg">
+        </div>
+        <div class="grid grid-cols-4 gap-2 mt-2">
+          <button onclick="setQuickTarget(25)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$25</button>
+          <button onclick="setQuickTarget(50)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$50</button>
+          <button onclick="setQuickTarget(100)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$100</button>
+          <button onclick="setQuickTarget(200)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$200</button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2.5">
+        <button onclick="closeTargetModal()" class="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-medium text-gray-300">Batal</button>
+        <button onclick="saveDailyTarget()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-lg">Simpan Target</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+    <div class="glass p-6 rounded-2xl max-w-sm w-full mx-4 border border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg text-white flex items-center gap-2">
+          <i class="fa-solid fa-gear text-gray-400"></i> Pengaturan
+        </h3>
+        <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Ganti PIN Keamanan</label>
+          <input type="password" id="inputNewPin" placeholder="PIN Baru (minimal 4 digit)"
+                 class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+          <button onclick="changePin()" class="mt-2 w-full py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-medium text-gray-300 transition">
+            Simpan PIN Baru
+          </button>
+        </div>
+
+        <div class="border-t border-gray-800 pt-3">
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Reset Statistik Harian</label>
+          <p class="text-[11px] text-gray-400 mb-2">Mengatur ulang baseline profit hari ini kembali ke nol.</p>
+          <button onclick="resetDailyStats()" class="w-full py-2 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/30 text-rose-300 rounded-xl text-xs font-medium transition">
+            Reset Profit Hari Ini
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE ZOOM MODAL -->
+  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md hidden p-4" onclick="closeFullImage()">
+    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-gray-800">
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let currentLogTab = 'ea';
+    let eaLogsCache = [];
+    let termLogsCache = [];
+    let statusInterval = null;
+    let screenInterval = null;
+    let isPaused = false;
+
+    // Check auth on load
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+    });
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth_check');
+        const data = await res.json();
+        if (data.authenticated) {
+          showDashboard();
+        } else {
+          document.getElementById('loginModal').classList.remove('hidden');
+        }
+      } catch (e) {
+        document.getElementById('loginModal').classList.remove('hidden');
+      }
+    }
+
+    async function doLogin() {
+      const pin = document.getElementById('pinInput').value;
+      const errEl = document.getElementById('loginError');
+      errEl.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showDashboard();
+        } else {
+          errEl.textContent = data.message || "PIN Salah!";
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = "Gagal terhubung ke server";
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginModal').classList.add('hidden');
+      document.getElementById('mainDashboard').classList.remove('hidden');
+      fetchStatus();
+      fetchLogs();
+      refreshScreen();
+
+      // Poll status every 2 seconds
+      if (!statusInterval) statusInterval = setInterval(fetchStatus, 2000);
+      // Auto refresh screen every 5 seconds
+      if (!screenInterval) screenInterval = setInterval(refreshScreen, 5000);
+    }
+
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        if (res.status === 401) {
+          location.reload();
+          return;
+        }
+        const data = await res.json();
+        renderStatus(data);
+      } catch (e) {
+        console.error("Status fetch error", e);
+      }
+    }
+
+    function renderStatus(data) {
+      if (!data) return;
+
+      // Header info
+      document.getElementById('headerAccount').textContent = `Acc: ${data.account || '---'}`;
+      document.getElementById('headerServer').textContent = `${data.server || 'MetaQuotes-Demo'}`;
+
+      // MT5 Status badge
+      const isRunning = data.mt5_running;
+      document.getElementById('badgeMt5').textContent = isRunning ? "ACTIVE" : "STOPPED";
+      document.getElementById('badgeMt5').className = isRunning ? "text-emerald-400" : "text-rose-400";
+      document.getElementById('dotMt5').className = isRunning ? "w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot" : "w-2.5 h-2.5 rounded-full bg-rose-500";
+
+      // Algo Trading badge
+      const isAlgo = data.algo_trading;
+      document.getElementById('badgeAlgo').textContent = isAlgo ? "ENABLED" : "DISABLED";
+      document.getElementById('badgeAlgo').className = isAlgo ? "text-emerald-400" : "text-rose-400";
+      document.getElementById('dotAlgo').className = isAlgo ? "w-2.5 h-2.5 rounded-full bg-emerald-500" : "w-2.5 h-2.5 rounded-full bg-rose-500";
+
+      // Cloudflare badge
+      if (data.cf_url) {
+        document.getElementById('cfBadgeContainer').classList.remove('hidden');
+        document.getElementById('cfBadgeContainer').classList.add('flex');
+        document.getElementById('cfUrlText').textContent = data.cf_url.replace("https://", "");
+        window.cfUrl = data.cf_url;
+      }
+
+      // Metric Cards
+      document.getElementById('valBalance').textContent = `$${formatNum(data.balance || 0)}`;
+      document.getElementById('valEquity').textContent = `$${formatNum(data.equity || 0)}`;
+      document.getElementById('valFreeMargin').textContent = `$${formatNum(data.free_margin || 0)}`;
+
+      // Floating P/L
+      const floating = data.floating_profit || 0;
+      const floatEl = document.getElementById('valFloating');
+      floatEl.textContent = `${floating >= 0 ? '+' : ''}$${formatNum(floating)}`;
+      floatEl.className = `font-bold ${floating >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+      // Daily Profit & Target
+      const dailyProfit = data.daily_profit || 0;
+      const targetUSD = data.daily_target_usd || data.configured_target_usd || 50;
+      const profitEl = document.getElementById('valDailyProfit');
+      profitEl.textContent = `${dailyProfit >= 0 ? '+' : ''}$${formatNum(dailyProfit)}`;
+      profitEl.className = `text-2xl font-black ${dailyProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+      document.getElementById('targetBadge').textContent = `TARGET: $${formatNum(targetUSD)}`;
+      
+      const pct = targetUSD > 0 ? Math.min(100, Math.max(0, (dailyProfit / targetUSD) * 100)) : 0;
+      document.getElementById('valTargetPercent').textContent = `(${pct.toFixed(0)}%)`;
+      document.getElementById('targetProgressBar').style.width = `${pct}%`;
+
+      // Target Hit Banner
+      const hitBanner = document.getElementById('targetHitBanner');
+      if (data.daily_target_hit) {
+        hitBanner.classList.remove('hidden');
+      } else {
+        hitBanner.classList.add('hidden');
+      }
+
+      // Positions Stats
+      document.getElementById('valPositionsTotal').textContent = data.positions_total || 0;
+      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} Posisi`;
+      document.getElementById('valBuyLots').textContent = `${(data.buy_lots || 0).toFixed(2)} L`;
+      document.getElementById('valSellLots').textContent = `${(data.sell_lots || 0).toFixed(2)} L`;
+
+      // Pause / Resume state
+      isPaused = data.web_paused;
+      const pauseBtn = document.getElementById('btnPauseResume');
+      const pauseText = document.getElementById('textPauseResume');
+      if (isPaused) {
+        pauseBtn.className = "px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition flex items-center gap-2";
+        pauseText.textContent = "Resume EA Trading";
+      } else {
+        pauseBtn.className = "px-4 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold transition flex items-center gap-2";
+        pauseText.textContent = "Pause EA Trading";
+      }
+
+      // Render Positions Table
+      renderPositionsTable(data.positions || []);
+    }
+
+    function renderPositionsTable(positions) {
+      const tbody = document.getElementById('positionsTableBody');
+      if (!positions || positions.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-12 text-center text-gray-500 font-sans">
+              <i class="fa-solid fa-inbox text-3xl mb-2 block opacity-40"></i>
+              Belum ada posisi terbuka saat ini
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let rows = '';
+      positions.forEach(p => {
+        const isBuy = p.type === 'BUY';
+        const typeBadge = isBuy
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">BUY</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>`;
+        
+        const pColor = p.profit >= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
+
+        rows += `
+          <tr class="hover:bg-gray-800/40 transition">
+            <td class="py-3 px-4 text-gray-400">#${p.ticket}</td>
+            <td class="py-3 px-3 font-semibold text-gray-200">${p.symbol}</td>
+            <td class="py-3 px-3">${typeBadge}</td>
+            <td class="py-3 px-3 text-gray-200">${p.lots.toFixed(2)}</td>
+            <td class="py-3 px-3 text-gray-300">${p.open_price.toFixed(2)}</td>
+            <td class="py-3 px-3 text-gray-300">${p.current_price.toFixed(2)}</td>
+            <td class="py-3 px-3 text-gray-400">${p.sl > 0 ? p.sl.toFixed(2) : '-'}</td>
+            <td class="py-3 px-3 text-right ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</td>
+            <td class="py-3 px-4 text-center">
+              <button onclick="closeSingleTicket(${p.ticket})" class="px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 text-[10px] transition" title="Tutup Posisi Ini">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = rows;
+    }
+
+    function formatNum(n) {
+      return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Screen Refresh
+    function refreshScreen() {
+      const img = document.getElementById('mt5ScreenImg');
+      const loader = document.getElementById('screenLoading');
+      const newSrc = `/api/screenshot?t=${new Date().getTime()}`;
+      img.src = newSrc;
+    }
+
+    function openFullImage() {
+      const fullImg = document.getElementById('fullImage');
+      fullImg.src = document.getElementById('mt5ScreenImg').src;
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeFullImage() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    // Actions
+    async function togglePauseResume() {
+      const action = isPaused ? "resume" : "pause";
+      try {
+        const res = await fetch('/api/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action })
+        });
+        const d = await res.json();
+        alert(d.message);
+        fetchStatus();
+      } catch (e) {
+        alert("Gagal mengirim perintah");
+      }
+    }
+
+    async function toggleAlgo() {
+      try {
+        const res = await fetch('/api/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "toggle_algo" })
+        });
+        const d = await res.json();
+        setTimeout(fetchStatus, 1500);
+      } catch (e) {
+        alert("Gagal toggle Algo Trading");
+      }
+    }
+
+    async function confirmCloseAll() {
+      if (confirm("PERINGATAN: Apakah Anda yakin ingin MENUTUP SEMUA POSISI sekarang?")) {
+        try {
+          const res = await fetch('/api/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "close_all" })
+          });
+          const d = await res.json();
+          alert(d.message);
+          setTimeout(fetchStatus, 1000);
+        } catch (e) {
+          alert("Gagal mengirim perintah tutup semua");
+        }
+      }
+    }
+
+    async function closeSingleTicket(ticket) {
+      if (confirm(`Tutup posisi #${ticket}?`)) {
+        try {
+          const res = await fetch('/api/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "close_ticket", ticket })
+          });
+          const d = await res.json();
+          setTimeout(fetchStatus, 1000);
+        } catch (e) {
+          alert("Gagal menutup order");
+        }
+      }
+    }
+
+    async function resumeTrading() {
+      try {
+        const res = await fetch('/api/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "resume" })
+        });
+        const d = await res.json();
+        alert("Trading dilanjutkan! Status target telah di-reset.");
+        fetchStatus();
+      } catch (e) {
+        alert("Gagal resume trading");
+      }
+    }
+
+    async function restartMT5() {
+      if (confirm("Restart layanan MetaTrader 5 di server?")) {
+        try {
+          const res = await fetch('/api/server', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ operation: "restart_mt5" })
+          });
+          const d = await res.json();
+          alert(d.message);
+          setTimeout(fetchStatus, 4000);
+        } catch (e) {
+          alert("Gagal restart MT5");
+        }
+      }
+    }
+
+    // Target Modal
+    function openTargetModal() {
+      document.getElementById('targetModal').classList.remove('hidden');
+    }
+    function closeTargetModal() {
+      document.getElementById('targetModal').classList.add('hidden');
+    }
+    function setQuickTarget(val) {
+      document.getElementById('inputTargetValue').value = val;
+    }
+    async function saveDailyTarget() {
+      const val = parseFloat(document.getElementById('inputTargetValue').value);
+      if (!val || val <= 0) {
+        alert("Masukkan angka target yang valid!");
+        return;
+      }
+      try {
+        const res = await fetch('/api/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: "set_daily_target", value: val })
+        });
+        const d = await res.json();
+        alert(d.message);
+        closeTargetModal();
+        fetchStatus();
+      } catch (e) {
+        alert("Gagal menyimpan target");
+      }
+    }
+
+    // Settings Modal
+    function openSettingsModal() {
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+    async function changePin() {
+      const pin = document.getElementById('inputNewPin').value;
+      if (pin.length < 4) {
+        alert("PIN minimal 4 karakter");
+        return;
+      }
+      try {
+        const res = await fetch('/api/server', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ operation: "change_pin", pin })
+        });
+        const d = await res.json();
+        alert(d.message);
+        closeSettingsModal();
+      } catch (e) {
+        alert("Gagal mengganti PIN");
+      }
+    }
+    async function resetDailyStats() {
+      if (confirm("Reset statistik profit hari ini ke nol?")) {
+        try {
+          const res = await fetch('/api/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "reset_daily" })
+          });
+          const d = await res.json();
+          alert(d.message);
+          closeSettingsModal();
+          fetchStatus();
+        } catch (e) {
+          alert("Gagal reset statistik");
+        }
+      }
+    }
+
+    // Logs Viewer
+    async function fetchLogs() {
+      try {
+        const res = await fetch('/api/logs');
+        const data = await res.json();
+        eaLogsCache = data.ea_logs || [];
+        termLogsCache = data.terminal_logs || [];
+        renderLogs();
+      } catch (e) {
+        console.error("Log error", e);
+      }
+    }
+
+    function switchLogTab(tab) {
+      currentLogTab = tab;
+      const bEa = document.getElementById('tabEa');
+      const bTerm = document.getElementById('tabTerm');
+      if (tab === 'ea') {
+        bEa.className = "px-3 py-1 rounded-md bg-indigo-600 text-white font-medium";
+        bTerm.className = "px-3 py-1 rounded-md text-gray-400 hover:text-white font-medium";
+      } else {
+        bTerm.className = "px-3 py-1 rounded-md bg-indigo-600 text-white font-medium";
+        bEa.className = "px-3 py-1 rounded-md text-gray-400 hover:text-white font-medium";
+      }
+      renderLogs();
+    }
+
+    function renderLogs() {
+      const container = document.getElementById('logContent');
+      const lines = currentLogTab === 'ea' ? eaLogsCache : termLogsCache;
+      if (!lines || lines.length === 0) {
+        container.innerHTML = '<div class="text-gray-500 italic">Belum ada data log...</div>';
+        return;
+      }
+      container.innerHTML = lines.map(l => {
+        let col = "text-gray-300";
+        if (l.includes("Order") || l.includes("deal") || l.includes("buy") || l.includes("sell")) col = "text-emerald-400";
+        if (l.includes("GAGAL") || l.includes("error") || l.includes("disabled")) col = "text-rose-400";
+        if (l.includes("TARGET")) col = "text-amber-300 font-bold";
+        return `<div class="${col}">${escapeHtml(l)}</div>`;
+      }).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function copyCfUrl() {
+      if (window.cfUrl) {
+        navigator.clipboard.writeText(window.cfUrl);
+        alert("URL Cloudflare disalin: " + window.cfUrl);
+      }
+    }
+  </script>
+</body>
+</html>
