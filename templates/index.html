@@ -3,370 +3,648 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoyalViento MT5 Trading Dashboard</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>RoyalViento — Serif Analytics on Warm Paper</title>
+
+  <!-- Google Fonts: Source Serif 4 (Signifier alternative) + Inter (Söhne alternative) + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;430;450;480;500;600&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+  
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    body { background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    .glass { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-card { background: rgba(22, 30, 49, 0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.06); }
-    .glow-green { box-shadow: 0 0 15px rgba(16, 185, 129, 0.25); }
-    .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.25); }
-    .glow-red { box-shadow: 0 0 15px rgba(239, 68, 68, 0.25); }
-    @keyframes pulse-subtle { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-    .pulse-dot { animation: pulse-subtle 2s infinite; }
+    :root {
+      /* Steep Design Tokens */
+      --color-ink-black: #17191c;
+      --color-paper-white: #ffffff;
+      --color-mist-gray: #f2f2f3;
+      --color-fog-white: #fafafb;
+      --color-slate-gray: #777b86;
+      --color-ash-gray: #979799;
+      --color-smoke-gray: #a3a6af;
+      --color-blush-peach: #fbe1d1;
+      --color-sienna-brown: #5d2a1a;
+      --color-hairline: #ececec;
+
+      /* Typography */
+      --font-signifier: 'Source Serif 4', Georgia, -apple-system, serif;
+      --font-sohne: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      /* Shadows */
+      --shadow-subtle: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 4px 20px 0 rgba(0, 0, 0, 0.05);
+      --shadow-artifact: 0 0 0 1px rgba(4, 23, 43, 0.05), 0 20px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      background-color: var(--color-paper-white);
+      color: var(--color-ink-black);
+      font-family: var(--font-sohne);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin: 0;
+      padding: 0;
+    }
+
+    .font-serif {
+      font-family: var(--font-signifier);
+      font-weight: 400;
+    }
+
+    .font-sans {
+      font-family: var(--font-sohne);
+    }
+
+    .font-mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Headings tracking */
+    .tracking-signifier-display { letter-spacing: -2.25px; }
+    .tracking-signifier-lg { letter-spacing: -0.96px; }
+    .tracking-signifier-md { letter-spacing: -0.66px; }
+    .tracking-signifier-sm { letter-spacing: -0.23px; }
+
+    /* Steep Cards & Artifacts */
+    .steep-card-neutral {
+      background-color: var(--color-mist-gray);
+      border-radius: 24px;
+      border: none;
+    }
+
+    .steep-card-peach {
+      background-color: var(--color-blush-peach);
+      color: var(--color-sienna-brown);
+      border-radius: 24px;
+      border: none;
+    }
+
+    .steep-artifact {
+      background-color: var(--color-paper-white);
+      border-radius: 20px;
+      box-shadow: var(--shadow-artifact);
+    }
+
+    /* Steep Pill Buttons */
+    .pill-btn-filled {
+      background-color: var(--color-ink-black);
+      color: var(--color-paper-white);
+      border: 1px solid var(--color-ink-black);
+      border-radius: 9999px;
+      padding: 10px 22px;
+      font-size: 15px;
+      font-weight: 450;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .pill-btn-filled:hover {
+      background-color: #000000;
+      transform: translateY(-1px);
+    }
+
+    .pill-btn-ghost {
+      background-color: transparent;
+      color: var(--color-ink-black);
+      border: 1px solid var(--color-ink-black);
+      border-radius: 9999px;
+      padding: 10px 22px;
+      font-size: 15px;
+      font-weight: 450;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .pill-btn-ghost:hover {
+      background-color: var(--color-mist-gray);
+    }
+
+    .pill-btn-subtle {
+      background-color: var(--color-mist-gray);
+      color: var(--color-ink-black);
+      border: 1px solid transparent;
+      border-radius: 9999px;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 450;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .pill-btn-subtle:hover {
+      background-color: #e5e5e7;
+    }
+
+    /* Text link with arrow */
+    .steep-arrow-link {
+      color: var(--color-ink-black);
+      font-size: 15px;
+      font-weight: 450;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+    .steep-arrow-link:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    /* Inputs */
+    .steep-input {
+      background-color: var(--color-paper-white);
+      border: 1px solid var(--color-hairline);
+      border-radius: 16px;
+      padding: 12px 18px;
+      color: var(--color-ink-black);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .steep-input:focus {
+      border-color: var(--color-ink-black);
+    }
+    .steep-input::placeholder {
+      color: var(--color-smoke-gray);
+    }
+
+    /* Subtle pulsing indicator */
+    @keyframes pulse-gentle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.92); }
+    }
+    .pulse-live {
+      animation: pulse-gentle 2.5s infinite ease-in-out;
+    }
+
+    /* Clean scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f8f8f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #d4d4d8;
+      border-radius: 9999px;
+    }
   </style>
 </head>
-<body class="text-gray-100 min-h-screen">
+<body class="min-h-screen selection:bg-[#fbe1d1] selection:text-[#5d2a1a]">
 
-  <!-- PIN LOGIN MODAL -->
-  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md">
-    <div class="glass p-8 rounded-2xl max-w-sm w-full mx-4 shadow-2xl text-center border border-indigo-500/30">
-      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-tr from-amber-500 to-indigo-600 flex items-center justify-center text-white text-2xl shadow-lg">
-        <i class="fa-solid fa-shield-halved"></i>
+  <!-- PIN LOGIN MODAL (Steep Style: Paper White Card over soft overlay) -->
+  <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/35 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-[24px] max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ececec] text-center">
+      <div class="w-12 h-12 rounded-full bg-[#fbe1d1] text-[#5d2a1a] flex items-center justify-center mx-auto mb-4 text-xl">
+        <i class="fa-solid fa-lock"></i>
       </div>
-      <h2 class="text-2xl font-bold mb-1">Trading Terminal</h2>
-      <p class="text-xs text-gray-400 mb-6">Masukkan PIN keamanan untuk mengakses dashboard</p>
+      <h2 class="font-serif text-3xl text-[#17191c] tracking-tight mb-2">Akses Terminal</h2>
+      <p class="text-sm text-[#777b86] mb-6">Masukkan PIN keamanan untuk membuka dashboard kendali MT5.</p>
       
-      <div class="mb-5">
-        <input type="password" id="pinInput" maxlength="12" placeholder="PIN Akses (default: 1234)"
-               class="w-full text-center text-2xl tracking-widest px-4 py-3 bg-gray-900/90 border border-gray-700 rounded-xl focus:outline-none focus:border-indigo-500 text-white transition font-mono"
+      <div class="mb-5 text-left">
+        <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1.5 pl-1">Security PIN</label>
+        <input type="password" id="pinInput" maxlength="12" placeholder="••••"
+               class="steep-input w-full text-center text-2xl tracking-[0.3em] font-mono font-medium"
                onkeypress="if(event.key==='Enter') doLogin()">
-        <p id="loginError" class="text-rose-400 text-xs mt-2 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i>PIN Salah!</p>
+        <p id="loginError" class="text-xs text-[#5d2a1a] bg-[#fbe1d1]/80 px-3 py-1.5 rounded-xl mt-2.5 hidden">
+          <i class="fa-solid fa-circle-exclamation mr-1"></i> PIN yang Anda masukkan salah.
+        </p>
       </div>
 
-      <button onclick="doLogin()" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 font-semibold rounded-xl transition shadow-lg flex items-center justify-center gap-2">
-        <i class="fa-solid fa-lock-open"></i> Buka Dashboard
+      <button onclick="doLogin()" class="pill-btn-filled w-full">
+        Buka Dashboard →
       </button>
+      <div class="mt-4 text-center">
+        <span class="text-xs text-[#979799]">RoyalViento EA · trading.aranya.my.id</span>
+      </div>
     </div>
   </div>
 
   <!-- MAIN DASHBOARD CONTENT -->
   <div id="mainDashboard" class="hidden">
-    <!-- TOP NAVIGATION -->
-    <header class="glass sticky top-0 z-40 border-b border-gray-800 px-4 lg:px-8 py-3.5">
-      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    
+    <!-- TOP NAVIGATION (Whisper-quiet, transparent, logo left, nav & pills right) -->
+    <header class="w-full bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-[#ececec]">
+      <div class="max-w-[1200px] mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        
+        <!-- Left: Brand / Logo in Signifier Serif -->
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white text-xl shadow-md">
-            <i class="fa-solid fa-chart-line"></i>
+          <div class="w-8 h-8 rounded-full bg-[#17191c] text-white flex items-center justify-center font-serif text-base italic shadow-sm">
+            R
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h1 class="font-bold text-lg tracking-tight">RoyalViento EA</h1>
-              <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-medium">v2.04 IDR Safe</span>
+              <span class="font-serif text-xl text-[#17191c] tracking-tight font-normal">RoyalViento</span>
+              <span class="text-xs text-[#979799] tracking-normal font-sans">v2.04 IDR Safe</span>
             </div>
-            <p class="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
-              <span id="headerAccount">Account: ...</span> &bull; 
-              <span id="headerServer">Server: ...</span> &bull; 
-              <span class="text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-bolt text-[10px]"></i> Ping SG: ~1 ms</span>
-            </p>
           </div>
         </div>
 
-        <!-- Badges & Statuses -->
-        <div class="flex items-center gap-3 flex-wrap">
-          <!-- MT5 Process Status -->
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-800/80 border border-gray-700/60 text-xs">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot" id="dotMt5"></span>
-            <span class="text-gray-300">MT5 Service:</span>
-            <strong id="badgeMt5" class="text-emerald-400">ACTIVE</strong>
+        <!-- Center: Ghost Typographic Tags -->
+        <div class="hidden md:flex items-center gap-6 text-xs text-[#777b86]">
+          <span id="headerAccount">Account: &mdash;</span>
+          <span class="text-[#ececec]">•</span>
+          <span id="headerServer">Server: &mdash;</span>
+          <span class="text-[#ececec]">•</span>
+          <span class="flex items-center gap-1.5 text-[#17191c]">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#17191c] pulse-live"></span>
+            Ping SG ~1ms
+          </span>
+        </div>
+
+        <!-- Right: Control Pills & Settings -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <!-- MT5 Service Status Pill -->
+          <div class="pill-btn-subtle" title="Status Service MT5 Wine">
+            <span class="w-2 h-2 rounded-full bg-[#17191c]" id="dotMt5"></span>
+            <span class="text-[#979799]">MT5:</span>
+            <span id="badgeMt5" class="font-medium text-[#17191c]">ACTIVE</span>
           </div>
 
-          <!-- Algo Trading Status -->
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-800/80 border border-gray-700/60 text-xs cursor-pointer hover:border-gray-500 transition" onclick="toggleAlgo()" title="Klik untuk On/Off Algo Trading">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" id="dotAlgo"></span>
-            <span class="text-gray-300">Algo Trading:</span>
-            <strong id="badgeAlgo" class="text-emerald-400">ENABLED</strong>
-            <i class="fa-solid fa-power-off text-xs text-gray-400 ml-1"></i>
-          </div>
+          <!-- Algo Trading Toggle Pill -->
+          <button onclick="toggleAlgo()" class="pill-btn-ghost py-1 px-3.5 text-xs hover:bg-[#f2f2f3]" title="Klik untuk Toggle Algo Trading">
+            <span class="w-2 h-2 rounded-full bg-[#17191c]" id="dotAlgo"></span>
+            <span>Algo:</span>
+            <strong id="badgeAlgo" class="font-medium">ENABLED</strong>
+            <i class="fa-solid fa-power-off text-[10px] ml-0.5 opacity-60"></i>
+          </button>
 
-          <!-- Cloudflare Badge -->
-          <div id="cfBadgeContainer" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-400">
-            <i class="fa-solid fa-cloud"></i>
-            <span id="cfUrlText" class="truncate max-w-[150px]">Tunnel Active</span>
-            <button onclick="copyCfUrl()" class="hover:text-white" title="Copy Tunnel URL"><i class="fa-regular fa-copy"></i></button>
-          </div>
+          <!-- Domain / Custom Host Pill -->
+          <a href="https://trading.aranya.my.id" target="_blank" class="hidden sm:inline-flex pill-btn-subtle text-xs text-[#777b86] hover:text-[#17191c]" title="Custom Domain Cloudflare">
+            <i class="fa-solid fa-globe text-[11px] opacity-70"></i>
+            <span id="domainBadgeText">trading.aranya.my.id</span>
+          </a>
 
-          <!-- Settings Button -->
-          <button onclick="openSettingsModal()" class="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 transition" title="Pengaturan">
-            <i class="fa-solid fa-gear"></i>
+          <!-- Quick Settings Button -->
+          <button onclick="openSettingsModal()" class="w-9 h-9 rounded-full border border-[#ececec] flex items-center justify-center text-[#17191c] hover:bg-[#f2f2f3] transition" title="Pengaturan">
+            <i class="fa-solid fa-gear text-sm"></i>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- CONTENT WRAPPER -->
-    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-6 space-y-6">
+    <!-- CONTAINER 1200px CENTERED -->
+    <main class="max-w-[1200px] mx-auto px-6 py-10 space-y-12">
 
-      <!-- TOP METRIC CARDS GRID -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- HERO SECTION (Editorial headline + subhead + paired pill buttons) -->
+      <section class="space-y-6 pt-2">
+        <div class="space-y-3">
+          <div class="text-xs uppercase tracking-widest text-[#979799] font-medium">Algorithmic Trading & Telemetry</div>
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-[54px] text-[#17191c] leading-[1.15] tracking-signifier-md font-normal max-w-3xl">
+            Precision automated execution, <span class="italic">monitored on warm paper.</span>
+          </h1>
+          <p class="text-[17px] text-[#777b86] max-w-2xl leading-relaxed">
+            Live balance telemetry, basket risk hedging, dan kontrol seketika untuk MetaTrader 5 di VPS Linux.
+          </p>
+        </div>
 
-        <!-- CARD 1: ACCOUNT BALANCE -->
-        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition">
-          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-            <span>SALDO AKUN (BALANCE)</span>
-            <i class="fa-solid fa-wallet text-indigo-400 text-sm"></i>
+        <!-- ACTION BUTTON PAIR ON BASELINE -->
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <!-- Primary Filled Pill Button -->
+          <button id="btnPauseResume" onclick="togglePauseResume()" class="pill-btn-filled">
+            <i class="fa-solid fa-pause text-xs" id="iconPauseResume"></i>
+            <span id="textPauseResume">Pause EA Trading</span>
+          </button>
+
+          <!-- Paired Ghost Pill Button -->
+          <button onclick="openTargetModal()" class="pill-btn-ghost">
+            <i class="fa-solid fa-bullseye text-xs opacity-70"></i>
+            <span>Atur Target Harian ($)</span>
+          </button>
+
+          <span class="text-[#ececec] mx-1 hidden sm:inline">|</span>
+
+          <!-- Inline Text Links with Arrow -->
+          <button onclick="confirmCloseAll()" class="steep-arrow-link text-sm text-[#777b86] hover:text-[#5d2a1a] transition">
+            Tutup Semua Posisi →
+          </button>
+
+          <button onclick="restartMT5()" class="steep-arrow-link text-sm text-[#777b86] hover:text-[#17191c] transition">
+            Restart MT5 →
+          </button>
+        </div>
+      </section>
+
+      <!-- METRICS GRID (Features 1 Accent Blush Peach Card + 3 Neutral/Artifact Cards) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- CARD 1: THE ACCENT PEACH CARD (Editorial Spotlight - Daily Target) -->
+        <div class="steep-card-peach p-6 flex flex-col justify-between relative overflow-hidden transition">
+          <div>
+            <div class="flex items-center justify-between text-xs text-[#5d2a1a]/80 font-medium mb-2">
+              <span class="uppercase tracking-wider">Target & Profit Harian</span>
+              <span id="targetBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#ffffff]/60 text-[#5d2a1a]">TARGET: $50.00</span>
+            </div>
+            
+            <div class="flex items-baseline gap-2 mt-1">
+              <div class="font-serif text-3xl lg:text-4xl text-[#5d2a1a] font-normal" id="valDailyProfit">+$0.00</div>
+              <span class="text-xs text-[#5d2a1a]/70 font-mono" id="valTargetPercent">(0%)</span>
+            </div>
           </div>
-          <div class="text-2xl font-black text-white" id="valBalance">$0.00</div>
-          <div class="mt-3 flex items-center justify-between text-xs text-gray-400 border-t border-gray-800/80 pt-2.5">
+
+          <!-- Gestural Progress Line in Sienna Brown -->
+          <div class="mt-5 pt-3 border-t border-[#5d2a1a]/15">
+            <div class="w-full bg-[#5d2a1a]/15 h-1.5 rounded-full overflow-hidden">
+              <div id="targetProgressBar" class="bg-[#5d2a1a] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between items-center text-[11px] text-[#5d2a1a]/70 mt-2 font-mono">
+              <span>Baseline: $0.00</span>
+              <span id="targetRemainingText">Menuju target</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: SALDO AKUN (BALANCE) -->
+        <div class="steep-card-neutral p-6 flex flex-col justify-between">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-[#979799] font-medium mb-2">
+              Saldo Akun (Balance)
+            </div>
+            <div class="font-serif text-3xl lg:text-4xl text-[#17191c] font-normal" id="valBalance">
+              $0.00
+            </div>
+          </div>
+          <div class="mt-5 pt-3 border-t border-[#ececec] flex items-center justify-between text-xs text-[#777b86]">
             <span>Free Margin:</span>
-            <span class="font-medium text-gray-200" id="valFreeMargin">$0.00</span>
+            <span class="font-mono font-medium text-[#17191c]" id="valFreeMargin">$0.00</span>
           </div>
         </div>
 
-        <!-- CARD 2: ACCOUNT EQUITY & FLOATING -->
-        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition">
-          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-            <span>EQUITY & FLOATING</span>
-            <i class="fa-solid fa-scale-balanced text-cyan-400 text-sm"></i>
+        <!-- CARD 3: EQUITY & FLOATING P/L (Floating Artifact) -->
+        <div class="steep-artifact p-6 flex flex-col justify-between">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-[#979799] font-medium mb-2">
+              Equity & Floating P/L
+            </div>
+            <div class="font-serif text-3xl lg:text-4xl text-[#17191c] font-normal" id="valEquity">
+              $0.00
+            </div>
           </div>
-          <div class="text-2xl font-black text-white" id="valEquity">$0.00</div>
-          <div class="mt-3 flex items-center justify-between text-xs border-t border-gray-800/80 pt-2.5">
-            <span class="text-gray-400">Floating P/L:</span>
-            <span class="font-bold" id="valFloating">$0.00</span>
-          </div>
-        </div>
-
-        <!-- CARD 3: TODAY'S PROFIT & TARGET -->
-        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition relative overflow-hidden">
-          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-            <span>PROFIT HARI INI</span>
-            <span id="targetBadge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/20 text-blue-400">TARGET: $50.00</span>
-          </div>
-          <div class="flex items-baseline gap-2">
-            <div class="text-2xl font-black text-emerald-400" id="valDailyProfit">+$0.00</div>
-            <span class="text-xs text-gray-400" id="valTargetPercent">(0%)</span>
-          </div>
-          <!-- Progress Bar -->
-          <div class="w-full bg-gray-800 h-2 rounded-full mt-3 overflow-hidden">
-            <div id="targetProgressBar" class="bg-gradient-to-r from-emerald-500 to-cyan-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          <div class="mt-5 pt-3 border-t border-[#ececec] flex items-center justify-between text-xs">
+            <span class="text-[#777b86]">Floating Net:</span>
+            <span class="font-mono font-semibold text-[#17191c]" id="valFloating">$0.00</span>
           </div>
         </div>
 
-        <!-- CARD 4: ACTIVE POSITIONS STATS -->
-        <div class="glass-card p-5 rounded-2xl border border-gray-800 hover:border-gray-700 transition">
-          <div class="flex items-center justify-between text-gray-400 text-xs mb-2">
-            <span>POSISI AKTIF</span>
-            <i class="fa-solid fa-layer-group text-amber-400 text-sm"></i>
+        <!-- CARD 4: ACTIVE POSITIONS & EXPOSURE -->
+        <div class="steep-card-neutral p-6 flex flex-col justify-between">
+          <div>
+            <div class="text-xs uppercase tracking-wider text-[#979799] font-medium mb-2">
+              Posisi Terbuka
+            </div>
+            <div class="flex items-baseline gap-2">
+              <div class="font-serif text-3xl lg:text-4xl text-[#17191c] font-normal" id="valPositionsTotal">
+                0
+              </div>
+              <span class="text-xs text-[#777b86]">order aktif</span>
+            </div>
           </div>
-          <div class="flex items-baseline gap-3">
-            <div class="text-2xl font-black text-white" id="valPositionsTotal">0</div>
-            <span class="text-xs text-gray-400">Order Terbuka</span>
-          </div>
-          <div class="mt-3 flex items-center justify-between text-xs text-gray-400 border-t border-gray-800/80 pt-2.5">
-            <span>BUY: <strong class="text-emerald-400" id="valBuyLots">0.00 L</strong></span>
-            <span>SELL: <strong class="text-rose-400" id="valSellLots">0.00 L</strong></span>
+          <div class="mt-5 pt-3 border-t border-[#ececec] flex items-center justify-between text-xs text-[#777b86] font-mono">
+            <span>BUY: <strong class="text-[#17191c] font-medium" id="valBuyLots">0.00 L</strong></span>
+            <span>SELL: <strong class="text-[#17191c] font-medium" id="valSellLots">0.00 L</strong></span>
           </div>
         </div>
 
-      </div>
+      </section>
 
-      <!-- TARGET BANNER IF REACHED -->
-      <div id="targetHitBanner" class="hidden p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 to-teal-950/80 border border-emerald-500/40 glow-green flex items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+      <!-- TARGET HIT EDITORIAL NOTIFICATION (If Daily Target is Hit) -->
+      <div id="targetHitBanner" class="hidden steep-card-peach p-6 flex flex-wrap items-center justify-between gap-4 border border-[#5d2a1a]/20">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-[#5d2a1a] text-[#fbe1d1] flex items-center justify-center text-lg">
             <i class="fa-solid fa-trophy"></i>
           </div>
           <div>
-            <h3 class="font-bold text-white text-base">TARGET HARIAN TERCAPAI! 🎯</h3>
-            <p class="text-xs text-emerald-300">Robot telah otomatis menghentikan entry baru sesuai target yang Anda atur untuk mengamankan profit.</p>
-          </div>
-        </div>
-        <button onclick="resumeTrading()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition shadow">
-          Lanjutkan Trading Lagi
-        </button>
-      </div>
-
-      <!-- CONTROL ACTIONS BAR -->
-      <div class="glass p-5 rounded-2xl border border-gray-800 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 class="font-bold text-sm text-gray-200 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-indigo-400"></i> Kontrol Cepat Trading
-          </h2>
-          <p class="text-xs text-gray-400 mt-0.5">Kelola aktivitas robot, atur target harian, dan kontrol darurat</p>
-        </div>
-
-        <div class="flex items-center gap-2.5 flex-wrap">
-          <!-- Pause / Resume EA Button -->
-          <button id="btnPauseResume" onclick="togglePauseResume()" class="px-4 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold transition flex items-center gap-2">
-            <i class="fa-solid fa-pause"></i> <span id="textPauseResume">Pause EA Trading</span>
-          </button>
-
-          <!-- Set Target Quick Modal Trigger -->
-          <button onclick="openTargetModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-xs font-semibold transition flex items-center gap-2">
-            <i class="fa-solid fa-bullseye"></i> Atur Target ($)
-          </button>
-
-          <!-- Emergency Close All -->
-          <button onclick="confirmCloseAll()" class="px-4 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold transition flex items-center gap-2">
-            <i class="fa-solid fa-triangle-exclamation"></i> Tutup Semua Posisi
-          </button>
-
-          <!-- Restart MT5 -->
-          <button onclick="restartMT5()" class="px-3.5 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition flex items-center gap-1.5" title="Restart Service MT5">
-            <i class="fa-solid fa-rotate"></i> Restart MT5
-          </button>
-        </div>
-      </div>
-
-      <!-- MAIN SPLIT: POSITIONS TABLE & LIVE SCREENSHOT -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- POSITIONS TABLE (7 Cols) -->
-        <div class="lg:col-span-7 glass rounded-2xl border border-gray-800 overflow-hidden flex flex-col">
-          <div class="p-4 border-b border-gray-800 flex items-center justify-between">
-            <h3 class="font-bold text-sm text-gray-200 flex items-center gap-2">
-              <i class="fa-solid fa-table-list text-cyan-400"></i> Daftar Posisi Terbuka (Live)
-            </h3>
-            <span class="text-xs px-2.5 py-1 rounded-full bg-gray-800 text-gray-400 font-mono" id="posCountBadge">0 Posisi</span>
-          </div>
-
-          <div class="p-0 overflow-x-auto flex-1 min-h-[220px]">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-gray-900/60 text-gray-400 uppercase text-[10px] tracking-wider border-b border-gray-800">
-                <tr>
-                  <th class="py-3 px-4">Tiket</th>
-                  <th class="py-3 px-3">Symbol</th>
-                  <th class="py-3 px-3">Tipe</th>
-                  <th class="py-3 px-3">Lot</th>
-                  <th class="py-3 px-3">Open Price</th>
-                  <th class="py-3 px-3">Current</th>
-                  <th class="py-3 px-3">SL</th>
-                  <th class="py-3 px-3 text-right">Profit ($)</th>
-                  <th class="py-3 px-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="positionsTableBody" class="divide-y divide-gray-800/60 font-mono">
-                <!-- Dynamically populated -->
-                <tr>
-                  <td colspan="9" class="py-12 text-center text-gray-500 font-sans">
-                    <i class="fa-solid fa-inbox text-3xl mb-2 block opacity-40"></i>
-                    Belum ada posisi terbuka saat ini
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- LIVE MT5 PREVIEW SCREEN (5 Cols) -->
-        <div class="lg:col-span-5 glass rounded-2xl border border-gray-800 overflow-hidden flex flex-col">
-          <div class="p-4 border-b border-gray-800 flex items-center justify-between">
-            <h3 class="font-bold text-sm text-gray-200 flex items-center gap-2">
-              <i class="fa-solid fa-display text-emerald-400"></i> Layar MT5 Chart & EA Live
-            </h3>
-            <div class="flex items-center gap-2">
-              <button onclick="refreshScreen()" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition flex items-center gap-1">
-                <i class="fa-solid fa-arrows-rotate"></i> Refresh
-              </button>
-              <button onclick="openFullImage()" class="px-2 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition" title="Perbesar Layar">
-                <i class="fa-solid fa-expand"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="p-4 flex-1 flex flex-col justify-center items-center bg-black/40">
-            <div class="relative w-full rounded-xl overflow-hidden border border-gray-800 bg-gray-950 flex items-center justify-center min-h-[220px]">
-              <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Live Screen" class="w-full h-auto object-contain cursor-pointer rounded-lg hover:opacity-95 transition" onclick="openFullImage()">
-              <div id="screenLoading" class="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center text-xs text-gray-300 hidden">
-                <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Mengambil screenshot live...
-              </div>
-            </div>
-            <p class="text-[11px] text-gray-500 mt-2 text-center">
-              Layar MT5 berjalan 24/7 di server. Gambar diperbarui secara real-time.
+            <h3 class="font-serif text-xl text-[#5d2a1a] font-normal">Target Profit Harian Telah Tercapai!</h3>
+            <p class="text-xs text-[#5d2a1a]/80 mt-0.5">
+              Robot otomatis menghentikan transaksi baru untuk mengunci perolehan profit hari ini.
             </p>
           </div>
         </div>
-
+        <button onclick="resumeTrading()" class="pill-btn-filled text-xs py-2 px-5">
+          Lanjutkan Trading Lagi →
+        </button>
       </div>
 
-      <!-- LOGS DRAWER -->
-      <div class="glass rounded-2xl border border-gray-800 overflow-hidden">
-        <div class="p-4 border-b border-gray-800 flex items-center justify-between flex-wrap gap-2">
-          <div class="flex items-center gap-3">
-            <h3 class="font-bold text-sm text-gray-200 flex items-center gap-2">
-              <i class="fa-solid fa-terminal text-purple-400"></i> Log Aktivitas Trading
-            </h3>
-            <!-- Tabs -->
-            <div class="flex items-center bg-gray-900 rounded-lg p-0.5 text-xs">
-              <button id="tabEa" onclick="switchLogTab('ea')" class="px-3 py-1 rounded-md bg-indigo-600 text-white font-medium">EA RoyalViento</button>
-              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-3 py-1 rounded-md text-gray-400 hover:text-white font-medium">Terminal MT5</button>
+      <!-- MAIN SPLIT: FLOATING PRODUCT ARTIFACTS (TABLE & LIVE SCREENSHOT) -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- ARTIFACT 1: LIVE POSITIONS TABLE (7 Cols) -->
+        <div class="lg:col-span-7 steep-artifact p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-4 border-b border-[#ececec] mb-4">
+              <div class="flex items-center gap-2.5">
+                <h3 class="font-serif text-2xl text-[#17191c] font-normal">Daftar Posisi Terbuka</h3>
+                <span id="posCountBadge" class="text-xs text-[#979799] font-mono">0 posisi</span>
+              </div>
+              <button onclick="fetchStatus()" class="pill-btn-subtle text-xs py-1 px-3" title="Perbarui Data">
+                <i class="fa-solid fa-rotate text-[10px]"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto min-h-[200px]">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="border-b border-[#ececec] text-[#979799] text-[11px] uppercase tracking-wider">
+                    <th class="py-2.5 px-2 font-medium">Tiket</th>
+                    <th class="py-2.5 px-2 font-medium">Symbol</th>
+                    <th class="py-2.5 px-2 font-medium">Tipe</th>
+                    <th class="py-2.5 px-2 font-medium">Lot</th>
+                    <th class="py-2.5 px-2 font-medium">Open Price</th>
+                    <th class="py-2.5 px-2 font-medium">Current</th>
+                    <th class="py-2.5 px-2 font-medium">SL</th>
+                    <th class="py-2.5 px-2 font-medium text-right">Profit ($)</th>
+                    <th class="py-2.5 px-2 font-medium text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="positionsTableBody" class="divide-y divide-[#f2f2f3] font-mono text-[13px]">
+                  <tr>
+                    <td colspan="9" class="py-12 text-center text-[#979799] font-sans">
+                      <div class="w-10 h-10 rounded-full bg-[#f2f2f3] text-[#777b86] flex items-center justify-center mx-auto mb-2 text-base">
+                        <i class="fa-regular fa-folder-open"></i>
+                      </div>
+                      Tidak ada posisi terbuka saat ini
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <button onclick="fetchLogs()" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition">
-            <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh Log
+
+          <div class="pt-4 border-t border-[#ececec] flex items-center justify-between text-xs text-[#979799]">
+            <span>Sinkronisasi otomatis setiap 2 detik via MQL5 WebBridge</span>
+            <button onclick="confirmCloseAll()" class="text-[#5d2a1a] hover:underline font-sans text-xs">
+              Tutup Semua Posisi
+            </button>
+          </div>
+        </div>
+
+        <!-- ARTIFACT 2: LIVE MT5 CHART & EA PREVIEW (5 Cols) -->
+        <div class="lg:col-span-5 steep-artifact p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-4 border-b border-[#ececec] mb-4">
+              <div>
+                <h3 class="font-serif text-2xl text-[#17191c] font-normal">Layar MT5 Live</h3>
+                <p class="text-xs text-[#979799] mt-0.5">Tampilan terminal grafik & panel EA</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="refreshScreen()" class="pill-btn-subtle text-xs py-1 px-3">
+                  <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+                  <span>Refresh</span>
+                </button>
+                <button onclick="openFullImage()" class="w-8 h-8 rounded-full border border-[#ececec] flex items-center justify-center text-[#17191c] hover:bg-[#f2f2f3] transition" title="Perbesar Layar">
+                  <i class="fa-solid fa-expand text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Screenshot Viewport -->
+            <div class="relative w-full rounded-[14px] overflow-hidden border border-[#ececec] bg-[#f2f2f3] flex items-center justify-center min-h-[220px] group">
+              <img id="mt5ScreenImg" src="/api/screenshot" alt="MT5 Live Screen" 
+                   class="w-full h-auto object-contain cursor-pointer transition group-hover:scale-[1.01]" 
+                   onclick="openFullImage()">
+              
+              <div id="screenLoading" class="absolute inset-0 bg-white/70 backdrop-blur-xs flex items-center justify-center text-xs text-[#17191c] hidden">
+                <i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Mengambil screenshot live...
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-[#ececec] text-center text-xs text-[#979799]">
+            Layar diperbarui otomatis setiap 5 detik · Klik gambar untuk zoom
+          </div>
+        </div>
+
+      </section>
+
+      <!-- LOGS SECTION (Mist Gray Card with White Monospace Drawer) -->
+      <section class="steep-card-neutral p-7 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <h3 class="font-serif text-2xl text-[#17191c] font-normal">Log Aktivitas Sistem</h3>
+            
+            <!-- Tab switches as quiet pills -->
+            <div class="inline-flex rounded-full bg-white p-1 border border-[#ececec] text-xs">
+              <button id="tabEa" onclick="switchLogTab('ea')" class="px-4 py-1 rounded-full bg-[#17191c] text-white font-medium transition">
+                EA RoyalViento
+              </button>
+              <button id="tabTerm" onclick="switchLogTab('terminal')" class="px-4 py-1 rounded-full text-[#777b86] hover:text-[#17191c] font-medium transition">
+                Terminal MT5
+              </button>
+            </div>
+          </div>
+
+          <button onclick="fetchLogs()" class="pill-btn-subtle text-xs bg-white border border-[#ececec]">
+            <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+            <span>Refresh Log</span>
           </button>
         </div>
 
-        <div class="p-4 bg-gray-950/70 font-mono text-[11px] h-48 overflow-y-auto leading-relaxed select-text" id="logContent">
-          <div class="text-gray-500 italic">Memuat log...</div>
+        <!-- Log Content Container (White artifact background for maximum readability) -->
+        <div class="bg-white rounded-[16px] p-5 border border-[#ececec] font-mono text-[12px] h-52 overflow-y-auto leading-relaxed select-text shadow-xs" id="logContent">
+          <div class="text-[#979799] italic">Memuat log aktivitas...</div>
         </div>
-      </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="pt-6 pb-12 border-t border-[#ececec] flex flex-wrap items-center justify-between text-xs text-[#979799] gap-4">
+        <div>
+          <span class="font-serif text-sm text-[#17191c]">RoyalViento</span> · MT5 Web Control System & Real-Time Monitoring
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/Aalfars/royalviento-mt5-dashboard" target="_blank" class="hover:text-[#17191c] transition flex items-center gap-1.5">
+            <i class="fa-brands fa-github text-sm"></i>
+            <span>GitHub Repository</span>
+          </a>
+          <span>Domain: <strong class="text-[#17191c]">trading.aranya.my.id</strong></span>
+        </div>
+      </footer>
 
     </main>
   </div>
 
-  <!-- TARGET MODAL -->
-  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
-    <div class="glass p-6 rounded-2xl max-w-sm w-full mx-4 border border-indigo-500/30">
+  <!-- TARGET MODAL (Steep Style Paper White Card) -->
+  <div id="targetModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/35 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-[24px] max-w-sm w-full p-7 shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ececec]">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-lg text-white flex items-center gap-2">
-          <i class="fa-solid fa-bullseye text-indigo-400"></i> Atur Target Harian
-        </h3>
-        <button onclick="closeTargetModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="font-serif text-2xl text-[#17191c] font-normal">Atur Target Harian</h3>
+        <button onclick="closeTargetModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-[#979799] hover:bg-[#f2f2f3] hover:text-[#17191c] transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
       </div>
-      <p class="text-xs text-gray-400 mb-4">
-        Jika profit hari ini mencapai angka ini, robot otomatis <strong>menutup posisi dan berhenti entry</strong> sampai besok atau Anda resume.
+
+      <p class="text-xs text-[#777b86] mb-5 leading-relaxed">
+        Saat total profit harian mencapai target ini, robot otomatis menutup semua posisi dan berhenti entry hingga sesi berikutnya.
       </p>
 
       <div class="mb-5">
-        <label class="block text-xs font-semibold text-gray-300 mb-1.5">Target Profit Harian (USD $)</label>
+        <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1.5 pl-1">Target Nominal (USD $)</label>
         <div class="relative">
-          <span class="absolute left-4 top-3 text-gray-400 text-base font-bold">$</span>
+          <span class="absolute left-4 top-3 text-[#979799] font-serif text-lg">$</span>
           <input type="number" step="1" min="1" id="inputTargetValue" placeholder="50.00"
-                 class="w-full pl-9 pr-4 py-2.5 bg-gray-900 border border-gray-700 rounded-xl focus:outline-none focus:border-indigo-500 text-white font-mono font-bold text-lg">
+                 class="steep-input w-full pl-8 font-mono text-xl font-medium">
         </div>
-        <div class="grid grid-cols-4 gap-2 mt-2">
-          <button onclick="setQuickTarget(25)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$25</button>
-          <button onclick="setQuickTarget(50)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$50</button>
-          <button onclick="setQuickTarget(100)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$100</button>
-          <button onclick="setQuickTarget(200)" class="py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-gray-300">$200</button>
+
+        <!-- Quick preset buttons as ghost pills -->
+        <div class="grid grid-cols-4 gap-2 mt-3">
+          <button onclick="setQuickTarget(25)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$25</button>
+          <button onclick="setQuickTarget(50)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$50</button>
+          <button onclick="setQuickTarget(100)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$100</button>
+          <button onclick="setQuickTarget(200)" class="py-1.5 rounded-full border border-[#ececec] hover:border-[#17191c] text-xs font-mono transition">$200</button>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2.5">
-        <button onclick="closeTargetModal()" class="px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-xs font-medium text-gray-300">Batal</button>
-        <button onclick="saveDailyTarget()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-lg">Simpan Target</button>
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="closeTargetModal()" class="pill-btn-ghost text-xs py-2 px-4 border-[#ececec] text-[#777b86]">
+          Batal
+        </button>
+        <button onclick="saveDailyTarget()" class="pill-btn-filled text-xs py-2 px-5">
+          Simpan Target →
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
-  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
-    <div class="glass p-6 rounded-2xl max-w-sm w-full mx-4 border border-gray-700">
+  <!-- SETTINGS MODAL (Steep Style Paper White Card) -->
+  <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/35 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-[24px] max-w-sm w-full p-7 shadow-[0_20px_50px_rgba(0,0,0,0.12)] border border-[#ececec]">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-lg text-white flex items-center gap-2">
-          <i class="fa-solid fa-gear text-gray-400"></i> Pengaturan
-        </h3>
-        <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="font-serif text-2xl text-[#17191c] font-normal">Pengaturan</h3>
+        <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full flex items-center justify-center text-[#979799] hover:bg-[#f2f2f3] hover:text-[#17191c] transition">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
       </div>
 
-      <div class="space-y-4">
+      <div class="space-y-5">
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Ganti PIN Keamanan</label>
+          <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1.5 pl-1">Ganti PIN Keamanan</label>
           <input type="password" id="inputNewPin" placeholder="PIN Baru (minimal 4 digit)"
-                 class="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
-          <button onclick="changePin()" class="mt-2 w-full py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-medium text-gray-300 transition">
+                 class="steep-input w-full text-sm font-mono">
+          <button onclick="changePin()" class="pill-btn-ghost w-full mt-2.5 text-xs py-2">
             Simpan PIN Baru
           </button>
         </div>
 
-        <div class="border-t border-gray-800 pt-3">
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Reset Statistik Harian</label>
-          <p class="text-[11px] text-gray-400 mb-2">Mengatur ulang baseline profit hari ini kembali ke nol.</p>
-          <button onclick="resetDailyStats()" class="w-full py-2 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/30 text-rose-300 rounded-xl text-xs font-medium transition">
+        <div class="border-t border-[#ececec] pt-4">
+          <label class="block text-xs uppercase tracking-wider text-[#979799] font-medium mb-1 pl-1">Reset Statistik Harian</label>
+          <p class="text-xs text-[#777b86] mb-3">Mengatur ulang baseline profit hari ini kembali ke 0.00.</p>
+          <button onclick="resetDailyStats()" class="w-full py-2.5 rounded-full bg-[#fbe1d1] text-[#5d2a1a] hover:bg-[#f7d3bd] font-medium text-xs transition">
             Reset Profit Hari Ini
           </button>
         </div>
@@ -374,12 +652,12 @@
     </div>
   </div>
 
-  <!-- IMAGE ZOOM MODAL -->
-  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md hidden p-4" onclick="closeFullImage()">
-    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-full object-contain rounded-xl shadow-2xl border border-gray-800">
+  <!-- FULLSCREEN IMAGE ZOOM MODAL -->
+  <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#17191c]/80 backdrop-blur-sm p-4 hidden" onclick="closeFullImage()">
+    <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[92vh] object-contain rounded-[16px] shadow-2xl border border-white/20">
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- JAVASCRIPT LOGIC & API HOOKS -->
   <script>
     let currentLogTab = 'ea';
     let eaLogsCache = [];
@@ -388,7 +666,6 @@
     let screenInterval = null;
     let isPaused = false;
 
-    // Check auth on load
     window.addEventListener('DOMContentLoaded', () => {
       checkAuth();
     });
@@ -438,9 +715,7 @@
       fetchLogs();
       refreshScreen();
 
-      // Poll status every 2 seconds
       if (!statusInterval) statusInterval = setInterval(fetchStatus, 2000);
-      // Auto refresh screen every 5 seconds
       if (!screenInterval) screenInterval = setInterval(refreshScreen, 5000);
     }
 
@@ -461,31 +736,23 @@
     function renderStatus(data) {
       if (!data) return;
 
-      // Header info
-      document.getElementById('headerAccount').textContent = `Acc: ${data.account || '---'}`;
-      document.getElementById('headerServer').textContent = `${data.server || 'MetaQuotes-Demo'}`;
+      // Header labels
+      document.getElementById('headerAccount').textContent = `Account: ${data.account || '---'}`;
+      document.getElementById('headerServer').textContent = `Server: ${data.server || 'MetaQuotes-Demo'}`;
 
-      // MT5 Status badge
+      // MT5 Service badge
       const isRunning = data.mt5_running;
       document.getElementById('badgeMt5').textContent = isRunning ? "ACTIVE" : "STOPPED";
-      document.getElementById('badgeMt5').className = isRunning ? "text-emerald-400" : "text-rose-400";
-      document.getElementById('dotMt5').className = isRunning ? "w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-dot" : "w-2.5 h-2.5 rounded-full bg-rose-500";
+      document.getElementById('badgeMt5').className = isRunning ? "font-medium text-[#17191c]" : "font-medium text-[#5d2a1a]";
+      document.getElementById('dotMt5').className = isRunning ? "w-2 h-2 rounded-full bg-[#17191c]" : "w-2 h-2 rounded-full bg-[#5d2a1a]";
 
       // Algo Trading badge
       const isAlgo = data.algo_trading;
       document.getElementById('badgeAlgo').textContent = isAlgo ? "ENABLED" : "DISABLED";
-      document.getElementById('badgeAlgo').className = isAlgo ? "text-emerald-400" : "text-rose-400";
-      document.getElementById('dotAlgo').className = isAlgo ? "w-2.5 h-2.5 rounded-full bg-emerald-500" : "w-2.5 h-2.5 rounded-full bg-rose-500";
+      document.getElementById('badgeAlgo').className = isAlgo ? "font-medium text-[#17191c]" : "font-medium text-[#777b86]";
+      document.getElementById('dotAlgo').className = isAlgo ? "w-2 h-2 rounded-full bg-[#17191c]" : "w-2 h-2 rounded-full bg-[#979799]";
 
-      // Cloudflare badge
-      if (data.cf_url) {
-        document.getElementById('cfBadgeContainer').classList.remove('hidden');
-        document.getElementById('cfBadgeContainer').classList.add('flex');
-        document.getElementById('cfUrlText').textContent = data.cf_url.replace("https://", "");
-        window.cfUrl = data.cf_url;
-      }
-
-      // Metric Cards
+      // Metrics
       document.getElementById('valBalance').textContent = `$${formatNum(data.balance || 0)}`;
       document.getElementById('valEquity').textContent = `$${formatNum(data.equity || 0)}`;
       document.getElementById('valFreeMargin').textContent = `$${formatNum(data.free_margin || 0)}`;
@@ -494,20 +761,27 @@
       const floating = data.floating_profit || 0;
       const floatEl = document.getElementById('valFloating');
       floatEl.textContent = `${floating >= 0 ? '+' : ''}$${formatNum(floating)}`;
-      floatEl.className = `font-bold ${floating >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+      floatEl.className = `font-mono font-medium ${floating >= 0 ? 'text-[#17191c]' : 'text-[#5d2a1a]'}`;
 
-      // Daily Profit & Target
+      // Daily Profit & Target (The Peach Spotlight Card)
       const dailyProfit = data.daily_profit || 0;
       const targetUSD = data.daily_target_usd || data.configured_target_usd || 50;
       const profitEl = document.getElementById('valDailyProfit');
       profitEl.textContent = `${dailyProfit >= 0 ? '+' : ''}$${formatNum(dailyProfit)}`;
-      profitEl.className = `text-2xl font-black ${dailyProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
 
       document.getElementById('targetBadge').textContent = `TARGET: $${formatNum(targetUSD)}`;
       
       const pct = targetUSD > 0 ? Math.min(100, Math.max(0, (dailyProfit / targetUSD) * 100)) : 0;
       document.getElementById('valTargetPercent').textContent = `(${pct.toFixed(0)}%)`;
       document.getElementById('targetProgressBar').style.width = `${pct}%`;
+      
+      const remain = targetUSD - dailyProfit;
+      const remainEl = document.getElementById('targetRemainingText');
+      if (remain <= 0) {
+        remainEl.textContent = "Target tercapai";
+      } else {
+        remainEl.textContent = `$${formatNum(remain)} lagi menuju target`;
+      }
 
       // Target Hit Banner
       const hitBanner = document.getElementById('targetHitBanner');
@@ -519,19 +793,19 @@
 
       // Positions Stats
       document.getElementById('valPositionsTotal').textContent = data.positions_total || 0;
-      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} Posisi`;
+      document.getElementById('posCountBadge').textContent = `${data.positions_total || 0} posisi terbuka`;
       document.getElementById('valBuyLots').textContent = `${(data.buy_lots || 0).toFixed(2)} L`;
       document.getElementById('valSellLots').textContent = `${(data.sell_lots || 0).toFixed(2)} L`;
 
       // Pause / Resume state
       isPaused = data.web_paused;
-      const pauseBtn = document.getElementById('btnPauseResume');
+      const pauseIcon = document.getElementById('iconPauseResume');
       const pauseText = document.getElementById('textPauseResume');
       if (isPaused) {
-        pauseBtn.className = "px-4 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition flex items-center gap-2";
+        pauseIcon.className = "fa-solid fa-play text-xs";
         pauseText.textContent = "Resume EA Trading";
       } else {
-        pauseBtn.className = "px-4 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold transition flex items-center gap-2";
+        pauseIcon.className = "fa-solid fa-pause text-xs";
         pauseText.textContent = "Pause EA Trading";
       }
 
@@ -544,9 +818,11 @@
       if (!positions || positions.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="9" class="py-12 text-center text-gray-500 font-sans">
-              <i class="fa-solid fa-inbox text-3xl mb-2 block opacity-40"></i>
-              Belum ada posisi terbuka saat ini
+            <td colspan="9" class="py-12 text-center text-[#979799] font-sans">
+              <div class="w-10 h-10 rounded-full bg-[#f2f2f3] text-[#777b86] flex items-center justify-center mx-auto mb-2 text-base">
+                <i class="fa-regular fa-folder-open"></i>
+              </div>
+              Tidak ada posisi terbuka saat ini
             </td>
           </tr>
         `;
@@ -557,24 +833,24 @@
       positions.forEach(p => {
         const isBuy = p.type === 'BUY';
         const typeBadge = isBuy
-          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">BUY</span>`
-          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">SELL</span>`;
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-medium bg-[#f2f2f3] text-[#17191c]">BUY</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-sans font-medium bg-[#fbe1d1] text-[#5d2a1a]">SELL</span>`;
         
-        const pColor = p.profit >= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold';
+        const pColor = p.profit >= 0 ? 'text-[#17191c]' : 'text-[#5d2a1a] font-semibold';
 
         rows += `
-          <tr class="hover:bg-gray-800/40 transition">
-            <td class="py-3 px-4 text-gray-400">#${p.ticket}</td>
-            <td class="py-3 px-3 font-semibold text-gray-200">${p.symbol}</td>
-            <td class="py-3 px-3">${typeBadge}</td>
-            <td class="py-3 px-3 text-gray-200">${p.lots.toFixed(2)}</td>
-            <td class="py-3 px-3 text-gray-300">${p.open_price.toFixed(2)}</td>
-            <td class="py-3 px-3 text-gray-300">${p.current_price.toFixed(2)}</td>
-            <td class="py-3 px-3 text-gray-400">${p.sl > 0 ? p.sl.toFixed(2) : '-'}</td>
-            <td class="py-3 px-3 text-right ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</td>
-            <td class="py-3 px-4 text-center">
-              <button onclick="closeSingleTicket(${p.ticket})" class="px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 text-[10px] transition" title="Tutup Posisi Ini">
-                <i class="fa-solid fa-xmark"></i>
+          <tr class="hover:bg-[#fafafb] transition">
+            <td class="py-3 px-2 text-[#777b86]">#${p.ticket}</td>
+            <td class="py-3 px-2 font-medium text-[#17191c]">${p.symbol}</td>
+            <td class="py-3 px-2">${typeBadge}</td>
+            <td class="py-3 px-2 text-[#17191c]">${p.lots.toFixed(2)}</td>
+            <td class="py-3 px-2 text-[#777b86]">${p.open_price.toFixed(2)}</td>
+            <td class="py-3 px-2 text-[#17191c]">${p.current_price.toFixed(2)}</td>
+            <td class="py-3 px-2 text-[#979799]">${p.sl > 0 ? p.sl.toFixed(2) : '—'}</td>
+            <td class="py-3 px-2 text-right ${pColor}">${p.profit >= 0 ? '+' : ''}$${p.profit.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center">
+              <button onclick="closeSingleTicket(${p.ticket})" class="w-6 h-6 rounded-full border border-[#ececec] text-[#777b86] hover:bg-[#fbe1d1] hover:text-[#5d2a1a] transition" title="Tutup Posisi Ini">
+                <i class="fa-solid fa-xmark text-[10px]"></i>
               </button>
             </td>
           </tr>
@@ -590,7 +866,6 @@
     // Screen Refresh
     function refreshScreen() {
       const img = document.getElementById('mt5ScreenImg');
-      const loader = document.getElementById('screenLoading');
       const newSrc = `/api/screenshot?t=${new Date().getTime()}`;
       img.src = newSrc;
     }
@@ -605,7 +880,7 @@
       document.getElementById('imageModal').classList.add('hidden');
     }
 
-    // Actions
+    // Commands
     async function togglePauseResume() {
       const action = isPaused ? "resume" : "pause";
       try {
@@ -701,7 +976,7 @@
       }
     }
 
-    // Target Modal
+    // Target Modal Functions
     function openTargetModal() {
       document.getElementById('targetModal').classList.remove('hidden');
     }
@@ -732,7 +1007,7 @@
       }
     }
 
-    // Settings Modal
+    // Settings Modal Functions
     function openSettingsModal() {
       document.getElementById('settingsModal').classList.remove('hidden');
     }
@@ -776,7 +1051,7 @@
       }
     }
 
-    // Logs Viewer
+    // Logs Functions
     async function fetchLogs() {
       try {
         const res = await fetch('/api/logs');
@@ -794,11 +1069,11 @@
       const bEa = document.getElementById('tabEa');
       const bTerm = document.getElementById('tabTerm');
       if (tab === 'ea') {
-        bEa.className = "px-3 py-1 rounded-md bg-indigo-600 text-white font-medium";
-        bTerm.className = "px-3 py-1 rounded-md text-gray-400 hover:text-white font-medium";
+        bEa.className = "px-4 py-1 rounded-full bg-[#17191c] text-white font-medium transition";
+        bTerm.className = "px-4 py-1 rounded-full text-[#777b86] hover:text-[#17191c] font-medium transition";
       } else {
-        bTerm.className = "px-3 py-1 rounded-md bg-indigo-600 text-white font-medium";
-        bEa.className = "px-3 py-1 rounded-md text-gray-400 hover:text-white font-medium";
+        bTerm.className = "px-4 py-1 rounded-full bg-[#17191c] text-white font-medium transition";
+        bEa.className = "px-4 py-1 rounded-full text-[#777b86] hover:text-[#17191c] font-medium transition";
       }
       renderLogs();
     }
@@ -807,28 +1082,21 @@
       const container = document.getElementById('logContent');
       const lines = currentLogTab === 'ea' ? eaLogsCache : termLogsCache;
       if (!lines || lines.length === 0) {
-        container.innerHTML = '<div class="text-gray-500 italic">Belum ada data log...</div>';
+        container.innerHTML = '<div class="text-[#979799] italic">Belum ada data log...</div>';
         return;
       }
       container.innerHTML = lines.map(l => {
-        let col = "text-gray-300";
-        if (l.includes("Order") || l.includes("deal") || l.includes("buy") || l.includes("sell")) col = "text-emerald-400";
-        if (l.includes("GAGAL") || l.includes("error") || l.includes("disabled")) col = "text-rose-400";
-        if (l.includes("TARGET")) col = "text-amber-300 font-bold";
-        return `<div class="${col}">${escapeHtml(l)}</div>`;
+        let col = "text-[#17191c]";
+        if (l.includes("Order") || l.includes("deal") || l.includes("buy") || l.includes("sell")) col = "text-[#17191c] font-medium";
+        if (l.includes("GAGAL") || l.includes("error") || l.includes("disabled")) col = "text-[#5d2a1a] font-medium";
+        if (l.includes("TARGET")) col = "text-[#5d2a1a] font-semibold bg-[#fbe1d1]/50 px-1 rounded";
+        return `<div class="${col} py-0.5">${escapeHtml(l)}</div>`;
       }).join('');
       container.scrollTop = container.scrollHeight;
     }
 
     function escapeHtml(text) {
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    function copyCfUrl() {
-      if (window.cfUrl) {
-        navigator.clipboard.writeText(window.cfUrl);
-        alert("URL Cloudflare disalin: " + window.cfUrl);
-      }
     }
   </script>
 </body>
