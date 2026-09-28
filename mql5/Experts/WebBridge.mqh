@@ -140,6 +140,8 @@ void WebBridge_ExportStatus()
       "  \"daily_loss_hit\": %s,\n"
       "  \"account_locked\": %s,\n"
       "  \"web_paused\": %s,\n"
+      "  \"trading_mode\": \"%s\",\n"
+      "  \"entry_block_reason\": \"%s\",\n"
       "  \"algo_trading\": %s,\n"
       "  \"buy_count\": %d,\n"
       "  \"buy_lots\": %.2f,\n"
@@ -160,6 +162,8 @@ void WebBridge_ExportStatus()
       (g_dailyLossHit ? "true" : "false"),
       (g_accountLocked ? "true" : "false"),
       (g_webPaused ? "true" : "false"),
+      (g_webMTFEnabled ? "safe" : "scalper"),
+      g_entryBlockReason,
       (TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) ? "true" : "false"),
       buyCount, totalBuyLots, sellCount, totalSellLots,
       totalPos, posJson,
