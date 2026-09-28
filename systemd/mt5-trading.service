@@ -8,7 +8,8 @@ User=root
 WorkingDirectory=/root
 ExecStart=/bin/bash /root/start_mt5_trading.sh
 Restart=always
-RestartSec=10
+RestartSec=5
+TimeoutStopSec=5
 
 [Install]
 WantedBy=multi-user.target

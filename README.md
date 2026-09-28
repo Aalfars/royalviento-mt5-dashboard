@@ -16,10 +16,12 @@ Dashboard ini mengadopsi estetika editorial **Steep**:
 
 ## 🌟 Fitur Utama
 
+- **🔄 Multi-Account Switcher (Real & Demo):** Beralih akun trading secara instan langsung dari Web Dashboard (misal: Exness Real, Exness Demo/Trial, MetaQuotes Demo). Sistem secara otomatis memperbarui startup `.ini`, me-restart engine MT5 Wine, dan menghubungkan telemetry akun terpilih secara seamless.
 - **🎯 Target Profit Harian ($):** Atur target harian dalam USD (misal: $25, $50, $100). Saat target tercapai, robot otomatis menutup semua posisi dan menghentikan trading harian (*auto-stop*).
 - **⏯️ Kontrol Trading Cepat:**
   - Pause / Resume EA Trading
   - Toggle tombol Algo Trading MT5 secara langsung via remote `xdotool`
+  - Mode Switcher (Mode Aman MTF H4/M5 vs Mode Scalper M1 Aktif)
   - Emergency Close All (Tutup semua posisi seketika)
   - Close Single Ticket (Tutup order individual dari tabel live)
   - Reset statistik profit harian ke nol

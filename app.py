@@ -13,6 +13,10 @@ STATUS_FILE = "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Files/web_sta
 COMMAND_FILE = "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Files/web_command.json"
 SCREENSHOT_PATH = "/tmp/mt5_web_preview.png"
 CLOUDFLARE_LOG = "/root/dashboard/cloudflared.log"
+START_INI_PATHS = [
+    "/root/.wine/drive_c/start.ini",
+    "/root/.wine/drive_c/Program Files/MetaTrader 5/start.ini"
+]
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
@@ -21,11 +25,49 @@ def load_config():
                 return json.load(f)
         except Exception:
             pass
-    return {"pin": "1234", "daily_target_usd": 50.0}
+    return {"pin": "1234", "daily_target_usd": 50.0, "accounts": [], "active_account_id": ""}
 
 def save_config(cfg):
     with open(CONFIG_FILE, "w") as f:
         json.dump(cfg, f, indent=2)
+
+def update_start_ini(account_info):
+    """Update start.ini files for MT5 launch"""
+    login = account_info.get("login", "")
+    password = account_info.get("password", "")
+    server = account_info.get("server", "")
+    symbol = account_info.get("symbol", "XAUUSDm")
+
+    ini_content = f"""[Common]
+Login={login}
+Password={password}
+Server={server}
+ProxyEnable=0
+CertInstall=0
+NewsEnable=0
+
+[Charts]
+ProfileLast=Default
+MaxBars=100000
+
+[Experts]
+AllowDllImport=1
+Enabled=1
+Account=0
+Profile=0
+
+[StartUp]
+Expert=RoyalQuantum_EA_v2.36_SingleEntryHistory
+ExpertParameters=RoyalViento_XAUUSD_M1_1JT_24H_CONTROLLED_MARTINGALE.set
+Symbol={symbol}
+Period=M1
+"""
+    for path in START_INI_PATHS:
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(ini_content)
+        except Exception as e:
+            print(f"Error writing {path}: {e}")
 
 def is_mt5_running():
     try:
@@ -86,6 +128,14 @@ def get_status():
     status_data["mt5_running"] = running
     status_data["configured_target_usd"] = cfg.get("daily_target_usd", 50.0)
     status_data["cf_url"] = get_cloudflare_url()
+
+    # Active account meta
+    active_id = str(cfg.get("active_account_id", ""))
+    status_data["active_account_id"] = active_id
+    active_acc = next((a for a in cfg.get("accounts", []) if str(a.get("id")) == active_id), None)
+    if active_acc:
+        status_data["account_name"] = active_acc.get("name")
+        status_data["account_type"] = active_acc.get("type", "demo")
     
     # System stats
     try:
@@ -95,6 +145,129 @@ def get_status():
         status_data["sys_load"] = "N/A"
 
     return jsonify(status_data)
+
+@app.route("/api/accounts", methods=["GET"])
+def get_accounts():
+    if not session.get("authenticated", False):
+        return jsonify({"authenticated": False}), 401
+
+    cfg = load_config()
+    accounts = cfg.get("accounts", [])
+    active_id = str(cfg.get("active_account_id", ""))
+
+    safe_accounts = []
+    for acc in accounts:
+        safe_accounts.append({
+            "id": str(acc.get("id")),
+            "name": acc.get("name", ""),
+            "login": acc.get("login", ""),
+            "server": acc.get("server", ""),
+            "type": acc.get("type", "demo"),
+            "symbol": acc.get("symbol", "XAUUSDm")
+        })
+
+    return jsonify({
+        "active_account_id": active_id,
+        "accounts": safe_accounts
+    })
+
+@app.route("/api/account/switch", methods=["POST"])
+def switch_account():
+    if not session.get("authenticated", False):
+        return jsonify({"authenticated": False}), 401
+
+    data = request.json or {}
+    target_id = str(data.get("account_id", "")).strip()
+
+    cfg = load_config()
+    accounts = cfg.get("accounts", [])
+    target_acc = next((a for a in accounts if str(a.get("id")) == target_id), None)
+
+    if not target_acc:
+        return jsonify({"success": False, "message": "Akun tidak ditemukan"}), 404
+
+    # 1. Update start.ini
+    update_start_ini(target_acc)
+
+    # 2. Update config.json
+    cfg["active_account_id"] = target_id
+    save_config(cfg)
+
+    # 3. Remove old status file
+    try:
+        if os.path.exists(STATUS_FILE):
+            os.remove(STATUS_FILE)
+    except Exception:
+        pass
+
+    # 4. Restart mt5-trading service
+    try:
+        subprocess.Popen(["systemctl", "restart", "mt5-trading"])
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Gagal me-restart MT5: {str(e)}"}), 500
+
+    return jsonify({
+        "success": True,
+        "message": f"Beralih ke {target_acc.get('name')} ({target_acc.get('server')}). MT5 sedang dimuat ulang...",
+        "account": {
+            "id": target_id,
+            "name": target_acc.get("name"),
+            "server": target_acc.get("server"),
+            "type": target_acc.get("type", "demo")
+        }
+    })
+
+@app.route("/api/account/save", methods=["POST"])
+def save_account():
+    if not session.get("authenticated", False):
+        return jsonify({"authenticated": False}), 401
+
+    data = request.json or {}
+    acc_id = str(data.get("id", "")).strip()
+    name = str(data.get("name", "")).strip()
+    login = data.get("login")
+    password = str(data.get("password", "")).strip()
+    server = str(data.get("server", "")).strip()
+    acc_type = str(data.get("type", "demo")).lower().strip()
+    symbol = str(data.get("symbol", "XAUUSDm")).strip()
+
+    if not name or not login or not server:
+        return jsonify({"success": False, "message": "Nama, login, dan server wajib diisi"}), 400
+
+    try:
+        login = int(login)
+    except Exception:
+        pass
+
+    cfg = load_config()
+    accounts = cfg.get("accounts", [])
+
+    existing = next((a for a in accounts if str(a.get("id")) == acc_id), None)
+    if existing:
+        existing["name"] = name
+        existing["login"] = login
+        if password:
+            existing["password"] = password
+        existing["server"] = server
+        existing["type"] = acc_type
+        existing["symbol"] = symbol
+    else:
+        if not password:
+            return jsonify({"success": False, "message": "Password wajib diisi untuk akun baru"}), 400
+        new_id = acc_id if acc_id else str(login)
+        accounts.append({
+            "id": new_id,
+            "name": name,
+            "login": login,
+            "password": password,
+            "server": server,
+            "type": acc_type,
+            "symbol": symbol
+        })
+
+    cfg["accounts"] = accounts
+    save_config(cfg)
+    return jsonify({"success": True, "message": "Data akun berhasil disimpan"})
 
 @app.route("/api/command", methods=["POST"])
 def send_command():
@@ -140,9 +313,16 @@ def send_command():
             json.dump({"action": "reset_daily"}, f)
         return jsonify({"success": True, "message": "Statistik profit harian di-reset ke 0"})
 
+    elif action == "set_mode":
+        mode = data.get("mode", "scalper")
+        with open(COMMAND_FILE, "w") as f:
+            json.dump({"action": "set_mode", "mode": mode}, f)
+        mode_label = "Mode Aman (MTF H4/M5)" if mode == "safe" else "Mode Scalper M1 (Aktif)"
+        return jsonify({"success": True, "message": f"Mode trading diubah ke: {mode_label}"})
+
     elif action == "toggle_algo":
         try:
-            subprocess.run("export DISPLAY=:99 && xdotool mousemove --sync 350 70 click 1", shell=True, timeout=5)
+            subprocess.run("export DISPLAY=:99 && xdotool key ctrl+e", shell=True, timeout=5)
             return jsonify({"success": True, "message": "Tombol Algo Trading di-toggle!"})
         except Exception as e:
             return jsonify({"success": False, "message": str(e)}), 500

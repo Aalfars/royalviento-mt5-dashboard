@@ -338,7 +338,7 @@
 
         <!-- Center: Live Telemetry Metadata (Desktop) -->
         <div class="hidden md:flex items-center gap-4 font-mono text-xs text-[#a2a2a2]">
-          <span id="headerAccount">ACC: 10012687831</span>
+          <span id="headerAccount" onclick="openAccountModal()" class="cursor-pointer hover:text-white transition flex items-center gap-1" title="Klik untuk Ganti Akun">ACC: 268028163 <i class="fa-solid fa-arrows-rotate text-[8px] text-[#ff6436]"></i></span>
           <span class="text-[#3c3a3e]">//</span>
           <span id="headerServer">SRV: MetaQuotes-Demo</span>
           <span class="text-[#3c3a3e]">//</span>
@@ -350,6 +350,14 @@
 
         <!-- Right: Status Pills & Action Badges -->
         <div class="flex items-center gap-2 sm:gap-2.5">
+          <!-- Account Switcher Pill -->
+          <button onclick="openAccountModal()" class="pill-nav hover:border-white transition flex items-center gap-1.5 cursor-pointer" title="Klik untuk Ganti Akun Trading">
+            <i class="fa-solid fa-user-shield text-[10px] text-[#ff6436]"></i>
+            <span id="navAccountBadge" class="bg-[#ff6436] text-black font-bold text-[9px] px-1.5 py-0.5 rounded uppercase">REAL</span>
+            <span id="navAccountName" class="text-white font-semibold text-[11px] sm:text-xs">Exness Real 39</span>
+            <i class="fa-solid fa-chevron-down text-[8px] text-[#7b7a7c] ml-0.5"></i>
+          </button>
+
           <!-- MT5 Service Status -->
           <div class="pill-nav" title="Status Service MT5 Wine">
             <span class="w-2 h-2 rounded-full bg-[#ff6436]" id="dotMt5"></span>
@@ -363,6 +371,14 @@
             <span class="text-[#7b7a7c] hidden xs:inline">ALGO:</span>
             <span id="badgeAlgo" class="text-white font-semibold">ON</span>
             <i class="fa-solid fa-power-off text-[9px] text-[#ff6436] ml-0.5"></i>
+          </button>
+
+          <!-- Trading Mode Toggle Pill -->
+          <button onclick="toggleTradingMode()" class="pill-nav hover:border-[#ff6436]" title="Klik untuk Ganti Mode Trading (Aman MTF vs Scalper M1)">
+            <span class="w-2 h-2 rounded-full bg-[#ff6436]" id="dotMode"></span>
+            <span class="text-[#7b7a7c] hidden xs:inline">MODE:</span>
+            <span id="badgeMode" class="text-white font-semibold">SCALPER M1</span>
+            <i class="fa-solid fa-arrows-rotate text-[9px] text-[#ff6436] ml-0.5"></i>
           </button>
 
           <!-- Domain Host (Desktop) -->
@@ -380,13 +396,15 @@
 
       <!-- MOBILE TELEMETRY SUB-BAR (Visible only on mobile screens) -->
       <div class="md:hidden border-t border-[#222224] bg-[#121214] px-4 py-1.5 flex items-center justify-between font-mono text-[10px] text-[#7b7a7c] overflow-x-auto whitespace-nowrap gap-3">
-        <span id="headerAccountMobile" class="text-white font-medium">ACC: 10012687831</span>
+        <span id="headerAccountMobile" class="text-white font-medium cursor-pointer hover:underline flex items-center gap-1" onclick="openAccountModal()">ACC: 268028163 <i class="fa-solid fa-arrows-rotate text-[8px] text-[#ff6436]"></i></span>
         <span>•</span>
         <span id="headerServerMobile">DEMO</span>
         <span>•</span>
         <span class="flex items-center gap-1 text-white">
           <span class="ember-dot"></span> SG ~1MS
         </span>
+        <span>•</span>
+        <span id="headerModeMobile" class="text-[#ff6436] font-medium" onclick="toggleTradingMode()">SCALPER M1</span>
         <span>•</span>
         <span>trading.aranya.my.id</span>
       </div>
@@ -420,6 +438,17 @@
             <button id="btnPauseResume" onclick="togglePauseResume()" class="pill-action-ember w-full sm:w-auto">
               <i class="fa-solid fa-pause text-xs" id="iconPauseResume"></i>
               <span id="textPauseResume">PAUSE EA</span>
+            </button>
+
+            <!-- Mode Switch Button -->
+            <button id="btnTradingMode" onclick="toggleTradingMode()" class="pill-action-ghost w-full sm:w-auto hover:border-[#ff6436]" title="Ganti Mode Trading (Aman MTF vs Scalper M1)">
+              <i class="fa-solid fa-bolt text-xs text-[#ff6436]" id="iconTradingMode"></i>
+              <span id="textTradingMode">MODE: SCALPER M1</span>
+            </button>
+
+            <button onclick="openAccountModal()" class="pill-action-ghost w-full sm:w-auto hover:border-white" title="Ganti Akun Trading">
+              <i class="fa-solid fa-users text-xs text-[#ff6436]"></i>
+              <span id="btnAccountText">GANTI AKUN</span>
             </button>
 
             <button onclick="openTargetModal()" class="pill-action-white w-full sm:w-auto">
@@ -833,6 +862,93 @@
     </div>
   </div>
 
+  <!-- ACCOUNT SWITCHER MODAL -->
+  <div id="accountModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-4 hidden">
+    <div class="bg-[#161616] border border-[#3c3a3e] max-w-lg w-full p-5 sm:p-7 text-left shadow-2xl relative max-h-[92vh] flex flex-col">
+      <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#2a2a2c]">
+        <div class="flex items-center gap-2.5">
+          <span class="w-2.5 h-2.5 bg-[#ff6436]"></span>
+          <h3 class="font-display text-xl sm:text-2xl text-white tracking-wider">PILIH AKUN TRADING</h3>
+        </div>
+        <button onclick="closeAccountModal()" class="text-[#7b7a7c] hover:text-white font-mono text-sm p-1">
+          [✕]
+        </button>
+      </div>
+
+      <p class="font-mono text-[11px] text-[#a2a2a2] mb-3 leading-relaxed">
+        PILIH AKUN METATRADER 5 AKTIF. KONEKSI DAN PROSES EA AKAN DIHUBUNGKAN SECARA OTOMATIS.
+      </p>
+
+      <!-- Switching Overlay -->
+      <div id="accountSwitchingBanner" class="hidden mb-3 p-3 bg-[#111113] border border-[#ff6436] font-mono text-xs text-center space-y-1.5 animate-pulse">
+        <div class="flex items-center justify-center gap-2 text-white font-semibold">
+          <i class="fa-solid fa-arrows-rotate fa-spin text-[#ff6436]"></i>
+          <span id="accountSwitchingText">PROSES BERGANTI AKUN...</span>
+        </div>
+        <p class="text-[10px] text-[#a2a2a2]">Restarting MT5 Wine engine & connecting to broker access point (~5-10 detik)...</p>
+      </div>
+
+      <!-- Accounts List Container -->
+      <div id="accountsListContainer" class="space-y-2.5 overflow-y-auto pr-1 flex-1 max-h-[340px] mb-3 select-none">
+        <div class="text-[#7b7a7c] font-mono text-xs text-center py-6">Memuat daftar akun...</div>
+      </div>
+
+      <!-- Add Account Toggle / Form -->
+      <div id="addAccountForm" class="hidden border-t border-[#2a2a2c] pt-3 space-y-2.5 mb-2">
+        <div class="font-mono text-[10px] text-[#ff6436] font-semibold tracking-wider flex items-center gap-1.5 uppercase">
+          <i class="fa-solid fa-plus-circle"></i> Tambah Akun Baru
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[9px] text-[#7b7a7c] mb-1">NAMA AKUN</label>
+            <input type="text" id="newAccName" placeholder="Ex: Exness Real 39" class="brutalist-input w-full text-xs font-mono py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[9px] text-[#7b7a7c] mb-1">TIPE</label>
+            <select id="newAccType" class="brutalist-input w-full text-xs font-mono py-2 bg-[#1a1a1c] text-white">
+              <option value="real">REAL ACCOUNT</option>
+              <option value="demo">DEMO ACCOUNT</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[9px] text-[#7b7a7c] mb-1">LOGIN ID</label>
+            <input type="number" id="newAccLogin" placeholder="268028163" class="brutalist-input w-full text-xs font-mono py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[9px] text-[#7b7a7c] mb-1">PASSWORD</label>
+            <input type="password" id="newAccPassword" placeholder="••••••••" class="brutalist-input w-full text-xs font-mono py-2">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-mono text-[9px] text-[#7b7a7c] mb-1">SERVER BROKER</label>
+            <input type="text" id="newAccServer" placeholder="Exness-MT5Real39" class="brutalist-input w-full text-xs font-mono py-2">
+          </div>
+          <div>
+            <label class="block font-mono text-[9px] text-[#7b7a7c] mb-1">SYMBOL CHART</label>
+            <input type="text" id="newAccSymbol" placeholder="XAUUSDm / XAUUSD" value="XAUUSDm" class="brutalist-input w-full text-xs font-mono py-2">
+          </div>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button onclick="toggleAddAccountForm(false)" class="pill-action-ghost text-xs py-1.5 px-3">BATAL</button>
+          <button onclick="saveNewAccount()" class="pill-action-white text-xs py-1.5 px-4">SIMPAN AKUN</button>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-3 border-t border-[#2a2a2c]">
+        <button id="btnToggleAddAccount" onclick="toggleAddAccountForm(true)" class="pill-action-ghost text-[10px] sm:text-xs py-1.5 px-3 hover:border-white">
+          <i class="fa-solid fa-plus text-[10px]"></i> TAMBAH AKUN
+        </button>
+        <button onclick="closeAccountModal()" class="pill-action-white text-xs py-1.5 px-4">
+          TUTUP &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- FULLSCREEN IMAGE ZOOM MODAL -->
   <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-2 sm:p-4 hidden" onclick="closeFullImage()">
     <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[94vh] object-contain border border-[#3c3a3e] shadow-2xl">
@@ -846,6 +962,9 @@
     let statusInterval = null;
     let screenInterval = null;
     let isPaused = false;
+    let currentStatusData = null;
+    let accountsCache = [];
+    let isSwitchingAccount = false;
 
     window.addEventListener('DOMContentLoaded', () => {
       checkAuth();
@@ -916,14 +1035,31 @@
 
     function renderStatus(data) {
       if (!data) return;
+      currentStatusData = data;
 
       // Header Meta
-      const accText = `ACC: ${data.account || '10012687831'}`;
-      const srvText = `SRV: ${data.server || 'MetaQuotes-Demo'}`;
-      document.getElementById('headerAccount').textContent = accText;
+      const accNum = data.account || '268028163';
+      const srvName = data.server || 'Exness-MT5Real39';
+      const accText = `ACC: ${accNum}`;
+      const srvText = `SRV: ${srvName}`;
+      const elHeaderAcc = document.getElementById('headerAccount');
+      if (elHeaderAcc) elHeaderAcc.innerHTML = `${accText} <i class="fa-solid fa-arrows-rotate text-[8px] text-[#ff6436]"></i>`;
       document.getElementById('headerServer').textContent = srvText;
-      document.getElementById('headerAccountMobile').textContent = accText;
-      document.getElementById('headerServerMobile').textContent = (data.server || 'DEMO').replace('MetaQuotes-', '');
+      const elHeaderAccMob = document.getElementById('headerAccountMobile');
+      if (elHeaderAccMob) elHeaderAccMob.innerHTML = `${accText} <i class="fa-solid fa-arrows-rotate text-[8px] text-[#ff6436]"></i>`;
+      document.getElementById('headerServerMobile').textContent = srvName.replace('MetaQuotes-', '').replace('Exness-', '');
+
+      // Account Selector Pill in Header
+      const navAccountBadge = document.getElementById('navAccountBadge');
+      const navAccountName = document.getElementById('navAccountName');
+      if (navAccountBadge && navAccountName) {
+        const isReal = (data.account_type === 'real' || srvName.toLowerCase().includes('real'));
+        navAccountBadge.textContent = isReal ? 'REAL' : 'DEMO';
+        navAccountBadge.className = isReal 
+          ? 'bg-[#ff6436] text-black font-bold text-[9px] px-1.5 py-0.5 rounded uppercase' 
+          : 'bg-[#2a2a2c] text-[#c9c7cc] border border-[#3c3a3e] font-bold text-[9px] px-1.5 py-0.5 rounded uppercase';
+        navAccountName.textContent = data.account_name || `Acc #${accNum}`;
+      }
 
       // MT5 Service badge
       const isRunning = data.mt5_running;
@@ -936,6 +1072,34 @@
       document.getElementById('badgeAlgo').textContent = isAlgo ? "ON" : "OFF";
       document.getElementById('badgeAlgo').className = isAlgo ? "text-white font-semibold" : "text-[#7b7a7c] font-semibold";
       document.getElementById('dotAlgo').className = isAlgo ? "w-2 h-2 rounded-full bg-[#ff6436]" : "w-2 h-2 rounded-full bg-[#7b7a7c]";
+
+      // Trading Mode badge & status
+      const currentMode = data.trading_mode || "scalper";
+      const isSafeMode = (currentMode === "safe");
+      const modeLabel = isSafeMode ? "AMAN (MTF)" : "SCALPER M1";
+
+      const badgeMode = document.getElementById('badgeMode');
+      if (badgeMode) {
+        badgeMode.textContent = modeLabel;
+        badgeMode.className = isSafeMode ? "text-[#00ff88] font-semibold" : "text-white font-semibold";
+      }
+      const dotMode = document.getElementById('dotMode');
+      if (dotMode) {
+        dotMode.className = isSafeMode ? "w-2 h-2 rounded-full bg-[#00ff88]" : "w-2 h-2 rounded-full bg-[#ff6436]";
+      }
+      const headerModeMobile = document.getElementById('headerModeMobile');
+      if (headerModeMobile) {
+        headerModeMobile.textContent = modeLabel;
+        headerModeMobile.className = isSafeMode ? "text-[#00ff88] font-medium" : "text-[#ff6436] font-medium";
+      }
+      const textTradingMode = document.getElementById('textTradingMode');
+      const iconTradingMode = document.getElementById('iconTradingMode');
+      if (textTradingMode) {
+        textTradingMode.textContent = isSafeMode ? "MODE: AMAN (MTF)" : "MODE: SCALPER M1";
+      }
+      if (iconTradingMode) {
+        iconTradingMode.className = isSafeMode ? "fa-solid fa-shield text-xs text-[#00ff88]" : "fa-solid fa-bolt text-xs text-[#ff6436]";
+      }
 
       // Metrics
       document.getElementById('valBalance').textContent = `$${formatNum(data.balance || 0)}`;
@@ -1274,6 +1438,30 @@
       }
     }
 
+    async function toggleTradingMode() {
+      const currentMode = (currentStatusData && currentStatusData.trading_mode) ? currentStatusData.trading_mode : "scalper";
+      const targetMode = (currentMode === "safe") ? "scalper" : "safe";
+      const targetName = (targetMode === "safe") ? "Mode Aman (MTF H4/M5)" : "Mode Scalper M1 (Aktif)";
+      const infoMsg = (targetMode === "safe")
+        ? "Ganti ke MODE AMAN (MTF H4/M5)?\n\nFilter entry akan mewajibkan konfirmasi trend H4 & M5 (EMA200 + Slope)."
+        : "Ganti ke MODE SCALPER M1 (Aktif)?\n\nEA akan trading agresif pada timeframe M1 tanpa menunggu konfirmasi filter H4/M5.";
+
+      if (confirm(infoMsg)) {
+        try {
+          const res = await fetch('/api/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "set_mode", mode: targetMode })
+          });
+          const d = await res.json();
+          alert(d.message || `Mode berhasil diubah ke ${targetName}`);
+          setTimeout(fetchStatus, 1000);
+        } catch (e) {
+          alert("Gagal mengubah mode trading");
+        }
+      }
+    }
+
     async function confirmCloseAll() {
       if (confirm("CRITICAL WARNING: CLOSE ALL ACTIVE POSITIONS IMMEDIATELY?")) {
         try {
@@ -1460,6 +1648,200 @@
 
     function escapeHtml(text) {
       return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Account Switcher Functions
+    async function openAccountModal() {
+      document.getElementById('accountModal').classList.remove('hidden');
+      toggleAddAccountForm(false);
+      await fetchAccounts();
+    }
+
+    function closeAccountModal() {
+      if (isSwitchingAccount) return;
+      document.getElementById('accountModal').classList.add('hidden');
+      toggleAddAccountForm(false);
+    }
+
+    function toggleAddAccountForm(show) {
+      const form = document.getElementById('addAccountForm');
+      const btn = document.getElementById('btnToggleAddAccount');
+      if (show) {
+        form.classList.remove('hidden');
+        btn.classList.add('hidden');
+      } else {
+        form.classList.add('hidden');
+        btn.classList.remove('hidden');
+      }
+    }
+
+    async function fetchAccounts() {
+      try {
+        const res = await fetch('/api/accounts');
+        if (res.status === 401) {
+          location.reload();
+          return;
+        }
+        const data = await res.json();
+        accountsCache = data.accounts || [];
+        renderAccounts(data.accounts || [], data.active_account_id);
+      } catch (e) {
+        console.error("Failed to load accounts", e);
+      }
+    }
+
+    function renderAccounts(accounts, activeId) {
+      const container = document.getElementById('accountsListContainer');
+      if (!accounts || accounts.length === 0) {
+        container.innerHTML = '<div class="text-[#7b7a7c] font-mono text-xs text-center py-6">[ TIDAK ADA AKUN TERDAFTAR ]</div>';
+        return;
+      }
+
+      container.innerHTML = accounts.map(acc => {
+        const isActive = (String(acc.id) === String(activeId));
+        const isReal = (acc.type === 'real');
+        const badgeBg = isReal ? 'bg-[#ff6436] text-black font-bold' : 'bg-[#2a2a2c] text-[#c9c7cc] border border-[#3c3a3e] font-semibold';
+        const badgeText = isReal ? 'REAL' : 'DEMO';
+        const borderCol = isActive ? 'border-[#ff6436] bg-[#1c1a1a]' : 'border-[#2a2a2c] bg-[#141416] hover:border-[#3c3a3e]';
+
+        return `
+          <div class="p-3 sm:p-3.5 border ${borderCol} transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-[9px] px-1.5 py-0.5 rounded ${badgeBg}">${badgeText}</span>
+                <span class="font-mono text-xs sm:text-sm font-semibold text-white">${escapeHtml(acc.name)}</span>
+                ${isActive ? '<span class="flex items-center gap-1 font-mono text-[10px] text-[#00ff88] font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-[#00ff88] animate-pulse"></span>AKTIF</span>' : ''}
+              </div>
+              <div class="font-mono text-[10px] text-[#7b7a7c] flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                <span>LOGIN: <strong class="text-[#c9c7cc]">${acc.login}</strong></span>
+                <span>•</span>
+                <span>SRV: <strong class="text-[#c9c7cc]">${escapeHtml(acc.server)}</strong></span>
+                <span>•</span>
+                <span>SYM: <strong class="text-[#c9c7cc]">${escapeHtml(acc.symbol || 'XAUUSDm')}</strong></span>
+              </div>
+            </div>
+
+            <div class="flex items-center sm:self-center">
+              ${isActive ? `
+                <div class="font-mono text-[11px] text-[#00ff88] py-1.5 px-3 border border-[#00ff88]/30 bg-[#00ff88]/10 text-center w-full sm:w-auto font-semibold">
+                  SEDANG AKTIF
+                </div>
+              ` : `
+                <button onclick="switchAccount('${acc.id}')" ${isSwitchingAccount ? 'disabled' : ''}
+                        class="pill-action-white text-[11px] py-1.5 px-3.5 w-full sm:w-auto hover:bg-[#ff6436] hover:text-black hover:border-[#ff6436] transition cursor-pointer">
+                  GANTI KE AKUN INI &rarr;
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function switchAccount(accountId) {
+      const acc = accountsCache.find(a => String(a.id) === String(accountId));
+      if (!acc) return;
+
+      const posCount = (currentStatusData && currentStatusData.positions_total) ? currentStatusData.positions_total : 0;
+      if (posCount > 0) {
+        const warn = `PERINGATAN KRITIS: Saat ini terdapat ${posCount} posisi trading terbuka!\n\nBerganti ke akun ${acc.name} (${acc.login}) akan ME-RESTART MetaTrader 5.\n\nApakah Anda yakin ingin melanjutkan pergantian akun?`;
+        if (!confirm(warn)) return;
+      } else {
+        if (!confirm(`Beralih ke akun: ${acc.name} (${acc.server} - Login: ${acc.login})?`)) return;
+      }
+
+      isSwitchingAccount = true;
+      const banner = document.getElementById('accountSwitchingBanner');
+      const bannerText = document.getElementById('accountSwitchingText');
+      bannerText.textContent = `BERALIH KE ${acc.name.toUpperCase()} (${acc.server})...`;
+      banner.classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/account/switch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ account_id: accountId })
+        });
+        const d = await res.json();
+        if (!d.success) {
+          alert(`Gagal: ${d.message}`);
+          banner.classList.add('hidden');
+          isSwitchingAccount = false;
+          return;
+        }
+
+        // Re-render accounts to reflect active state
+        await fetchAccounts();
+
+        // Poll for new status
+        let attempts = 0;
+        const maxAttempts = 15;
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const sRes = await fetch('/api/status');
+            if (sRes.ok) {
+              const sData = await sRes.json();
+              if (String(sData.account) === String(acc.login)) {
+                clearInterval(pollInterval);
+                isSwitchingAccount = false;
+                banner.classList.add('hidden');
+                renderStatus(sData);
+                await fetchAccounts();
+                alert(`BERHASIL: MetaTrader 5 terhubung ke ${acc.name} (${acc.login})!`);
+                closeAccountModal();
+                return;
+              }
+            }
+          } catch (err) {}
+
+          if (attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            isSwitchingAccount = false;
+            banner.classList.add('hidden');
+            fetchStatus();
+            alert(`Layanan MT5 telah direstart. Menunggu sinkronisasi telemetry ${acc.name}...`);
+            closeAccountModal();
+          }
+        }, 1500);
+
+      } catch (e) {
+        alert("Gagal mengirim perintah switch akun: " + e.message);
+        banner.classList.add('hidden');
+        isSwitchingAccount = false;
+      }
+    }
+
+    async function saveNewAccount() {
+      const name = document.getElementById('newAccName').value.trim();
+      const type = document.getElementById('newAccType').value;
+      const login = document.getElementById('newAccLogin').value.trim();
+      const password = document.getElementById('newAccPassword').value.trim();
+      const server = document.getElementById('newAccServer').value.trim();
+      const symbol = document.getElementById('newAccSymbol').value.trim() || 'XAUUSDm';
+
+      if (!name || !login || !password || !server) {
+        alert("Mohon lengkapi semua kolom form!");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/account/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, type, login, password, server, symbol })
+        });
+        const d = await res.json();
+        if (d.success) {
+          alert("Akun berhasil ditambahkan!");
+          toggleAddAccountForm(false);
+          await fetchAccounts();
+        } else {
+          alert("Gagal: " + (d.message || "Gagal menyimpan akun"));
+        }
+      } catch (e) {
+        alert("Error saving account: " + e.message);
+      }
     }
   </script>
 </body>

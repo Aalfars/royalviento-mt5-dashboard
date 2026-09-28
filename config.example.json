@@ -1,4 +1,25 @@
 {
   "pin": "1234",
-  "daily_target_usd": 50.0
+  "daily_target_usd": 50.0,
+  "active_account_id": "10012687831",
+  "accounts": [
+    {
+      "id": "10012687831",
+      "name": "Demo MetaQuotes",
+      "login": 10012687831,
+      "password": "your_password",
+      "server": "MetaQuotes-Demo",
+      "type": "demo",
+      "symbol": "XAUUSD"
+    },
+    {
+      "id": "268028163",
+      "name": "Exness Real Account",
+      "login": 268028163,
+      "password": "your_password",
+      "server": "Exness-MT5Real39",
+      "type": "real",
+      "symbol": "XAUUSDm"
+    }
+  ]
 }
