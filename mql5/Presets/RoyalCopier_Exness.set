@@ -1,0 +1,15 @@
+; RoyalCopier - Follower EA Preset for Exness ($30 Capital Account)
+; Auto-Mirror from MetaQuotes Master EA
+; Strict Risk: 0.01 Lot, -$25 Daily Loss Kill Switch
+
+InpMasterSymbol=XAUUSD
+InpSlaveSymbol=XAUUSDm
+InpFixedLot=0.01
+InpMagicNumber=778899
+InpMaxOpenPositions=3
+
+InpDailyLossLimitUSD=25.0
+InpAutoCloseOnHalt=true
+
+InpCheckIntervalMs=200
+InpSlippagePoints=50

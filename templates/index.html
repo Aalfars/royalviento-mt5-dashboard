@@ -874,6 +874,169 @@
 
       </section>
 
+      <!-- =================================================================== -->
+      <!-- EXNESS COPIER // $30 AUTO-MIRROR (METAQUOTES MASTER -> EXNESS SLAVE)-->
+      <!-- =================================================================== -->
+      <section class="brutalist-card p-4 sm:p-6 space-y-4 sm:space-y-5 border-l-4 border-l-[#00ff88]">
+        
+        <!-- Header Strip -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-[#2a2a2c]">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 bg-[#00ff88] rounded-full animate-pulse"></span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-display text-xl sm:text-2xl text-white tracking-wider">EXNESS AUTO-MIRROR ($30 CAPITAL)</h2>
+                <span id="copierEngineBadge" class="tag-mono-ember text-[9px] bg-[#00ff88]/10 text-[#00ff88] border-[#00ff88]/30">MIRROR ACTIVE</span>
+              </div>
+              <p class="font-mono text-[10px] sm:text-[11px] text-[#a2a2a2] mt-0.5">
+                FOLLOWER OTOMATIS: SALIN ENTRY/EXIT MASTER ($99K) DENGAN LOT 0.01 & KILL-SWITCH -$25.00
+              </p>
+            </div>
+          </div>
+
+          <!-- Copier Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <!-- Terminal Status Indicator -->
+            <div id="copierProcessBadge" class="px-2.5 py-1 border border-[#3c3a3e] bg-[#111113] font-mono text-[10px] font-semibold flex items-center gap-1.5 text-white">
+              <span id="copierProcessDot" class="w-2 h-2 rounded-full bg-[#00ff88]"></span>
+              <span id="copierProcessText">EXNESS MT5: ONLINE</span>
+            </div>
+
+            <!-- Pause / Resume Button -->
+            <button id="btnCopierPause" onclick="toggleCopierPause()" class="pill-nav text-[11px] py-1 px-3 hover:border-amber-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-pause text-[10px]"></i>
+              <span id="btnCopierPauseText">PAUSE COPIER</span>
+            </button>
+
+            <!-- Reset Kill Switch Button (Hidden unless halted) -->
+            <button id="btnCopierResetHalt" onclick="resetCopierHalt()" class="hidden pill-action-white text-[11px] py-1 px-3 bg-red-600 text-white border-red-500 hover:bg-red-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-rotate-left text-[10px]"></i>
+              <span>RESET KILL SWITCH</span>
+            </button>
+
+            <!-- Panic Close Slave Positions -->
+            <button onclick="emergencyCloseCopierPositions()" class="pill-nav text-[11px] py-1 px-3 border-red-500/50 hover:bg-red-950/40 text-red-400 flex items-center gap-1.5" title="Tutup Semua Posisi Exness">
+              <i class="fa-solid fa-radiation text-[10px]"></i>
+              <span>CLOSE ALL (EXNESS)</span>
+            </button>
+
+            <!-- Restart Exness MT5 -->
+            <button onclick="restartExnessMT5()" class="pill-nav text-[11px] py-1 px-2.5 hover:border-white" title="Restart Service MT5 Exness">
+              <i class="fa-solid fa-arrows-rotate text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Cards Grid (4 Column) -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          
+          <!-- Card 1: Exness Balance & Equity -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-3.5 sm:p-4 flex flex-col justify-between">
+            <span class="font-mono text-[10px] text-[#7b7a7c] tracking-wider uppercase">SALDO & EQUITY EXNESS</span>
+            <div class="my-2">
+              <div class="font-display text-xl sm:text-2xl text-white" id="copierEquity">$0.00</div>
+              <div class="font-mono text-[10px] text-[#a2a2a2] mt-0.5">
+                Balance: <span id="copierBalance" class="text-white font-semibold">$0.00</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between font-mono text-[9px] text-[#7b7a7c] border-t border-[#1d1d20] pt-1.5">
+              <span>SERVER:</span>
+              <span id="copierServer" class="text-white truncate">Exness-MT5Trial17</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Realized Today Closed P/L -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-3.5 sm:p-4 flex flex-col justify-between">
+            <span class="font-mono text-[10px] text-[#7b7a7c] tracking-wider uppercase">PROFIT/LOSS HARI INI</span>
+            <div class="my-2">
+              <div class="font-display text-xl sm:text-2xl" id="copierTodayProfit">$0.00</div>
+              <div class="font-mono text-[10px] text-[#a2a2a2] mt-0.5">
+                Floating: <span id="copierFloatingProfit" class="text-white font-semibold">$0.00</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between font-mono text-[9px] text-[#7b7a7c] border-t border-[#1d1d20] pt-1.5">
+              <span>STATUS:</span>
+              <span id="copierProfitStatus" class="text-[#00ff88] font-bold">AMAN</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Safety Kill Switch Limit (-$25) Meter -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-3.5 sm:p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] text-[#7b7a7c] tracking-wider uppercase">KILL SWITCH -$25.00</span>
+              <span id="copierHaltBadge" class="font-mono text-[9px] px-1.5 py-0.5 bg-[#00ff88]/20 text-[#00ff88] border border-[#00ff88]/40">NORMAL</span>
+            </div>
+            <div class="my-2">
+              <div class="flex justify-between items-baseline mb-1">
+                <span class="font-mono text-[11px] text-white" id="copierLossUsedText">Rugi: $0.00</span>
+                <span class="font-mono text-[10px] text-[#a2a2a2]">Max: -$25.00</span>
+              </div>
+              <!-- Progress Bar -->
+              <div class="w-full bg-[#1e1e22] h-2.5 rounded-xs overflow-hidden border border-[#2d2d32]">
+                <div id="copierLossBar" class="bg-[#00ff88] h-full transition-all duration-300" style="width: 0%;"></div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between font-mono text-[9px] text-[#7b7a7c] border-t border-[#1d1d20] pt-1.5">
+              <span>PROTEKSI MODAL:</span>
+              <span id="copierCapitalPreserved" class="text-[#00ff88]">100% AMAN</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Positions Copied & Sizing -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-3.5 sm:p-4 flex flex-col justify-between">
+            <span class="font-mono text-[10px] text-[#7b7a7c] tracking-wider uppercase">AKTIF COPY // LOT SIZE</span>
+            <div class="my-2">
+              <div class="font-display text-xl sm:text-2xl text-white">
+                <span id="copierOpenCount">0</span> <span class="text-sm font-mono text-[#7b7a7c]">/ 3 MAX</span>
+              </div>
+              <div class="font-mono text-[10px] text-[#a2a2a2] mt-0.5">
+                Fixed Lot: <strong class="text-[#ff6436]">0.01</strong> (Simbol: <span id="copierSymbol">XAUUSDm</span>)
+              </div>
+            </div>
+            <div class="flex items-center justify-between font-mono text-[9px] text-[#7b7a7c] border-t border-[#1d1d20] pt-1.5">
+              <span>TOTAL ORDER:</span>
+              <span class="text-white"><span id="copierTotalCopied">0</span> Copied</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Copier Open Positions Table Strip -->
+        <div class="bg-[#111113] border border-[#2a2a2c] p-3.5 sm:p-4">
+          <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-[#222225]">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-xs text-[#00ff88]"></i>
+              <span class="font-mono text-[11px] font-semibold text-white tracking-wider uppercase">POSISI TERBUKA EXNESS (HASIL AUTO-MIRROR)</span>
+            </div>
+            <span class="font-mono text-[10px] text-[#7b7a7c]">Sinkronisasi tiap 200ms</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left font-mono text-[11px]">
+              <thead>
+                <tr class="text-[#7b7a7c] border-b border-[#1e1e22] text-[10px]">
+                  <th class="pb-2">TIKET SLAVE</th>
+                  <th class="pb-2">TIKET MASTER</th>
+                  <th class="pb-2">SIMBOL</th>
+                  <th class="pb-2">TIPE</th>
+                  <th class="pb-2">LOT</th>
+                  <th class="pb-2">OPEN PRICE</th>
+                  <th class="pb-2 text-right">PROFIT</th>
+                </tr>
+              </thead>
+              <tbody id="copierPositionsBody">
+                <tr>
+                  <td colspan="7" class="py-4 text-center text-[#7b7a7c] italic">
+                    Belum ada posisi terbuka di Exness. Menunggu order dari MetaQuotes Master...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
       <!-- MAIN SPLIT: MONITOR VIEWPORT & OPEN POSITIONS (Responsive Flow) -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
@@ -1561,6 +1724,9 @@
 
       // Render Multi-Timeframe Radar Signals
       renderMTFSignals(data.mtf || {}, data);
+
+      // Render Exness Copier ($30 Auto-Mirror)
+      renderCopier(data.copier || {});
 
       // Render Positions & Order History
       renderPositions(data.positions || []);
@@ -2683,6 +2849,291 @@
         if (spinner) spinner.classList.add('hidden');
         if (btnText) btnText.textContent = "SIMPAN & TERAPKAN KE MT5 →";
         btn.classList.remove('opacity-75', 'cursor-not-allowed');
+      }
+    }
+
+    // ===================================================================
+    // EXNESS AUTO-MIRROR COPIER ($30 CAPITAL) UI ENGINE
+    // ===================================================================
+    function renderCopier(copier) {
+      if (!copier) return;
+
+      const isRunning = !!copier.exness_running;
+      const isActive = !!copier.active;
+      const isHalted = !!copier.is_halted;
+      const isPaused = !!copier.is_paused;
+
+      // Process indicator
+      const procDot = document.getElementById('copierProcessDot');
+      const procText = document.getElementById('copierProcessText');
+      if (procDot && procText) {
+        if (isRunning) {
+          procDot.className = "w-2 h-2 rounded-full bg-[#00ff88]";
+          procText.textContent = "EXNESS MT5: ONLINE";
+        } else {
+          procDot.className = "w-2 h-2 rounded-full bg-[#7b7a7c]";
+          procText.textContent = "EXNESS MT5: OFFLINE";
+        }
+      }
+
+      // Copier Engine Badge
+      const engineBadge = document.getElementById('copierEngineBadge');
+      if (engineBadge) {
+        if (isHalted) {
+          engineBadge.className = "tag-mono-ember text-[9px] bg-red-600/20 text-red-400 border border-red-500/40 animate-pulse";
+          engineBadge.textContent = "HALTED (LOSS -$25)";
+        } else if (isPaused) {
+          engineBadge.className = "tag-mono-ember text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40";
+          engineBadge.textContent = "COPIER PAUSED";
+        } else if (isActive) {
+          engineBadge.className = "tag-mono-ember text-[9px] bg-[#00ff88]/10 text-[#00ff88] border-[#00ff88]/30";
+          engineBadge.textContent = "MIRROR ACTIVE";
+        } else {
+          engineBadge.className = "tag-mono-ember text-[9px] bg-[#2a2a2c] text-[#a2a2a2] border-[#3c3a3e]";
+          engineBadge.textContent = "STANDBY";
+        }
+      }
+
+      // Pause/Resume button state
+      const btnPauseText = document.getElementById('btnCopierPauseText');
+      const btnPauseIcon = document.getElementById('btnCopierPause')?.querySelector('i');
+      if (btnPauseText) {
+        if (isPaused) {
+          btnPauseText.textContent = "RESUME COPIER";
+          if (btnPauseIcon) btnPauseIcon.className = "fa-solid fa-play text-[10px]";
+        } else {
+          btnPauseText.textContent = "PAUSE COPIER";
+          if (btnPauseIcon) btnPauseIcon.className = "fa-solid fa-pause text-[10px]";
+        }
+      }
+
+      // Reset Halt button visibility
+      const btnResetHalt = document.getElementById('btnCopierResetHalt');
+      if (btnResetHalt) {
+        if (isHalted) btnResetHalt.classList.remove('hidden');
+        else btnResetHalt.classList.add('hidden');
+      }
+
+      // Balance & Equity
+      const elEq = document.getElementById('copierEquity');
+      const elBal = document.getElementById('copierBalance');
+      const elSrv = document.getElementById('copierServer');
+      if (elEq) elEq.textContent = `$${formatNum(copier.equity || 0)}`;
+      if (elBal) elBal.textContent = `$${formatNum(copier.balance || 0)}`;
+      if (elSrv) elSrv.textContent = copier.slave_server || 'Exness-MT5Trial17';
+
+      // Profit & Loss Hari Ini
+      const todayProfit = Number(copier.today_closed_profit || 0);
+      const floatProfit = Number(copier.floating_profit || 0);
+      const elTodayP = document.getElementById('copierTodayProfit');
+      const elFloatP = document.getElementById('copierFloatingProfit');
+      const elPStatus = document.getElementById('copierProfitStatus');
+
+      if (elTodayP) {
+        const pColor = todayProfit > 0 ? 'text-[#00ff88]' : (todayProfit < 0 ? 'text-red-400' : 'text-white');
+        elTodayP.className = `font-display text-xl sm:text-2xl ${pColor}`;
+        elTodayP.textContent = `${todayProfit >= 0 ? '+' : ''}$${formatNum(todayProfit)}`;
+      }
+      if (elFloatP) {
+        const fColor = floatProfit > 0 ? 'text-[#00ff88]' : (floatProfit < 0 ? 'text-red-400' : 'text-white');
+        elFloatP.className = `font-semibold ${fColor}`;
+        elFloatP.textContent = `${floatProfit >= 0 ? '+' : ''}$${formatNum(floatProfit)}`;
+      }
+      if (elPStatus) {
+        if (todayProfit > 0) {
+          elPStatus.className = "text-[#00ff88] font-bold";
+          elPStatus.textContent = "PROFITABLE";
+        } else if (todayProfit <= -25.0) {
+          elPStatus.className = "text-red-400 font-bold";
+          elPStatus.textContent = "LIMIT TERSENTUH";
+        } else if (todayProfit < -15.0) {
+          elPStatus.className = "text-amber-400 font-bold";
+          elPStatus.textContent = "WASPADA LOSS";
+        } else {
+          elPStatus.className = "text-[#00ff88] font-bold";
+          elPStatus.textContent = "AMAN";
+        }
+      }
+
+      // Safety Kill Switch Meter (-$25.00)
+      const limit = Number(copier.daily_loss_limit_usd || 25.0);
+      const lossUsed = Math.max(0, -todayProfit);
+      const lossPct = Math.min(100, Math.max(0, (lossUsed / limit) * 100));
+
+      const elLossText = document.getElementById('copierLossUsedText');
+      const elLossBar = document.getElementById('copierLossBar');
+      const elHaltBadge = document.getElementById('copierHaltBadge');
+      const elCapPres = document.getElementById('copierCapitalPreserved');
+
+      if (elLossText) {
+        elLossText.textContent = `Rugi: -$${formatNum(lossUsed)}`;
+      }
+      if (elLossBar) {
+        elLossBar.style.width = `${lossPct}%`;
+        if (lossPct >= 100 || isHalted) {
+          elLossBar.className = "bg-red-500 h-full transition-all duration-300";
+        } else if (lossPct >= 60) {
+          elLossBar.className = "bg-amber-400 h-full transition-all duration-300";
+        } else {
+          elLossBar.className = "bg-[#00ff88] h-full transition-all duration-300";
+        }
+      }
+      if (elHaltBadge) {
+        if (isHalted) {
+          elHaltBadge.className = "font-mono text-[9px] px-1.5 py-0.5 bg-red-600/30 text-red-400 border border-red-500/50 animate-pulse";
+          elHaltBadge.textContent = "HALTED";
+        } else if (lossPct >= 60) {
+          elHaltBadge.className = "font-mono text-[9px] px-1.5 py-0.5 bg-amber-500/30 text-amber-300 border border-amber-500/50";
+          elHaltBadge.textContent = "WARNING";
+        } else {
+          elHaltBadge.className = "font-mono text-[9px] px-1.5 py-0.5 bg-[#00ff88]/20 text-[#00ff88] border border-[#00ff88]/40";
+          elHaltBadge.textContent = "NORMAL";
+        }
+      }
+      if (elCapPres) {
+        const remainingCapitalPct = Math.max(0, 100 - lossPct);
+        if (remainingCapitalPct > 50) {
+          elCapPres.className = "text-[#00ff88]";
+          elCapPres.textContent = `${Math.round(remainingCapitalPct)}% MODAL AMAN`;
+        } else {
+          elCapPres.className = "text-red-400 font-bold";
+          elCapPres.textContent = `${Math.round(remainingCapitalPct)}% TERSISA (HALT)`;
+        }
+      }
+
+      // Positions Copied
+      const posCount = (copier.positions || []).length;
+      const elOpenCount = document.getElementById('copierOpenCount');
+      const elSymbol = document.getElementById('copierSymbol');
+      const elTotCopied = document.getElementById('copierTotalCopied');
+
+      if (elOpenCount) elOpenCount.textContent = posCount;
+      if (elSymbol) elSymbol.textContent = copier.slave_symbol || 'XAUUSDm';
+      if (elTotCopied) elTotCopied.textContent = copier.copied_total || 0;
+
+      // Positions Table
+      const posBody = document.getElementById('copierPositionsBody');
+      if (posBody) {
+        const positions = copier.positions || [];
+        if (positions.length === 0) {
+          posBody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-4 text-center text-[#7b7a7c] italic">
+                Belum ada posisi terbuka di Exness. Menunggu order dari MetaQuotes Master...
+              </td>
+            </tr>
+          `;
+        } else {
+          let rows = '';
+          positions.forEach(p => {
+            const isBuy = p.type === 'BUY';
+            const badge = isBuy
+              ? `<span class="px-1.5 py-0.5 font-mono text-[9px] font-bold bg-white text-black">BUY</span>`
+              : `<span class="px-1.5 py-0.5 font-mono text-[9px] font-bold bg-[#ff6436] text-black">SELL</span>`;
+            
+            const pVal = Number(p.profit || 0);
+            const pColor = pVal >= 0 ? 'text-[#00ff88]' : 'text-red-400 font-bold';
+
+            let mTicket = '-';
+            if (p.comment && p.comment.includes('RV-M:')) {
+              mTicket = '#' + p.comment.replace('RV-M:', '');
+            }
+
+            rows += `
+              <tr class="border-b border-[#1c1c1f] hover:bg-[#141417]">
+                <td class="py-2 text-white font-bold">#${p.ticket}</td>
+                <td class="py-2 text-[#a2a2a2]">${mTicket}</td>
+                <td class="py-2 text-white">${p.symbol}</td>
+                <td class="py-2">${badge}</td>
+                <td class="py-2 text-[#ff6436] font-bold">${formatNum(p.lots)}</td>
+                <td class="py-2 text-[#c9c7cc]">${formatNum(p.open_price)}</td>
+                <td class="py-2 text-right ${pColor}">$${formatNum(pVal)}</td>
+              </tr>
+            `;
+          });
+          posBody.innerHTML = rows;
+        }
+      }
+    }
+
+    async function toggleCopierPause() {
+      const isPaused = currentStatusData?.copier?.is_paused;
+      const action = isPaused ? "resume" : "pause";
+      try {
+        const res = await fetch('/api/copier/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: action })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("SUKSES: " + data.message);
+          fetchStatus();
+        } else {
+          alert("Gagal: " + (data.message || 'Gagal mengubah status copier'));
+        }
+      } catch (e) {
+        alert('Error koneksi ke server: ' + e.message);
+      }
+    }
+
+    async function resetCopierHalt() {
+      if (!confirm("Reset Safety Kill Switch Exness? EA akan kembali aktif dan dapat meng-copy order baru.")) return;
+      try {
+        const res = await fetch('/api/copier/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reset_halt' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("SUKSES: " + data.message);
+          fetchStatus();
+        } else {
+          alert("Gagal: " + (data.message || 'Gagal mereset halt'));
+        }
+      } catch (e) {
+        alert('Error koneksi ke server: ' + e.message);
+      }
+    }
+
+    async function emergencyCloseCopierPositions() {
+      if (!confirm("PERINGATAN: Tutup paksa seluruh posisi terbuka di akun Exness sekarang juga?")) return;
+      try {
+        const res = await fetch('/api/copier/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'close_all' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("SUKSES: " + data.message);
+          fetchStatus();
+        } else {
+          alert("Gagal: " + (data.message || 'Gagal menutup posisi Exness'));
+        }
+      } catch (e) {
+        alert('Error koneksi ke server: ' + e.message);
+      }
+    }
+
+    async function restartExnessMT5() {
+      if (!confirm("Restart layanan MetaTrader 5 Exness?")) return;
+      try {
+        const res = await fetch('/api/copier/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'restart_exness' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("SUKSES: " + data.message);
+          fetchStatus();
+        } else {
+          alert("Gagal: " + (data.message || 'Gagal me-restart MT5 Exness'));
+        }
+      } catch (e) {
+        alert('Error koneksi ke server: ' + e.message);
       }
     }
   </script>

@@ -21,6 +21,10 @@ if IS_WINDOWS:
         os.path.join(BASE_DIR, "mql5", "Presets", "RoyalViento_XAUUSD_M1_1JT_24H_CONTROLLED_MARTINGALE.set")
     ]
     START_INI_PATHS = []
+    COMMON_FILES_DIR = os.path.join(os.environ.get("APPDATA", ""), "MetaQuotes", "Terminal", "Common", "Files")
+    COPIER_MASTER_FILE = os.path.join(COMMON_FILES_DIR, "copier_master.json")
+    COPIER_SLAVE_STATUS_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_status.json")
+    COPIER_SLAVE_COMMAND_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_command.json")
 else:
     CONFIG_FILE = "/root/dashboard/config.json"
     STATUS_FILE = "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Files/web_status.json"
@@ -35,6 +39,10 @@ else:
         "/root/.wine/drive_c/start.ini",
         "/root/.wine/drive_c/Program Files/MetaTrader 5/start.ini"
     ]
+    COMMON_FILES_DIR = "/root/.wine/drive_c/users/root/AppData/Roaming/MetaQuotes/Terminal/Common/Files"
+    COPIER_MASTER_FILE = os.path.join(COMMON_FILES_DIR, "copier_master.json")
+    COPIER_SLAVE_STATUS_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_status.json")
+    COPIER_SLAVE_COMMAND_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_command.json")
 
 # Parameter definitions and metadata for GUI Configuration
 PARAMETER_CATEGORIES = [
@@ -1075,7 +1083,20 @@ Period=M1
 
 def is_mt5_running():
     try:
-        res = subprocess.run(["pgrep", "-f", "terminal64.exe"], capture_output=True, text=True)
+        res = subprocess.run(["pgrep", "-f", "Program Files/MetaTrader 5/terminal64.exe"], capture_output=True, text=True)
+        if res.returncode == 0:
+            return True
+        res = subprocess.run(["pgrep", "-f", "start.ini"], capture_output=True, text=True)
+        return res.returncode == 0
+    except Exception:
+        return False
+
+def is_exness_mt5_running():
+    try:
+        res = subprocess.run(["pgrep", "-f", "MetaTrader 5 Exness"], capture_output=True, text=True)
+        if res.returncode == 0:
+            return True
+        res = subprocess.run(["pgrep", "-f", "start_exness.ini"], capture_output=True, text=True)
         return res.returncode == 0
     except Exception:
         return False
@@ -1168,6 +1189,40 @@ def get_status():
     # Parameters fallback
     if "parameters" not in status_data or not status_data["parameters"]:
         status_data["parameters"] = get_current_parameters()
+
+    # Exness Copier Telemetry
+    copier_data = {
+        "active": False,
+        "is_halted": False,
+        "is_paused": False,
+        "today_closed_profit": 0.0,
+        "floating_profit": 0.0,
+        "daily_loss_limit_usd": 25.0,
+        "balance": 0.0,
+        "equity": 0.0,
+        "margin": 0.0,
+        "free_margin": 0.0,
+        "fixed_lot": 0.01,
+        "copied_total": 0,
+        "closed_total": 0,
+        "positions_count": 0,
+        "positions": [],
+        "slave_account": None,
+        "slave_server": None,
+        "slave_symbol": "XAUUSDm",
+        "status": "OFFLINE",
+        "exness_running": is_exness_mt5_running()
+    }
+    if os.path.exists(COPIER_SLAVE_STATUS_FILE):
+        try:
+            with open(COPIER_SLAVE_STATUS_FILE, "r", encoding="utf-8", errors="ignore") as f:
+                c_json = json.load(f)
+                copier_data.update(c_json)
+                copier_data["active"] = True
+        except Exception:
+            pass
+    copier_data["exness_running"] = is_exness_mt5_running()
+    status_data["copier"] = copier_data
 
     # System stats
     try:
@@ -1603,6 +1658,101 @@ def get_logs():
         "ea_logs": ea_log_lines,
         "terminal_logs": term_log_lines
     })
+
+@app.route("/api/copier", methods=["GET"])
+def get_copier_status():
+    if not session.get("authenticated", False):
+        return jsonify({"authenticated": False}), 401
+
+    master_info = {}
+    if os.path.exists(COPIER_MASTER_FILE):
+        try:
+            with open(COPIER_MASTER_FILE, "r", encoding="utf-8", errors="ignore") as f:
+                master_info = json.load(f)
+        except Exception:
+            pass
+
+    slave_info = {
+        "active": False,
+        "is_halted": False,
+        "is_paused": False,
+        "today_closed_profit": 0.0,
+        "floating_profit": 0.0,
+        "daily_loss_limit_usd": 25.0,
+        "balance": 0.0,
+        "equity": 0.0,
+        "margin": 0.0,
+        "free_margin": 0.0,
+        "fixed_lot": 0.01,
+        "copied_total": 0,
+        "closed_total": 0,
+        "positions_count": 0,
+        "positions": [],
+        "status": "OFFLINE"
+    }
+    if os.path.exists(COPIER_SLAVE_STATUS_FILE):
+        try:
+            with open(COPIER_SLAVE_STATUS_FILE, "r", encoding="utf-8", errors="ignore") as f:
+                c_json = json.load(f)
+                slave_info.update(c_json)
+                slave_info["active"] = True
+        except Exception:
+            pass
+
+    slave_info["exness_running"] = is_exness_mt5_running()
+
+    return jsonify({
+        "master": master_info,
+        "slave": slave_info,
+        "timestamp": int(time.time())
+    })
+
+@app.route("/api/copier/command", methods=["POST"])
+def copier_command():
+    if not session.get("authenticated", False):
+        return jsonify({"authenticated": False}), 401
+
+    data = request.json or {}
+    action = data.get("action", "")
+
+    if action in ("pause", "resume", "reset_halt", "close_all"):
+        try:
+            os.makedirs(os.path.dirname(COPIER_SLAVE_COMMAND_FILE), exist_ok=True)
+            with open(COPIER_SLAVE_COMMAND_FILE, "w", encoding="utf-8") as f:
+                json.dump({"action": action, "timestamp": int(time.time())}, f)
+
+            action_names = {
+                "pause": "Copier di-Pause (tidak membuka order baru)",
+                "resume": "Copier di-Resume (siap copy sinyal)",
+                "reset_halt": "Daily Loss Halt di-Reset",
+                "close_all": "Semua posisi Exness diperintahkan tutup!"
+            }
+            return jsonify({"success": True, "message": action_names.get(action, "Perintah berhasil dikirim!")})
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Gagal mengirim perintah: {str(e)}"}), 500
+
+    elif action == "restart_exness":
+        try:
+            subprocess.Popen(["systemctl", "restart", "mt5-exness"])
+            return jsonify({"success": True, "message": "Layanan MT5 Exness sedang dimuat ulang..."})
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Gagal me-restart MT5 Exness: {str(e)}"}), 500
+
+    elif action == "stop_exness":
+        try:
+            subprocess.Popen(["systemctl", "stop", "mt5-exness"])
+            return jsonify({"success": True, "message": "Layanan MT5 Exness dihentikan."})
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Gagal menghentikan MT5 Exness: {str(e)}"}), 500
+
+    elif action == "start_exness":
+        try:
+            subprocess.Popen(["systemctl", "start", "mt5-exness"])
+            return jsonify({"success": True, "message": "Layanan MT5 Exness dijalankan."})
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Gagal menjalankan MT5 Exness: {str(e)}"}), 500
+
+    return jsonify({"success": False, "message": "Perintah copier tidak dikenal"}), 400
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

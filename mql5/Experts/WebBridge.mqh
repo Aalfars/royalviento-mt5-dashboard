@@ -261,6 +261,69 @@ void WebBridge_ExportStatus()
       FileWriteString(h, json);
       FileClose(h);
    }
+
+   // Export to FILE_COMMON for Trade Copier (Slave EA)
+   WebBridge_ExportCopierSignals();
+}
+
+//+------------------------------------------------------------------+
+//| Export Master positions to FILE_COMMON for Trade Copier          |
+//+------------------------------------------------------------------+
+void WebBridge_ExportCopierSignals()
+{
+   int totalPos = PositionsTotal();
+   string posJson = "[";
+   bool first = true;
+
+   for(int i = 0; i < totalPos; i++)
+   {
+      ulong ticket = PositionGetTicket(i);
+      if(ticket == 0) continue;
+
+      string symbol = PositionGetString(POSITION_SYMBOL);
+      long posType  = PositionGetInteger(POSITION_TYPE);
+      double lots   = PositionGetDouble(POSITION_VOLUME);
+      double openPr = PositionGetDouble(POSITION_PRICE_OPEN);
+      double sl     = PositionGetDouble(POSITION_SL);
+      double tp     = PositionGetDouble(POSITION_TP);
+      double profit = PositionGetDouble(POSITION_PROFIT);
+      datetime oTime= (datetime)PositionGetInteger(POSITION_TIME);
+
+      if(!first) posJson += ",";
+      first = false;
+
+      string p = StringFormat(
+         "{\"ticket\":%I64u,\"symbol\":\"%s\",\"type\":\"%s\",\"type_int\":%d,\"lots\":%.2f,\"open_price\":%.2f,\"sl\":%.2f,\"tp\":%.2f,\"profit\":%.2f,\"time\":%I64d}",
+         ticket, symbol, (posType == POSITION_TYPE_BUY ? "BUY" : "SELL"), (int)posType,
+         lots, openPr, sl, tp, profit, (long)oTime
+      );
+      posJson += p;
+   }
+   posJson += "]";
+
+   string masterJson = StringFormat(
+      "{\n"
+      "  \"master_account\": %I64d,\n"
+      "  \"master_server\": \"%s\",\n"
+      "  \"master_symbol\": \"%s\",\n"
+      "  \"positions_count\": %d,\n"
+      "  \"positions\": %s,\n"
+      "  \"updated_at\": %I64d\n"
+      "}",
+      AccountInfoInteger(ACCOUNT_LOGIN),
+      AccountInfoString(ACCOUNT_SERVER),
+      _Symbol,
+      totalPos,
+      posJson,
+      (long)TimeCurrent()
+   );
+
+   int h = FileOpen("copier_master.json", FILE_WRITE|FILE_TXT|FILE_ANSI|FILE_COMMON);
+   if(h != INVALID_HANDLE)
+   {
+      FileWriteString(h, masterJson);
+      FileClose(h);
+   }
 }
 
 //+------------------------------------------------------------------+
