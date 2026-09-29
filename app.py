@@ -25,6 +25,7 @@ if IS_WINDOWS:
     COPIER_MASTER_FILE = os.path.join(COMMON_FILES_DIR, "copier_master.json")
     COPIER_SLAVE_STATUS_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_status.json")
     COPIER_SLAVE_COMMAND_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_command.json")
+    CANDLES_FILE = os.path.join(COMMON_FILES_DIR, "web_candles.json")
 else:
     CONFIG_FILE = "/root/dashboard/config.json"
     STATUS_FILE = "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Files/web_status.json"
@@ -43,6 +44,7 @@ else:
     COPIER_MASTER_FILE = os.path.join(COMMON_FILES_DIR, "copier_master.json")
     COPIER_SLAVE_STATUS_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_status.json")
     COPIER_SLAVE_COMMAND_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_command.json")
+    CANDLES_FILE = os.path.join(COMMON_FILES_DIR, "web_candles.json")
 
 # Parameter definitions and metadata for GUI Configuration
 PARAMETER_CATEGORIES = [
@@ -1753,6 +1755,78 @@ def copier_command():
             return jsonify({"success": False, "message": f"Gagal menjalankan MT5 Exness: {str(e)}"}), 500
 
     return jsonify({"success": False, "message": "Perintah copier tidak dikenal"}), 400
+
+@app.route("/api/candles", methods=["GET"])
+def api_candles():
+    """Return latest OHLC candlestick bars and trade history markers for the interactive chart."""
+    target_file = CANDLES_FILE
+    if not os.path.exists(target_file):
+        alt_path = "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Files/web_candles.json" if not IS_WINDOWS else os.path.join(BASE_DIR, "mql5", "Files", "web_candles.json")
+        if os.path.exists(alt_path):
+            target_file = alt_path
+
+    if not os.path.exists(target_file):
+        return jsonify({
+            "status": "waiting",
+            "symbol": "XAUUSD",
+            "timeframe": "M1",
+            "candles": [],
+            "markers": [],
+            "message": "Menunggu data candlestick dari MT5..."
+        })
+
+    try:
+        with open(target_file, "r", encoding="utf-8", errors="replace") as f:
+            data = json.load(f)
+
+        candles = data.get("candles", [])
+        markers = data.get("markers", [])
+
+        # Ensure candles are sorted ascending by time
+        candles.sort(key=lambda c: c.get("time", 0))
+
+        # Build set of valid candle times for marker alignment
+        candle_times = set(c.get("time") for c in candles)
+        valid_markers = []
+
+        if candles:
+            min_time = candles[0]["time"]
+
+            for m in markers:
+                m_time = m.get("time", 0)
+                if m_time < min_time:
+                    continue
+                # If exact bar time isn't in candle_times, snap to 60s bar
+                if m_time not in candle_times:
+                    snapped = m_time - (m_time % 60)
+                    if snapped in candle_times:
+                        m["time"] = snapped
+                    else:
+                        continue
+                valid_markers.append(m)
+
+        # Sort markers strictly ascending by time for Lightweight Charts
+        valid_markers.sort(key=lambda m: (m.get("time", 0), m.get("raw_time", 0)))
+
+        response = jsonify({
+            "status": "ok",
+            "symbol": data.get("symbol", "XAUUSD"),
+            "timeframe": data.get("timeframe", "M1"),
+            "digits": data.get("digits", 2),
+            "count": len(candles),
+            "updated_at": data.get("updated_at", int(time.time())),
+            "candles": candles,
+            "markers": valid_markers
+        })
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        return response
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "candles": [],
+            "markers": []
+        }), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

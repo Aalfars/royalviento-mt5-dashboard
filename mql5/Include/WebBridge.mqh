@@ -108,6 +108,9 @@ string WebBridge_BuildParamsJson()
 }
 #endif
 
+void WebBridge_ExportCopierSignals();
+void WebBridge_ExportCandles();
+
 //+------------------------------------------------------------------+
 //| Export status akun & order ke JSON                               |
 //+------------------------------------------------------------------+
@@ -264,6 +267,8 @@ void WebBridge_ExportStatus()
 
    // Export to FILE_COMMON for Trade Copier (Slave EA)
    WebBridge_ExportCopierSignals();
+   // Export Candlestick OHLC and Trade History Markers for Interactive Chart
+   WebBridge_ExportCandles();
 }
 
 //+------------------------------------------------------------------+
@@ -323,6 +328,154 @@ void WebBridge_ExportCopierSignals()
    {
       FileWriteString(h, masterJson);
       FileClose(h);
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Export Candlestick Data (OHLC) & Trade History Markers           |
+//+------------------------------------------------------------------+
+void WebBridge_ExportCandles()
+{
+   static datetime lastCandleExport = 0;
+   datetime now = TimeCurrent();
+   if(now - lastCandleExport < 2) return;
+   lastCandleExport = now;
+
+   MqlRates ratesM1[];
+   ArraySetAsSeries(ratesM1, false);
+   int countM1 = CopyRates(_Symbol, PERIOD_M1, 0, 300, ratesM1);
+   if(countM1 <= 0) return;
+
+   datetime earliestTime = ratesM1[0].time;
+
+   HistorySelect(earliestTime, now + 60);
+   int totalDeals = HistoryDealsTotal();
+
+   string markersJson = "[";
+   bool firstMarker = true;
+
+   for(int i = 0; i < totalDeals; i++)
+   {
+      ulong dTicket = HistoryDealGetTicket(i);
+      if(dTicket == 0) continue;
+
+      string dSymbol = HistoryDealGetString(dTicket, DEAL_SYMBOL);
+      if(StringLen(dSymbol) > 0 && dSymbol != _Symbol) continue;
+
+      long dEntry   = HistoryDealGetInteger(dTicket, DEAL_ENTRY);
+      long dType    = HistoryDealGetInteger(dTicket, DEAL_TYPE);
+      double dPrice = HistoryDealGetDouble(dTicket, DEAL_PRICE);
+      double dLots  = HistoryDealGetDouble(dTicket, DEAL_VOLUME);
+      double dProfit= HistoryDealGetDouble(dTicket, DEAL_PROFIT);
+      datetime dTime= (datetime)HistoryDealGetInteger(dTicket, DEAL_TIME);
+      ulong dOrder  = (ulong)HistoryDealGetInteger(dTicket, DEAL_ORDER);
+
+      datetime barTime = dTime - (dTime % 60);
+      if(barTime < earliestTime) continue;
+
+      if(dEntry == DEAL_ENTRY_IN)
+      {
+         string action = (dType == DEAL_TYPE_BUY ? "BUY" : (dType == DEAL_TYPE_SELL ? "SELL" : "ENTRY"));
+         string mColor = (dType == DEAL_TYPE_BUY ? "#10b981" : "#ef4444");
+         string mShape = (dType == DEAL_TYPE_BUY ? "arrowUp" : "arrowDown");
+         string mPos   = (dType == DEAL_TYPE_BUY ? "belowBar" : "aboveBar");
+         string text   = StringFormat("%s %.2f @ %.2f", action, dLots, dPrice);
+
+         if(!firstMarker) markersJson += ",";
+         firstMarker = false;
+
+         markersJson += StringFormat(
+            "{\"time\":%I64d,\"raw_time\":%I64d,\"price\":%.2f,\"category\":\"ENTRY\",\"type\":\"%s\",\"lots\":%.2f,\"profit\":0.00,\"color\":\"%s\",\"shape\":\"%s\",\"position\":\"%s\",\"text\":\"%s\",\"ticket\":%I64u}",
+            (long)barTime, (long)dTime, dPrice, action, dLots, mColor, mShape, mPos, text, dOrder
+         );
+      }
+      else if(dEntry == DEAL_ENTRY_OUT || dEntry == DEAL_ENTRY_INOUT)
+      {
+         string action = "CLOSE";
+         string mColor = (dProfit >= 0 ? "#38bdf8" : "#f59e0b");
+         string mShape = "circle";
+         string mPos   = "aboveBar";
+         string text   = StringFormat("CLOSE (%s$%.2f) @ %.2f", (dProfit >= 0 ? "+" : ""), dProfit, dPrice);
+
+         if(!firstMarker) markersJson += ",";
+         firstMarker = false;
+
+         markersJson += StringFormat(
+            "{\"time\":%I64d,\"raw_time\":%I64d,\"price\":%.2f,\"category\":\"EXIT\",\"type\":\"%s\",\"lots\":%.2f,\"profit\":%.2f,\"color\":\"%s\",\"shape\":\"%s\",\"position\":\"%s\",\"text\":\"%s\",\"ticket\":%I64u}",
+            (long)barTime, (long)dTime, dPrice, action, dLots, dProfit, mColor, mShape, mPos, text, dOrder
+         );
+      }
+   }
+
+   // Open active positions
+   for(int p = 0; p < PositionsTotal(); p++)
+   {
+      ulong ticket = PositionGetTicket(p);
+      if(ticket == 0) continue;
+      string pSymbol = PositionGetString(POSITION_SYMBOL);
+      if(pSymbol != _Symbol) continue;
+
+      long posType  = PositionGetInteger(POSITION_TYPE);
+      double pLots  = PositionGetDouble(POSITION_VOLUME);
+      double pPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+      double pProfit= PositionGetDouble(POSITION_PROFIT);
+      datetime pTime= (datetime)PositionGetInteger(POSITION_TIME);
+
+      datetime barTime = pTime - (pTime % 60);
+      if(barTime < earliestTime) barTime = earliestTime;
+
+      string action = (posType == POSITION_TYPE_BUY ? "BUY" : "SELL");
+      string mColor = "#eab308";
+      string mShape = (posType == POSITION_TYPE_BUY ? "arrowUp" : "arrowDown");
+      string mPos   = (posType == POSITION_TYPE_BUY ? "belowBar" : "aboveBar");
+      string text   = StringFormat("ACTIVE %s %.2f @ %.2f (%s$%.2f)",
+         action, pLots, pPrice, (pProfit >= 0 ? "+" : ""), pProfit);
+
+      if(!firstMarker) markersJson += ",";
+      firstMarker = false;
+
+      markersJson += StringFormat(
+         "{\"time\":%I64d,\"raw_time\":%I64d,\"price\":%.2f,\"category\":\"ACTIVE\",\"type\":\"%s\",\"lots\":%.2f,\"profit\":%.2f,\"color\":\"%s\",\"shape\":\"%s\",\"position\":\"%s\",\"text\":\"%s\",\"ticket\":%I64u}",
+         (long)barTime, (long)pTime, pPrice, action, pLots, pProfit, mColor, mShape, mPos, text, ticket
+      );
+   }
+   markersJson += "]";
+
+   string json = "{\n";
+   json += StringFormat("  \"symbol\": \"%s\",\n", _Symbol);
+   json += "  \"timeframe\": \"M1\",\n";
+   json += StringFormat("  \"digits\": %d,\n", _Digits);
+   json += StringFormat("  \"count\": %d,\n", countM1);
+   json += StringFormat("  \"updated_at\": %I64d,\n", (long)now);
+   json += "  \"candles\": [\n";
+
+   for(int i = 0; i < countM1; i++)
+   {
+      if(i > 0) json += ",\n";
+      json += StringFormat("    {\"time\":%I64d,\"open\":%.2f,\"high\":%.2f,\"low\":%.2f,\"close\":%.2f,\"volume\":%I64d}",
+         (long)ratesM1[i].time,
+         ratesM1[i].open,
+         ratesM1[i].high,
+         ratesM1[i].low,
+         ratesM1[i].close,
+         ratesM1[i].tick_volume
+      );
+   }
+   json += "\n  ],\n";
+   json += "  \"markers\": " + markersJson + "\n";
+   json += "}";
+
+   int hCommon = FileOpen("web_candles.json", FILE_WRITE|FILE_TXT|FILE_ANSI|FILE_COMMON);
+   if(hCommon != INVALID_HANDLE)
+   {
+      FileWriteString(hCommon, json);
+      FileClose(hCommon);
+   }
+   int hLocal = FileOpen("web_candles.json", FILE_WRITE|FILE_TXT|FILE_ANSI);
+   if(hLocal != INVALID_HANDLE)
+   {
+      FileWriteString(hLocal, json);
+      FileClose(hLocal);
    }
 }
 

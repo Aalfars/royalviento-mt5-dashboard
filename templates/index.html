@@ -20,6 +20,9 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- TradingView Lightweight Charts v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+
   <style>
     :root {
       /* Dylanbrouwer Style Tokens */
@@ -1037,6 +1040,107 @@
 
       </section>
 
+      <!-- LIVE INTERACTIVE CANDLESTICK CHART & HISTORICAL ENTRY MARKERS -->
+      <section class="brutalist-card p-4 sm:p-5 space-y-3 sm:space-y-4">
+        <!-- Chart Header Strip -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#2a2a2c]">
+          <!-- Title & Asset Metadata -->
+          <div class="flex items-center gap-3">
+            <span class="ember-dot"></span>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="font-mono text-xs sm:text-sm tracking-wider text-white font-bold flex items-center gap-1.5">
+                  <span>CANDLESTICK ENGINE</span>
+                  <span class="text-[#7b7a7c]">//</span>
+                  <span id="chartSymbolTitle" class="text-[#ff6436]">XAUUSD</span>
+                  <span id="chartTfBadge" class="px-1.5 py-0.2 bg-[#222225] text-[10px] text-white border border-[#3c3a3e]">M1</span>
+                </h3>
+                <span id="chartLivePulse" class="inline-flex items-center px-2 py-0.5 text-[9px] font-mono font-semibold bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/30">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-ping mr-1.5"></span> LIVE FEED
+                </span>
+              </div>
+              <p class="font-mono text-[10px] text-[#7b7a7c] mt-0.5">
+                Interactive Chart &bull; Visual Markers: <span class="text-[#10b981] font-semibold"><i class="fa-solid fa-arrow-up text-[9px]"></i> BUY Entry</span> &bull; <span class="text-[#ef4444] font-semibold"><i class="fa-solid fa-arrow-down text-[9px]"></i> SELL Entry</span> &bull; <span class="text-[#38bdf8] font-semibold"><i class="fa-solid fa-circle text-[7px]"></i> EXIT</span> &bull; <span class="text-[#eab308] font-semibold"><i class="fa-solid fa-bolt text-[9px]"></i> ACTIVE</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Controls: Timeframe, Markers Filter, Fit -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Last Price Display -->
+            <div class="flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-[#101012] border border-[#2a2a2c] font-mono">
+              <span class="text-[10px] text-[#7b7a7c]">PRICE</span>
+              <span id="chartLivePrice" class="text-xs font-bold text-white tracking-wider">--.--</span>
+            </div>
+
+            <!-- Timeframe selector -->
+            <div class="inline-flex bg-[#101012] p-0.5 border border-[#2a2a2c]">
+              <button onclick="setChartTimeframe('M1')" id="btnTfM1" class="px-2.5 py-1 font-mono text-[10px] bg-white text-black font-semibold transition">M1</button>
+              <button onclick="setChartTimeframe('M5')" id="btnTfM5" class="px-2.5 py-1 font-mono text-[10px] text-[#a2a2a2] hover:text-white transition">M5</button>
+              <button onclick="setChartTimeframe('M15')" id="btnTfM15" class="px-2.5 py-1 font-mono text-[10px] text-[#a2a2a2] hover:text-white transition">M15</button>
+            </div>
+
+            <!-- Toggle Filter Markers -->
+            <div class="hidden sm:inline-flex items-center gap-1">
+              <button onclick="toggleChartMarkers('entries')" id="btnFilterEntries" class="pill-nav text-[10px] py-1 px-2 border-[#10b981]/40 text-[#10b981] bg-[#10b981]/10 font-mono font-medium">
+                <i class="fa-solid fa-check text-[9px] mr-1"></i>ENTRIES
+              </button>
+              <button onclick="toggleChartMarkers('exits')" id="btnFilterExits" class="pill-nav text-[10px] py-1 px-2 border-[#38bdf8]/40 text-[#38bdf8] bg-[#38bdf8]/10 font-mono font-medium">
+                <i class="fa-solid fa-check text-[9px] mr-1"></i>EXITS
+              </button>
+              <button onclick="toggleChartMarkers('active')" id="btnFilterActive" class="pill-nav text-[10px] py-1 px-2 border-[#eab308]/40 text-[#eab308] bg-[#eab308]/10 font-mono font-medium">
+                <i class="fa-solid fa-check text-[9px] mr-1"></i>ACTIVE
+              </button>
+            </div>
+
+            <!-- Auto Scale / Fit Button -->
+            <button onclick="fitChartContent()" class="pill-nav text-[10px] py-1 px-2.5" title="Auto Scale Content">
+              <i class="fa-solid fa-arrows-to-eye text-[9px]"></i>
+              <span class="ml-1">FIT</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- OHLC & Marker Legend Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-1.5 bg-[#121214] border border-[#222225] font-mono text-[10px]">
+          <div id="chartOhlcLegend" class="flex flex-wrap items-center gap-2 sm:gap-3 text-[#a2a2a2]">
+            <span>TIME: <span id="legendTime" class="text-white">--:--:--</span></span>
+            <span>O: <span id="legendOpen" class="text-white">--.--</span></span>
+            <span>H: <span id="legendHigh" class="text-[#10b981]">--.--</span></span>
+            <span>L: <span id="legendLow" class="text-[#ef4444]">--.--</span></span>
+            <span>C: <span id="legendClose" class="text-white font-bold">--.--</span></span>
+            <span>VOL: <span id="legendVol" class="text-[#a2a2a2]">--</span></span>
+          </div>
+
+          <div class="flex items-center gap-3 text-[#7b7a7c]">
+            <span><strong id="chartMarkersCount" class="text-white">0</strong> markers</span>
+            <span>&bull;</span>
+            <span id="chartCandlesCount" class="text-white">0</span> bars
+          </div>
+        </div>
+
+        <!-- Chart Canvas Container -->
+        <div class="relative w-full h-[340px] sm:h-[420px] bg-[#0c0c0e] border border-[#222225] overflow-hidden" id="tvChartContainer">
+          <!-- Loading overlay -->
+          <div id="chartLoadingOverlay" class="absolute inset-0 bg-[#0c0c0e]/85 backdrop-blur-xs flex items-center justify-center font-mono text-xs text-[#a2a2a2] z-10">
+            <i class="fa-solid fa-circle-notch fa-spin mr-2 text-[#ff6436]"></i> LOADING XAUUSD CANDLES &amp; TRADE HISTORY...
+          </div>
+        </div>
+
+        <!-- Chart Bottom Info Strip -->
+        <div class="pt-2 border-t border-[#222225] flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-[#7b7a7c]">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <span>MASTER: <span class="text-white font-semibold">MetaQuotes Demo</span></span>
+            <span>&bull;</span>
+            <span>SLAVE: <span class="text-[#ff6436] font-semibold">Exness Demo (XAUUSDm)</span></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span>LAST SYNC: <span id="chartLastSyncTime" class="text-white font-semibold">--:--:--</span></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
+          </div>
+        </div>
+      </section>
+
       <!-- MAIN SPLIT: MONITOR VIEWPORT & OPEN POSITIONS (Responsive Flow) -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
@@ -1573,6 +1677,8 @@
 
       if (!statusInterval) statusInterval = setInterval(fetchStatus, 2000);
       if (!screenInterval) screenInterval = setInterval(refreshScreen, 5000);
+
+      initCandleChart();
     }
 
     async function fetchStatus() {
@@ -3134,6 +3240,332 @@
         }
       } catch (e) {
         alert('Error koneksi ke server: ' + e.message);
+      }
+    }
+    // ==========================================
+    // CANDLESTICK CHART & TRADE MARKERS CONTROLLER
+    // ==========================================
+    let tvChart = null;
+    let candleSeries = null;
+    let rawM1Candles = [];
+    let currentCandles = [];
+    let allRawMarkers = [];
+    let activeMarkerFilters = { entries: true, exits: true, active: true };
+    let currentTf = 'M1';
+    let chartPollingInterval = null;
+
+    function initCandleChart() {
+      const container = document.getElementById('tvChartContainer');
+      if (!container) return;
+
+      if (!window.LightweightCharts) {
+        console.warn("LightweightCharts library not loaded yet, retrying in 500ms...");
+        setTimeout(initCandleChart, 500);
+        return;
+      }
+
+      if (tvChart) {
+        fetchCandlesData(true);
+        return;
+      }
+
+      try {
+        tvChart = LightweightCharts.createChart(container, {
+          width: container.clientWidth || 800,
+          height: container.clientHeight || 420,
+          layout: {
+            background: { type: 'solid', color: '#0c0c0e' },
+            textColor: '#a2a2a2',
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 11
+          },
+          grid: {
+            vertLines: { color: 'rgba(255, 255, 255, 0.05)' },
+            horzLines: { color: 'rgba(255, 255, 255, 0.05)' }
+          },
+          crosshair: {
+            mode: LightweightCharts.CrosshairMode.Normal,
+            vertLine: {
+              color: '#ff6436',
+              width: 1,
+              style: LightweightCharts.LineStyle.Dashed,
+              labelBackgroundColor: '#ff6436'
+            },
+            horzLine: {
+              color: '#ff6436',
+              width: 1,
+              style: LightweightCharts.LineStyle.Dashed,
+              labelBackgroundColor: '#ff6436'
+            }
+          },
+          rightPriceScale: {
+            borderColor: '#2a2a2c',
+            scaleMargins: { top: 0.12, bottom: 0.12 },
+            autoScale: true
+          },
+          timeScale: {
+            borderColor: '#2a2a2c',
+            timeVisible: true,
+            secondsVisible: false,
+            barSpacing: 8,
+            minBarSpacing: 3
+          }
+        });
+
+        candleSeries = tvChart.addCandlestickSeries({
+          upColor: '#10b981',
+          downColor: '#ef4444',
+          borderUpColor: '#10b981',
+          borderDownColor: '#ef4444',
+          wickUpColor: '#10b981',
+          wickDownColor: '#ef4444'
+        });
+
+        // Crosshair move listener for interactive OHLC legend
+        tvChart.subscribeCrosshairMove(param => {
+          if (!param || !param.time || !param.seriesData || !param.seriesData.get(candleSeries)) {
+            updateLegendWithLatestCandle();
+            return;
+          }
+          const c = param.seriesData.get(candleSeries);
+          renderOhlcLegend(c, param.time);
+        });
+
+        // Responsive ResizeObserver for flawless full-width adaptation
+        const resizeObserver = new ResizeObserver(entries => {
+          if (!entries || entries.length === 0 || !entries[0].contentRect) return;
+          const { width, height } = entries[0].contentRect;
+          if (width > 0 && height > 0 && tvChart) {
+            tvChart.applyOptions({ width, height });
+          }
+        });
+        resizeObserver.observe(container);
+
+        fetchCandlesData(true);
+
+        if (!chartPollingInterval) {
+          chartPollingInterval = setInterval(() => fetchCandlesData(false), 2000);
+        }
+      } catch (err) {
+        console.error("Failed to initialize TradingView Lightweight Charts:", err);
+      }
+    }
+
+    async function fetchCandlesData(fitToContent = false) {
+      try {
+        const res = await fetch('/api/candles');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.status === 'ok' && Array.isArray(data.candles) && data.candles.length > 0) {
+          const loadingEl = document.getElementById('chartLoadingOverlay');
+          if (loadingEl) loadingEl.classList.add('hidden');
+
+          rawM1Candles = data.candles;
+          allRawMarkers = data.markers || [];
+
+          applyTimeframeAndRender(fitToContent);
+
+          // Update header stats
+          const symbolEl = document.getElementById('chartSymbolTitle');
+          if (symbolEl) symbolEl.textContent = data.symbol || 'XAUUSD';
+
+          const countEl = document.getElementById('chartCandlesCount');
+          if (countEl) countEl.textContent = currentCandles.length;
+
+          const lastSyncEl = document.getElementById('chartLastSyncTime');
+          if (lastSyncEl && data.updated_at) {
+            const d = new Date(data.updated_at * 1000);
+            lastSyncEl.textContent = d.toLocaleTimeString('id-ID');
+          }
+
+          // Last price display
+          if (currentCandles.length > 0) {
+            const last = currentCandles[currentCandles.length - 1];
+            const priceEl = document.getElementById('chartLivePrice');
+            if (priceEl) {
+              priceEl.textContent = Number(last.close).toFixed(data.digits || 2);
+              priceEl.className = `text-xs font-bold tracking-wider ${last.close >= last.open ? 'text-[#10b981]' : 'text-[#ef4444]'}`;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching candles data:", e);
+      }
+    }
+
+    function aggregateCandles(m1Bars, minutes) {
+      if (!m1Bars || m1Bars.length === 0) return [];
+      if (minutes <= 1) return m1Bars;
+
+      const tfSec = minutes * 60;
+      const aggregated = [];
+      let currentBucket = null;
+
+      for (const bar of m1Bars) {
+        const bucketTime = bar.time - (bar.time % tfSec);
+
+        if (!currentBucket || currentBucket.time !== bucketTime) {
+          if (currentBucket) aggregated.push(currentBucket);
+          currentBucket = {
+            time: bucketTime,
+            open: bar.open,
+            high: bar.high,
+            low: bar.low,
+            close: bar.close,
+            volume: bar.volume || 0
+          };
+        } else {
+          currentBucket.high = Math.max(currentBucket.high, bar.high);
+          currentBucket.low = Math.min(currentBucket.low, bar.low);
+          currentBucket.close = bar.close;
+          currentBucket.volume += (bar.volume || 0);
+        }
+      }
+      if (currentBucket) aggregated.push(currentBucket);
+      return aggregated;
+    }
+
+    function applyTimeframeAndRender(fitToContent = false) {
+      if (!candleSeries) return;
+
+      const minutes = currentTf === 'M15' ? 15 : (currentTf === 'M5' ? 5 : 1);
+      currentCandles = aggregateCandles(rawM1Candles, minutes);
+
+      candleSeries.setData(currentCandles);
+
+      // Filter and set markers
+      renderChartMarkers();
+
+      updateLegendWithLatestCandle();
+
+      if (fitToContent && tvChart) {
+        tvChart.timeScale().fitContent();
+      }
+    }
+
+    function renderChartMarkers() {
+      if (!candleSeries || !currentCandles || currentCandles.length === 0) return;
+
+      const minutes = currentTf === 'M15' ? 15 : (currentTf === 'M5' ? 5 : 1);
+      const tfSec = minutes * 60;
+      const candleTimes = new Set(currentCandles.map(c => c.time));
+      const minChartTime = currentCandles[0].time;
+      const maxChartTime = currentCandles[currentCandles.length - 1].time;
+
+      const filtered = [];
+
+      for (const m of allRawMarkers) {
+        const cat = (m.category || '').toUpperCase();
+        if (cat === 'ENTRY' && !activeMarkerFilters.entries) continue;
+        if (cat === 'EXIT' && !activeMarkerFilters.exits) continue;
+        if (cat === 'ACTIVE' && !activeMarkerFilters.active) continue;
+
+        // Snap marker time to current timeframe bucket
+        const rawTime = m.raw_time || m.time;
+        const bucketTime = rawTime - (rawTime % tfSec);
+
+        if (bucketTime < minChartTime || bucketTime > maxChartTime) continue;
+        if (!candleTimes.has(bucketTime)) continue;
+
+        filtered.push({
+          time: bucketTime,
+          position: m.position || 'aboveBar',
+          color: m.color || '#ff6436',
+          shape: m.shape || 'circle',
+          text: m.text || '',
+          id: m.ticket || Math.random()
+        });
+      }
+
+      // Crucial: Must be sorted strictly ascending by time for Lightweight Charts
+      filtered.sort((a, b) => a.time - b.time);
+
+      candleSeries.setMarkers(filtered);
+
+      const markersCountEl = document.getElementById('chartMarkersCount');
+      if (markersCountEl) markersCountEl.textContent = filtered.length;
+    }
+
+    function setChartTimeframe(tf) {
+      currentTf = tf;
+      ['btnTfM1', 'btnTfM5', 'btnTfM15'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (id === `btnTf${tf}`) {
+          btn.className = "px-2.5 py-1 font-mono text-[10px] bg-white text-black font-semibold transition";
+        } else {
+          btn.className = "px-2.5 py-1 font-mono text-[10px] text-[#a2a2a2] hover:text-white transition";
+        }
+      });
+
+      const badge = document.getElementById('chartTfBadge');
+      if (badge) badge.textContent = tf;
+
+      applyTimeframeAndRender(true);
+    }
+
+    function toggleChartMarkers(filterName) {
+      activeMarkerFilters[filterName] = !activeMarkerFilters[filterName];
+
+      const btnMap = {
+        entries: { id: 'btnFilterEntries', label: 'ENTRIES' },
+        exits: { id: 'btnFilterExits', label: 'EXITS' },
+        active: { id: 'btnFilterActive', label: 'ACTIVE' }
+      };
+
+      const cfg = btnMap[filterName];
+      const btn = document.getElementById(cfg.id);
+      if (btn) {
+        if (activeMarkerFilters[filterName]) {
+          btn.className = `pill-nav text-[10px] py-1 px-2 border-[#ff6436]/40 text-white bg-[#ff6436]/20 font-mono font-medium`;
+          btn.innerHTML = `<i class="fa-solid fa-check text-[9px] mr-1"></i>${cfg.label}`;
+        } else {
+          btn.className = `pill-nav text-[10px] py-1 px-2 border-[#2a2a2c] text-[#7b7a7c] bg-[#121214] font-mono font-medium`;
+          btn.innerHTML = `<i class="fa-solid fa-xmark text-[9px] mr-1"></i>${cfg.label}`;
+        }
+      }
+
+      renderChartMarkers();
+    }
+
+    function fitChartContent() {
+      if (tvChart) {
+        tvChart.timeScale().fitContent();
+      }
+    }
+
+    function renderOhlcLegend(c, timeSec) {
+      if (!c) return;
+      const t = new Date(timeSec * 1000);
+      const timeStr = t.toLocaleTimeString('id-ID');
+
+      const elTime = document.getElementById('legendTime');
+      if (elTime) elTime.textContent = timeStr;
+
+      const elOpen = document.getElementById('legendOpen');
+      if (elOpen) elOpen.textContent = Number(c.open).toFixed(2);
+
+      const elHigh = document.getElementById('legendHigh');
+      if (elHigh) elHigh.textContent = Number(c.high).toFixed(2);
+
+      const elLow = document.getElementById('legendLow');
+      if (elLow) elLow.textContent = Number(c.low).toFixed(2);
+
+      const elClose = document.getElementById('legendClose');
+      if (elClose) {
+        elClose.textContent = Number(c.close).toFixed(2);
+        elClose.className = `font-bold ${c.close >= c.open ? 'text-[#10b981]' : 'text-[#ef4444]'}`;
+      }
+
+      const elVol = document.getElementById('legendVol');
+      if (elVol) elVol.textContent = c.volume !== undefined ? c.volume : '--';
+    }
+
+    function updateLegendWithLatestCandle() {
+      if (currentCandles && currentCandles.length > 0) {
+        const last = currentCandles[currentCandles.length - 1];
+        renderOhlcLegend(last, last.time);
       }
     }
   </script>

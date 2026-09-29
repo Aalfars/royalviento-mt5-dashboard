@@ -521,6 +521,8 @@ void ExportSlaveStatus()
    json += StringFormat("  \"last_master_update\": %I64d,\n", (long)g_lastMasterUpdate);
    json += StringFormat("  \"positions_count\": %d,\n", totalPos);
    json += "  \"positions\": " + posJson + ",\n";
+   bool tradeAllowed  = (bool)TerminalInfoInteger(TERMINAL_TRADE_ALLOWED);
+   json += StringFormat("  \"algo_trading\": %s,\n", (tradeAllowed ? "true" : "false"));
    json += StringFormat("  \"updated_at\": %I64d\n", (long)TimeCurrent());
    json += "}";
 
