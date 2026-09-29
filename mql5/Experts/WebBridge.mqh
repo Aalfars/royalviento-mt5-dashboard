@@ -221,58 +221,39 @@ void WebBridge_ExportStatus()
    string blockReasonVal = "NONE";
 #endif
 
-   string json = StringFormat(
-      "{\n"
-      "  \"account\": %I64d,\n"
-      "  \"server\": \"%s\",\n"
-      "  \"currency\": \"%s\",\n"
-      "  \"balance\": %.2f,\n"
-      "  \"equity\": %.2f,\n"
-      "  \"margin\": %.2f,\n"
-      "  \"free_margin\": %.2f,\n"
-      "  \"margin_level\": %.2f,\n"
-      "  \"day_start_equity\": %.2f,\n"
-      "  \"daily_profit\": %.2f,\n"
-      "  \"floating_profit\": %.2f,\n"
-      "  \"daily_target_usd\": %.2f,\n"
-      "  \"daily_target_hit\": %s,\n"
-      "  \"daily_loss_hit\": %s,\n"
-      "  \"account_locked\": %s,\n"
-      "  \"web_paused\": %s,\n"
-      "  \"trading_mode\": \"%s\",\n"
-      "  \"entry_block_reason\": \"%s\",\n"
-      "  \"algo_trading\": %s,\n"
-      "  \"buy_count\": %d,\n"
-      "  \"buy_lots\": %.2f,\n"
-      "  \"sell_count\": %d,\n"
-      "  \"sell_lots\": %.2f,\n"
-      "  \"positions_total\": %d,\n"
-      "  \"positions\": %s,\n"
-      "  \"history_total\": %d,\n"
-      "  \"history_profit_sum\": %.2f,\n"
-      "  \"history\": %s,\n"
-      "  %s"
-      "  %s"
-      "  \"updated_at\": %I64d\n"
-      "}",
-      login, server, currency,
-      balance, equity, margin, freeMargin, marginLevel,
-      g_dayStartEquity, g_dailyProfit, totalFloatingProfit,
-      g_webDailyTargetUSD,
-      (g_dailyTargetHit ? "true" : "false"),
-      (g_dailyLossHit ? "true" : "false"),
-      (g_accountLocked ? "true" : "false"),
-      (g_webPaused ? "true" : "false"),
-      modeVal,
-      blockReasonVal,
-      (TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) ? "true" : "false"),
-      buyCount, totalBuyLots, sellCount, totalSellLots,
-      totalPos, posJson,
-      exportedDeals, historyProfitSum, histJson,
-      mtfPart,
-      paramsPart,
-      (long)TimeCurrent()
-   );
+   string json = "{\n";
+   json += StringFormat("  \"account\": %I64d,\n", login);
+   json += StringFormat("  \"server\": \"%s\",\n", server);
+   json += StringFormat("  \"currency\": \"%s\",\n", currency);
+   json += StringFormat("  \"balance\": %.2f,\n", balance);
+   json += StringFormat("  \"equity\": %.2f,\n", equity);
+   json += StringFormat("  \"margin\": %.2f,\n", margin);
+   json += StringFormat("  \"free_margin\": %.2f,\n", freeMargin);
+   json += StringFormat("  \"margin_level\": %.2f,\n", marginLevel);
+   json += StringFormat("  \"day_start_equity\": %.2f,\n", g_dayStartEquity);
+   json += StringFormat("  \"daily_profit\": %.2f,\n", g_dailyProfit);
+   json += StringFormat("  \"floating_profit\": %.2f,\n", totalFloatingProfit);
+   json += StringFormat("  \"daily_target_usd\": %.2f,\n", g_webDailyTargetUSD);
+   json += StringFormat("  \"daily_target_hit\": %s,\n", (g_dailyTargetHit ? "true" : "false"));
+   json += StringFormat("  \"daily_loss_hit\": %s,\n", (g_dailyLossHit ? "true" : "false"));
+   json += StringFormat("  \"account_locked\": %s,\n", (g_accountLocked ? "true" : "false"));
+   json += StringFormat("  \"web_paused\": %s,\n", (g_webPaused ? "true" : "false"));
+   json += StringFormat("  \"trading_mode\": \"%s\",\n", modeVal);
+   json += StringFormat("  \"entry_block_reason\": \"%s\",\n", blockReasonVal);
+   json += StringFormat("  \"algo_trading\": %s,\n", (TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) ? "true" : "false"));
+   json += StringFormat("  \"buy_count\": %d,\n", buyCount);
+   json += StringFormat("  \"buy_lots\": %.2f,\n", totalBuyLots);
+   json += StringFormat("  \"sell_count\": %d,\n", sellCount);
+   json += StringFormat("  \"sell_lots\": %.2f,\n", totalSellLots);
+   json += StringFormat("  \"positions_total\": %d,\n", totalPos);
+   json += "  \"positions\": " + posJson + ",\n";
+   json += StringFormat("  \"history_total\": %d,\n", exportedDeals);
+   json += StringFormat("  \"history_profit_sum\": %.2f,\n", historyProfitSum);
+   json += "  \"history\": " + histJson + ",\n";
+   json += "  " + mtfPart;
+   json += "  " + paramsPart;
+   json += StringFormat("  \"updated_at\": %I64d\n", (long)TimeCurrent());
+   json += "}";
 
    int h = FileOpen("web_status.json", FILE_WRITE|FILE_TXT|FILE_ANSI);
    if(h != INVALID_HANDLE)
