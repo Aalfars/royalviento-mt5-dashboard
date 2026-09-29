@@ -1,0 +1,5 @@
+# Ensure shell scripts always have LF endings on all platforms
+*.sh text eol=lf
+*.mq5 text eol=crlf
+*.mqh text eol=crlf
+*.set text eol=crlf

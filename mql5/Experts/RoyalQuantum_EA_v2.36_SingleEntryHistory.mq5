@@ -39,6 +39,8 @@
 #property version   "2.35"
 #property strict
 
+#define __ROYAL_QUANTUM__ 1
+
 //======================================================================
 // ROYAL QUANTUM BRANDING
 // Resource BMP files are intentionally not required in this build.

@@ -381,6 +381,12 @@
             <i class="fa-solid fa-arrows-rotate text-[9px] text-[#ff6436] ml-0.5"></i>
           </button>
 
+          <!-- Parameters Console Pill -->
+          <button onclick="openParametersModal()" class="pill-nav hover:border-[#ff6436] transition flex items-center gap-1.5" title="Buka Pengaturan Parameter GUI EA">
+            <i class="fa-solid fa-sliders text-[10px] text-[#ff6436]"></i>
+            <span class="text-white font-semibold">PARAMETERS</span>
+          </button>
+
           <!-- Domain Host (Desktop) -->
           <a href="https://trading.aranya.my.id" target="_blank" class="hidden lg:inline-flex pill-nav text-[#a2a2a2] hover:text-white" title="Custom Cloudflare Domain">
             <span>trading.aranya.my.id</span>
@@ -388,7 +394,7 @@
 
           <!-- Settings -->
           <button onclick="openSettingsModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-[rgba(201,199,204,0.22)] flex items-center justify-center text-[#a2a2a2] hover:text-white hover:border-white transition" title="Pengaturan">
-            <i class="fa-solid fa-sliders text-xs"></i>
+            <i class="fa-solid fa-gear text-xs"></i>
           </button>
         </div>
 
@@ -405,6 +411,8 @@
         </span>
         <span>•</span>
         <span id="headerModeMobile" class="text-[#ff6436] font-medium" onclick="toggleTradingMode()">SCALPER M1</span>
+        <span>•</span>
+        <span onclick="openParametersModal()" class="text-white hover:text-[#ff6436] cursor-pointer font-medium flex items-center gap-1"><i class="fa-solid fa-sliders text-[8px] text-[#ff6436]"></i> PARAMS</span>
         <span>•</span>
         <span>trading.aranya.my.id</span>
       </div>
@@ -444,6 +452,12 @@
             <button id="btnTradingMode" onclick="toggleTradingMode()" class="pill-action-ghost w-full sm:w-auto hover:border-[#ff6436]" title="Ganti Mode Trading (Aman MTF vs Scalper M1)">
               <i class="fa-solid fa-bolt text-xs text-[#ff6436]" id="iconTradingMode"></i>
               <span id="textTradingMode">MODE: SCALPER M1</span>
+            </button>
+
+            <!-- Parameter Manager Button -->
+            <button onclick="openParametersModal()" class="pill-action-ghost w-full sm:w-auto hover:border-[#ff6436]" title="Buka Pengaturan Lengkap Parameter GUI EA">
+              <i class="fa-solid fa-sliders text-xs text-[#ff6436]"></i>
+              <span>PARAMETER EA</span>
             </button>
 
             <button onclick="openAccountModal()" class="pill-action-ghost w-full sm:w-auto hover:border-white" title="Ganti Akun Trading">
@@ -572,6 +586,293 @@
           RESUME TRADING &rarr;
         </button>
       </div>
+
+      <!-- =================================================================== -->
+      <!-- MULTI-TIMEFRAME RADAR // LIVE SIGNALS & INDICATORS                  -->
+      <!-- =================================================================== -->
+      <section class="brutalist-card p-4 sm:p-6 space-y-4 sm:space-y-5 border-l-4 border-l-[#ff6436]">
+        
+        <!-- Radar Header Strip -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-[#2a2a2c]">
+          <div class="flex items-center gap-3">
+            <span class="ember-dot"></span>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-display text-xl sm:text-2xl text-white tracking-wider">MULTI-TIMEFRAME RADAR</h2>
+                <span class="tag-mono-ember text-[9px]">LIVE TELEMETRY</span>
+              </div>
+              <p class="font-mono text-[10px] sm:text-[11px] text-[#a2a2a2] mt-0.5">
+                MONITORING SINYAL REAL-TIME: M1 (ENTRY) // M5 (CONFIRMATION) // H4 (MACRO TREND)
+              </p>
+            </div>
+          </div>
+
+          <!-- Alignment & Mode Badges -->
+          <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <!-- MTF Summary Badge -->
+            <div id="mtfSummaryBadge" class="px-3 py-1.5 border border-[#3c3a3e] bg-[#111113] font-mono text-[11px] font-semibold flex items-center gap-2 text-white">
+              <span class="w-2 h-2 rounded-full bg-[#ff6436] animate-pulse"></span>
+              <span id="mtfSummaryText">SCANNING SIGNALS...</span>
+            </div>
+
+            <!-- Mode Quick Switch -->
+            <button onclick="toggleTradingMode()" class="pill-nav text-[11px] hover:border-[#ff6436] flex items-center gap-1.5" title="Klik untuk Ganti Mode Sinyal">
+              <span id="mtfModeDot" class="w-1.5 h-1.5 rounded-full bg-[#00ff88]"></span>
+              <span class="text-[#7b7a7c]">MODE:</span>
+              <span id="mtfModeLabel" class="text-white font-bold">AMAN (MTF)</span>
+            </button>
+
+            <!-- Parameters Button -->
+            <button onclick="openParametersModal()" class="pill-action-white text-xs py-1.5 px-3.5 flex items-center gap-1.5" title="Buka Pengaturan Parameter">
+              <i class="fa-solid fa-sliders text-[10px]"></i>
+              <span>SETTING PARAMETER</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3 Timeframe Signal Cards (M1, M5, H4) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+          
+          <!-- TIMEFRAME 1: M1 (TRIGGER) -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-[#3c3a3e] transition">
+            <!-- Card Header -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-[#222225] border border-[#3c3a3e] font-mono text-[10px] font-bold text-white uppercase">M1 // TRIGGER</span>
+                <span class="text-[#7b7a7c] text-[10px] font-mono">1 MIN</span>
+              </div>
+              <span id="m1SignalPill" class="px-2.5 py-0.5 font-mono text-xs font-bold bg-[#2a2a2c] text-[#a2a2a2]">WAIT</span>
+            </div>
+
+            <!-- Signal Spotlight Display -->
+            <div class="flex items-baseline justify-between pt-1">
+              <div>
+                <div class="text-[10px] font-mono text-[#7b7a7c] uppercase">DIRECTION SIGNAL</div>
+                <div id="m1BigSignal" class="font-display text-3xl sm:text-4xl text-white tracking-wide flex items-center gap-2 mt-0.5">
+                  <span id="m1SignalIcon">—</span>
+                  <span id="m1SignalText">SCANNING</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] font-mono text-[#7b7a7c]">CLOSE PRICE</div>
+                <div id="m1ClosePrice" class="font-mono text-base sm:text-lg font-bold text-white">$0.00</div>
+              </div>
+            </div>
+
+            <!-- Indicator Telemetry List -->
+            <div class="space-y-2 pt-3 border-t border-[#1e1e21] font-mono text-[11px]">
+              <!-- EMA Direction -->
+              <div class="flex items-center justify-between">
+                <span class="text-[#7b7a7c]">EMA Dir (<span id="m1EmaDirPeriod">100</span>):</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="m1EmaDirVal" class="text-white font-medium">$0.00</span>
+                  <span id="m1CloseVsEma" class="text-[9px] px-1 bg-[#222224] text-[#a2a2a2]">WAIT</span>
+                </div>
+              </div>
+
+              <!-- EMA 200 Filter -->
+              <div class="flex items-center justify-between">
+                <span class="text-[#7b7a7c]">EMA 200 Bias:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="m1Ema200Val" class="text-white font-medium">$0.00</span>
+                  <span id="m1EmaOkBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#222224] text-[#7b7a7c]">OFF</span>
+                </div>
+              </div>
+
+              <!-- Stochastic -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[#7b7a7c]">Stoch (5,3,3):</span>
+                  <span id="m1StochVal" class="text-white font-bold">50.0%</span>
+                </div>
+                <div class="w-full bg-[#1c1c1f] h-1.5 overflow-hidden">
+                  <div id="m1StochBar" class="bg-[#ff6436] h-1.5 transition-all duration-300" style="width: 50%"></div>
+                </div>
+                <div class="flex justify-between text-[8px] text-[#555]">
+                  <span>20 OVERSOLD</span>
+                  <span>50 MID</span>
+                  <span>80 OVERBOUGHT</span>
+                </div>
+              </div>
+
+              <!-- EMA Slope -->
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[#7b7a7c]">EMA Slope:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="m1SlopeVal" class="text-white font-medium">0.0 pt</span>
+                  <span id="m1SlopeBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#222224] text-[#7b7a7c]">OFF</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TIMEFRAME 2: M5 (CONFIRMATION) -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-[#3c3a3e] transition">
+            <!-- Card Header -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-[#222225] border border-[#3c3a3e] font-mono text-[10px] font-bold text-white uppercase">M5 // CONFIRM</span>
+                <span class="text-[#7b7a7c] text-[10px] font-mono">5 MIN</span>
+              </div>
+              <span id="m5SignalPill" class="px-2.5 py-0.5 font-mono text-xs font-bold bg-[#2a2a2c] text-[#a2a2a2]">WAIT</span>
+            </div>
+
+            <!-- Signal Spotlight Display -->
+            <div class="flex items-baseline justify-between pt-1">
+              <div>
+                <div class="text-[10px] font-mono text-[#7b7a7c] uppercase">CONFIRMATION SIGNAL</div>
+                <div id="m5BigSignal" class="font-display text-3xl sm:text-4xl text-white tracking-wide flex items-center gap-2 mt-0.5">
+                  <span id="m5SignalIcon">—</span>
+                  <span id="m5SignalText">SCANNING</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] font-mono text-[#7b7a7c]">CLOSE PRICE</div>
+                <div id="m5ClosePrice" class="font-mono text-base sm:text-lg font-bold text-white">$0.00</div>
+              </div>
+            </div>
+
+            <!-- Indicator Telemetry List -->
+            <div class="space-y-2 pt-3 border-t border-[#1e1e21] font-mono text-[11px]">
+              <!-- EMA Direction -->
+              <div class="flex items-center justify-between">
+                <span class="text-[#7b7a7c]">EMA Dir (<span id="m5EmaDirPeriod">100</span>):</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="m5EmaDirVal" class="text-white font-medium">$0.00</span>
+                  <span id="m5CloseVsEma" class="text-[9px] px-1 bg-[#222224] text-[#a2a2a2]">WAIT</span>
+                </div>
+              </div>
+
+              <!-- EMA 200 Filter -->
+              <div class="flex items-center justify-between">
+                <span class="text-[#7b7a7c]">EMA 200 Trend:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="m5Ema200Val" class="text-white font-medium">$0.00</span>
+                  <span id="m5EmaOkBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#222224] text-[#7b7a7c]">OFF</span>
+                </div>
+              </div>
+
+              <!-- Stochastic -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[#7b7a7c]">Stoch (5,3,3):</span>
+                  <span id="m5StochVal" class="text-white font-bold">50.0%</span>
+                </div>
+                <div class="w-full bg-[#1c1c1f] h-1.5 overflow-hidden">
+                  <div id="m5StochBar" class="bg-[#ff6436] h-1.5 transition-all duration-300" style="width: 50%"></div>
+                </div>
+                <div class="flex justify-between text-[8px] text-[#555]">
+                  <span>20 OVERSOLD</span>
+                  <span>50 MID</span>
+                  <span>80 OVERBOUGHT</span>
+                </div>
+              </div>
+
+              <!-- EMA Slope -->
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[#7b7a7c]">Momentum Slope:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="m5SlopeVal" class="text-white font-medium">0.0 pt</span>
+                  <span id="m5SlopeBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#222224] text-[#7b7a7c]">OFF</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TIMEFRAME 3: H4 (MACRO TREND) -->
+          <div class="bg-[#111113] border border-[#2a2a2c] p-4 sm:p-5 flex flex-col justify-between space-y-4 hover:border-[#3c3a3e] transition">
+            <!-- Card Header -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-[#222225] border border-[#3c3a3e] font-mono text-[10px] font-bold text-white uppercase">H4 // MACRO</span>
+                <span class="text-[#7b7a7c] text-[10px] font-mono">4 HOURS</span>
+              </div>
+              <span id="h4SignalPill" class="px-2.5 py-0.5 font-mono text-xs font-bold bg-[#2a2a2c] text-[#a2a2a2]">WAIT</span>
+            </div>
+
+            <!-- Signal Spotlight Display -->
+            <div class="flex items-baseline justify-between pt-1">
+              <div>
+                <div class="text-[10px] font-mono text-[#7b7a7c] uppercase">MACRO TREND SIGNAL</div>
+                <div id="h4BigSignal" class="font-display text-3xl sm:text-4xl text-white tracking-wide flex items-center gap-2 mt-0.5">
+                  <span id="h4SignalIcon">—</span>
+                  <span id="h4SignalText">SCANNING</span>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] font-mono text-[#7b7a7c]">CLOSE PRICE</div>
+                <div id="h4ClosePrice" class="font-mono text-base sm:text-lg font-bold text-white">$0.00</div>
+              </div>
+            </div>
+
+            <!-- Indicator Telemetry List -->
+            <div class="space-y-2 pt-3 border-t border-[#1e1e21] font-mono text-[11px]">
+              <!-- EMA Direction -->
+              <div class="flex items-center justify-between">
+                <span class="text-[#7b7a7c]">EMA Dir (<span id="h4EmaDirPeriod">100</span>):</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="h4EmaDirVal" class="text-white font-medium">$0.00</span>
+                  <span id="h4CloseVsEma" class="text-[9px] px-1 bg-[#222224] text-[#a2a2a2]">WAIT</span>
+                </div>
+              </div>
+
+              <!-- EMA 200 Filter -->
+              <div class="flex items-center justify-between">
+                <span class="text-[#7b7a7c]">EMA 200 Macro:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="h4Ema200Val" class="text-white font-medium">$0.00</span>
+                  <span id="h4EmaOkBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#222224] text-[#7b7a7c]">OFF</span>
+                </div>
+              </div>
+
+              <!-- Stochastic -->
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[#7b7a7c]">Stoch (5,3,3):</span>
+                  <span id="h4StochVal" class="text-white font-bold">50.0%</span>
+                </div>
+                <div class="w-full bg-[#1c1c1f] h-1.5 overflow-hidden">
+                  <div id="h4StochBar" class="bg-[#ff6436] h-1.5 transition-all duration-300" style="width: 50%"></div>
+                </div>
+                <div class="flex justify-between text-[8px] text-[#555]">
+                  <span>20 OVERSOLD</span>
+                  <span>50 MID</span>
+                  <span>80 OVERBOUGHT</span>
+                </div>
+              </div>
+
+              <!-- EMA Slope -->
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[#7b7a7c]">Macro Slope:</span>
+                <div class="flex items-center gap-1.5">
+                  <span id="h4SlopeVal" class="text-white font-medium">0.0 pt</span>
+                  <span id="h4SlopeBadge" class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#222224] text-[#7b7a7c]">OFF</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Radar Bottom Status Bar -->
+        <div class="pt-3 border-t border-[#2a2a2c] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 font-mono text-[10px] text-[#7b7a7c]">
+          <div class="flex items-center gap-2">
+            <span class="text-white font-bold">ENTRY GATE TELEMETRY:</span>
+            <span id="radarEntryGateText" class="px-2 py-0.5 bg-[#18181a] border border-[#2a2a2c] text-[#ff6436] font-semibold">
+              SEEKING MOMENTUM BREAKOUT
+            </span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span>SYNC: <strong class="text-white">1S TICK ENGINE</strong></span>
+            <span>•</span>
+            <span id="radarLastUpdated">UPDATING...</span>
+          </div>
+        </div>
+
+      </section>
 
       <!-- MAIN SPLIT: MONITOR VIEWPORT & OPEN POSITIONS (Responsive Flow) -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
@@ -949,6 +1250,98 @@
     </div>
   </div>
 
+  <!-- PARAMETERS MANAGER MODAL (Configure All MT5 GUI Inputs) -->
+  <div id="parametersModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-2 sm:p-4 hidden">
+    <div class="bg-[#141416] border border-[#3c3a3e] max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
+      
+      <!-- Top Tag -->
+      <div class="absolute -top-3 left-6 px-2.5 py-0.5 bg-[#ff6436] text-black font-mono text-[9px] font-bold tracking-widest uppercase">
+        EA CONTROL PANEL // INPUT PARAMETERS
+      </div>
+
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-[#2a2a2c] shrink-0">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <h2 class="font-display text-2xl sm:text-3xl text-white tracking-wider">PARAMETER CONTROLLER</h2>
+            <p class="font-mono text-[11px] text-[#a2a2a2] mt-0.5">
+              KONFIGURASI LENGKAP PARAMETER GUI EXPERT ADVISOR DARI WEBSITE
+            </p>
+          </div>
+          <button onclick="closeParametersModal()" class="text-[#7b7a7c] hover:text-white font-mono text-base p-1.5 transition">
+            [✕]
+          </button>
+        </div>
+
+        <!-- Presets and Search Strip -->
+        <div class="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <!-- Preset Selector -->
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-[10px] text-[#7b7a7c] uppercase whitespace-nowrap">PRESET:</span>
+            <select id="presetSelect" onchange="onPresetSelected()" class="brutalist-input text-xs py-1.5 px-3 bg-[#0d0d0f] border-[#3c3a3e] text-white font-mono cursor-pointer">
+              <option value="1jt_controlled_martingale">Modal 1 Juta (Controlled Martingale 24H) [DEFAULT]</option>
+              <option value="safe_conservative">Konservatif / Ultra-Safe Defense</option>
+              <option value="scalper_aggressive">Scalper Agresif M1 (High Frequency)</option>
+            </select>
+          </div>
+
+          <!-- Parameter Search -->
+          <div class="relative w-full sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-[#7b7a7c] text-xs"></i>
+            <input type="text" id="paramSearchInput" oninput="filterParameters(this.value)" placeholder="CARI PARAMETER..."
+                   class="brutalist-input w-full pl-8 py-1.5 text-xs font-mono uppercase bg-[#0d0d0f]">
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="mt-4 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap pb-1 border-t border-[#1f1f22] pt-3 font-mono text-[11px]">
+          <button id="paramTab-lot" onclick="switchParamCategory('lot')" class="px-3 py-1.5 bg-white text-black font-semibold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-coins text-[10px]"></i> LOT & MM
+          </button>
+          <button id="paramTab-mtf" onclick="switchParamCategory('mtf')" class="px-3 py-1.5 text-[#a2a2a2] hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line text-[10px]"></i> MTF & SINYAL
+          </button>
+          <button id="paramTab-grid" onclick="switchParamCategory('grid')" class="px-3 py-1.5 text-[#a2a2a2] hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-layer-group text-[10px]"></i> GRID & AVERAGING
+          </button>
+          <button id="paramTab-tp" onclick="switchParamCategory('tp')" class="px-3 py-1.5 text-[#a2a2a2] hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-trophy text-[10px]"></i> TAKE PROFIT & TRAIL
+          </button>
+          <button id="paramTab-risk" onclick="switchParamCategory('risk')" class="px-3 py-1.5 text-[#a2a2a2] hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved text-[10px]"></i> RISK & PROTEKSI
+          </button>
+          <button id="paramTab-filter" onclick="switchParamCategory('filter')" class="px-3 py-1.5 text-[#a2a2a2] hover:text-white transition flex items-center gap-1.5">
+            <i class="fa-solid fa-clock text-[10px]"></i> JAM & SPREAD
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body: Parameter Form Container (Scrollable) -->
+      <div id="paramCardsContainer" class="p-4 sm:p-6 overflow-y-auto space-y-4 max-h-[60vh]">
+        <!-- Rendered dynamically by renderParameterCards() -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-5 border-t border-[#2a2a2c] bg-[#111113] shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <label class="flex items-center gap-2 cursor-pointer font-mono text-[11px] text-[#a2a2a2] select-none">
+          <input type="checkbox" id="checkRestartMT5" checked class="w-4 h-4 accent-[#ff6436]">
+          <span>Auto-Restart Layanan MT5 agar parameter langsung aktif seketika</span>
+        </label>
+
+        <div class="flex items-center gap-2.5 justify-end">
+          <button onclick="closeParametersModal()" class="pill-action-ghost text-xs py-2.5 px-4 font-mono">
+            BATAL
+          </button>
+          <button id="btnSaveParameters" onclick="saveParameters()" class="pill-action-ember text-xs py-2.5 px-6 font-mono font-bold flex items-center gap-2">
+            <span id="saveParamSpinner" class="hidden"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+            <span id="saveParamText">SIMPAN & TERAPKAN KE MT5 &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- FULLSCREEN IMAGE ZOOM MODAL -->
   <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md p-2 sm:p-4 hidden" onclick="closeFullImage()">
     <img id="fullImage" src="" alt="Fullscreen MT5" class="max-w-full max-h-[94vh] object-contain border border-[#3c3a3e] shadow-2xl">
@@ -1165,6 +1558,9 @@
       const elHistBadge = document.getElementById('tabBadgeHistory');
       if (elPosBadge) elPosBadge.textContent = `(${posCount})`;
       if (elHistBadge) elHistBadge.textContent = `(${histCount})`;
+
+      // Render Multi-Timeframe Radar Signals
+      renderMTFSignals(data.mtf || {}, data);
 
       // Render Positions & Order History
       renderPositions(data.positions || []);
@@ -1841,6 +2237,452 @@
         }
       } catch (e) {
         alert("Error saving account: " + e.message);
+      }
+    }
+
+    // =========================================================================
+    // MULTI-TIMEFRAME RADAR (M1, M5, H4 SIGNALS TELEMETRY)
+    // =========================================================================
+    function renderMTFSignals(mtf, data) {
+      if (!mtf) return;
+
+      const m1 = mtf.m1 || {};
+      const m5 = mtf.m5 || {};
+      const h4 = mtf.h4 || {};
+
+      function updateTFCard(prefix, tfData, minSlope) {
+        const sig = (tfData.signal || 'WAIT').toUpperCase();
+        const isBuy = sig === 'BUY' || tfData.direction === 1;
+        const isSell = sig === 'SELL' || tfData.direction === -1;
+        const isValid = Boolean(tfData.valid);
+
+        // Top pill badge
+        const pill = document.getElementById(`${prefix}SignalPill`);
+        if (pill) {
+          pill.textContent = sig;
+          if (isBuy) {
+            pill.className = "px-2.5 py-0.5 font-mono text-xs font-bold bg-[#00ff88] text-black shadow-[0_0_10px_rgba(0,255,136,0.3)]";
+          } else if (isSell) {
+            pill.className = "px-2.5 py-0.5 font-mono text-xs font-bold bg-[#ff6436] text-black shadow-[0_0_10px_rgba(255,100,54,0.3)]";
+          } else {
+            pill.className = "px-2.5 py-0.5 font-mono text-xs font-bold bg-[#2a2a2c] text-[#a2a2a2]";
+          }
+        }
+
+        // Big Signal
+        const bigIcon = document.getElementById(`${prefix}SignalIcon`);
+        const bigText = document.getElementById(`${prefix}SignalText`);
+        if (bigIcon && bigText) {
+          if (isBuy) {
+            bigIcon.textContent = "▲";
+            bigIcon.className = "text-[#00ff88] animate-bounce text-2xl";
+            bigText.textContent = "BUY";
+            bigText.className = "text-[#00ff88]";
+          } else if (isSell) {
+            bigIcon.textContent = "▼";
+            bigIcon.className = "text-[#ff6436] animate-bounce text-2xl";
+            bigText.textContent = "SELL";
+            bigText.className = "text-[#ff6436]";
+          } else {
+            bigIcon.textContent = "—";
+            bigIcon.className = "text-[#7b7a7c] text-2xl";
+            bigText.textContent = isValid ? "FLAT" : "SCANNING";
+            bigText.className = "text-white";
+          }
+        }
+
+        // Close price
+        const closeEl = document.getElementById(`${prefix}ClosePrice`);
+        if (closeEl) closeEl.textContent = tfData.close ? `$${Number(tfData.close).toFixed(2)}` : '—';
+
+        // EMA Direction value and comparison
+        const emaDirEl = document.getElementById(`${prefix}EmaDirVal`);
+        const closeVsEmaEl = document.getElementById(`${prefix}CloseVsEma`);
+        if (emaDirEl) emaDirEl.textContent = tfData.ema_dir ? `$${Number(tfData.ema_dir).toFixed(2)}` : '—';
+        if (closeVsEmaEl) {
+          if (tfData.close && tfData.ema_dir) {
+            const isAbove = tfData.close >= tfData.ema_dir;
+            closeVsEmaEl.textContent = isAbove ? "CLOSE > EMA" : "CLOSE < EMA";
+            closeVsEmaEl.className = isAbove ? "text-[9px] px-1 bg-[#00ff88]/20 text-[#00ff88]" : "text-[9px] px-1 bg-[#ff6436]/20 text-[#ff6436]";
+          } else {
+            closeVsEmaEl.textContent = "WAIT";
+            closeVsEmaEl.className = "text-[9px] px-1 bg-[#222224] text-[#a2a2a2]";
+          }
+        }
+
+        // EMA 200 value and OK badge
+        const ema200El = document.getElementById(`${prefix}Ema200Val`);
+        const emaOkBadge = document.getElementById(`${prefix}EmaOkBadge`);
+        if (ema200El) ema200El.textContent = tfData.ema_200 ? `$${Number(tfData.ema_200).toFixed(2)}` : '—';
+        if (emaOkBadge) {
+          if (tfData.ema_ok) {
+            emaOkBadge.textContent = "TREND PASS";
+            emaOkBadge.className = "text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#00ff88]/20 text-[#00ff88]";
+          } else {
+            emaOkBadge.textContent = "FILTERED";
+            emaOkBadge.className = "text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#2a2a2c] text-[#7b7a7c]";
+          }
+        }
+
+        // Stochastic
+        const stochVal = Number(tfData.stoch || 50);
+        const stochValEl = document.getElementById(`${prefix}StochVal`);
+        const stochBarEl = document.getElementById(`${prefix}StochBar`);
+        if (stochValEl) stochValEl.textContent = `${stochVal.toFixed(1)}%`;
+        if (stochBarEl) {
+          stochBarEl.style.width = `${Math.min(100, Math.max(0, stochVal))}%`;
+          if (stochVal >= 80) {
+            stochBarEl.className = "bg-[#ff6436] h-1.5 transition-all duration-300"; // Overbought
+          } else if (stochVal <= 20) {
+            stochBarEl.className = "bg-[#00ff88] h-1.5 transition-all duration-300"; // Oversold
+          } else {
+            stochBarEl.className = "bg-[#ffffff] h-1.5 transition-all duration-300"; // Normal
+          }
+        }
+
+        // Slope
+        const slopePts = Number(tfData.slope_pts || 0);
+        const slopeValEl = document.getElementById(`${prefix}SlopeVal`);
+        const slopeBadgeEl = document.getElementById(`${prefix}SlopeBadge`);
+        if (slopeValEl) slopeValEl.textContent = `${slopePts.toFixed(1)} pt`;
+        if (slopeBadgeEl) {
+          if (tfData.slope_ok) {
+            slopeBadgeEl.textContent = "PASS";
+            slopeBadgeEl.className = "text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#00ff88]/20 text-[#00ff88]";
+          } else {
+            slopeBadgeEl.textContent = `< ${minSlope} pt`;
+            slopeBadgeEl.className = "text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#2a2a2c] text-[#7b7a7c]";
+          }
+        }
+      }
+
+      updateTFCard('m1', m1, 15);
+      updateTFCard('m5', m5, 10);
+      updateTFCard('h4', h4, 10);
+
+      // Overall Alignment Summary
+      const summaryTextEl = document.getElementById('mtfSummaryText');
+      const summaryBadgeEl = document.getElementById('mtfSummaryBadge');
+      const summary = mtf.summary || 'WAIT';
+
+      if (summaryTextEl && summaryBadgeEl) {
+        const dot = summaryBadgeEl.querySelector('span:first-child');
+        if (summary === 'BUY_ALIGNED') {
+          summaryTextEl.textContent = "BUY CONVERGENCE // ALL 3 TIMEFRAMES ALIGNED";
+          summaryBadgeEl.className = "px-3 py-1.5 border border-[#00ff88]/40 bg-[#00ff88]/10 font-mono text-[11px] font-bold flex items-center gap-2 text-[#00ff88] shadow-[0_0_15px_rgba(0,255,136,0.15)]";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-[#00ff88] animate-ping";
+        } else if (summary === 'SELL_ALIGNED') {
+          summaryTextEl.textContent = "SELL CONVERGENCE // ALL 3 TIMEFRAMES ALIGNED";
+          summaryBadgeEl.className = "px-3 py-1.5 border border-[#ff6436]/40 bg-[#ff6436]/10 font-mono text-[11px] font-bold flex items-center gap-2 text-[#ff6436] shadow-[0_0_15px_rgba(255,100,54,0.15)]";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-[#ff6436] animate-ping";
+        } else if (summary === 'MIXED') {
+          const mode = (data && data.trading_mode) ? data.trading_mode : (mtf.mode || 'safe');
+          if (mode === 'safe') {
+            summaryTextEl.textContent = "DIVERGING (M1 VS M5/H4) // SAFE ENTRY BLOCKED";
+            summaryBadgeEl.className = "px-3 py-1.5 border border-[#eab308]/40 bg-[#eab308]/10 font-mono text-[11px] font-semibold flex items-center gap-2 text-[#eab308]";
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-[#eab308]";
+          } else {
+            summaryTextEl.textContent = "SCALPER M1 MODE // HIGHER TF FILTER BYPASSED";
+            summaryBadgeEl.className = "px-3 py-1.5 border border-[#ff6436]/30 bg-[#ff6436]/10 font-mono text-[11px] font-semibold flex items-center gap-2 text-white";
+            if (dot) dot.className = "w-2 h-2 rounded-full bg-[#ff6436]";
+          }
+        } else {
+          summaryTextEl.textContent = "SYNCING MARKET TICKS...";
+          summaryBadgeEl.className = "px-3 py-1.5 border border-[#3c3a3e] bg-[#111113] font-mono text-[11px] font-semibold flex items-center gap-2 text-[#a2a2a2]";
+          if (dot) dot.className = "w-2 h-2 rounded-full bg-[#7b7a7c]";
+        }
+      }
+
+      // Mode badge in Radar
+      const mode = (data && data.trading_mode) ? data.trading_mode : (mtf.mode || 'safe');
+      const isSafe = (mode === 'safe');
+      const mtfModeDot = document.getElementById('mtfModeDot');
+      const mtfModeLabel = document.getElementById('mtfModeLabel');
+      if (mtfModeDot && mtfModeLabel) {
+        mtfModeDot.className = isSafe ? "w-1.5 h-1.5 rounded-full bg-[#00ff88]" : "w-1.5 h-1.5 rounded-full bg-[#ff6436]";
+        mtfModeLabel.textContent = isSafe ? "AMAN (MTF)" : "SCALPER M1";
+        mtfModeLabel.className = isSafe ? "text-[#00ff88] font-bold" : "text-[#ff6436] font-bold";
+      }
+
+      // Entry Gate Status
+      const gateEl = document.getElementById('radarEntryGateText');
+      if (gateEl) {
+        const reason = (data && data.entry_block_reason) ? data.entry_block_reason : "SEEKING MOMENTUM BREAKOUT";
+        gateEl.textContent = reason.toUpperCase();
+        if (reason === "NONE" || reason.toLowerCase().includes("seeking") || reason.toLowerCase().includes("ready")) {
+          gateEl.className = "px-2 py-0.5 bg-[#00ff88]/15 border border-[#00ff88]/30 text-[#00ff88] font-semibold";
+        } else {
+          gateEl.className = "px-2 py-0.5 bg-[#ff6436]/15 border border-[#ff6436]/30 text-[#ff6436] font-semibold";
+        }
+      }
+
+      const lastUpdatedEl = document.getElementById('radarLastUpdated');
+      if (lastUpdatedEl) {
+        const now = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        lastUpdatedEl.textContent = `LAST: ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      }
+    }
+
+    // =========================================================================
+    // PARAMETERS MANAGER (CONFIGURE ALL MT5 GUI INPUTS FROM WEB)
+    // =========================================================================
+    let allParamDefinitions = [];
+    let allParamCategories = [];
+    let currentParamValues = {};
+    let activeParamCategory = 'lot';
+    let isSavingParams = false;
+
+    async function openParametersModal() {
+      const modal = document.getElementById('parametersModal');
+      modal.classList.remove('hidden');
+      await fetchParameters();
+    }
+
+    function closeParametersModal() {
+      document.getElementById('parametersModal').classList.add('hidden');
+    }
+
+    async function fetchParameters() {
+      const container = document.getElementById('paramCardsContainer');
+      container.innerHTML = `
+        <div class="py-16 text-center text-[#7b7a7c] font-mono text-xs">
+          <i class="fa-solid fa-circle-notch fa-spin text-xl text-[#ff6436] mb-3"></i>
+          <div>MEMUAT PARAMETER MT5 LIVE...</div>
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/parameters');
+        if (!res.ok) throw new Error("Gagal memuat parameter");
+        const data = await res.json();
+        allParamDefinitions = data.definitions || [];
+        allParamCategories = data.categories || [];
+        currentParamValues = data.parameters || {};
+
+        renderParameterCards();
+      } catch (e) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-[#ff6436] font-mono text-xs">
+            [!] GAGAL MENGAMBIL PARAMETER DARI SERVER: ${e.message}
+          </div>
+        `;
+      }
+    }
+
+    function switchParamCategory(catId) {
+      activeParamCategory = catId;
+
+      // Update tabs styling
+      allParamCategories.forEach(c => {
+        const tabBtn = document.getElementById(`paramTab-${c.id}`);
+        if (tabBtn) {
+          if (c.id === catId) {
+            tabBtn.className = "px-3 py-1.5 bg-white text-black font-semibold transition flex items-center gap-1.5";
+          } else {
+            tabBtn.className = "px-3 py-1.5 text-[#a2a2a2] hover:text-white transition flex items-center gap-1.5";
+          }
+        }
+      });
+
+      // Clear search
+      const searchInput = document.getElementById('paramSearchInput');
+      if (searchInput) searchInput.value = '';
+
+      renderParameterCards();
+    }
+
+    function filterParameters(query) {
+      renderParameterCards(query.trim().toLowerCase());
+    }
+
+    function renderParameterCards(filterQuery = '') {
+      const container = document.getElementById('paramCardsContainer');
+      if (!allParamDefinitions || allParamDefinitions.length === 0) return;
+
+      let filtered = allParamDefinitions;
+      if (filterQuery) {
+        filtered = allParamDefinitions.filter(d => 
+          d.key.toLowerCase().includes(filterQuery) ||
+          d.label.toLowerCase().includes(filterQuery) ||
+          (d.desc && d.desc.toLowerCase().includes(filterQuery))
+        );
+      } else {
+        filtered = allParamDefinitions.filter(d => d.category === activeParamCategory);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-[#7b7a7c] font-mono text-xs">
+            [ TIDAK DITEMUKAN PARAMETER YANG COCOK ]
+          </div>
+        `;
+        return;
+      }
+
+      let html = `<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">`;
+
+      filtered.forEach(d => {
+        const val = currentParamValues[d.key] !== undefined ? currentParamValues[d.key] : d.default;
+        const unitBadge = d.unit ? `<span class="tag-mono text-[9px] ml-1.5">${d.unit}</span>` : '';
+
+        let inputControl = '';
+
+        if (d.type === 'bool') {
+          const isChecked = Boolean(val);
+          inputControl = `
+            <label class="relative inline-flex items-center cursor-pointer select-none">
+              <input type="checkbox" id="inp_${d.key}" ${isChecked ? 'checked' : ''} 
+                     onchange="currentParamValues['${d.key}'] = this.checked"
+                     class="sr-only peer">
+              <div class="w-11 h-6 bg-[#222225] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ff6436]"></div>
+              <span class="ml-2 font-mono text-xs uppercase ${isChecked ? 'text-[#00ff88]' : 'text-[#a2a2a2]'}" id="label_${d.key}">${isChecked ? 'AKTIF (TRUE)' : 'NONAKTIF (FALSE)'}</span>
+            </label>
+          `;
+        } else if (d.type === 'select') {
+          const optionsHtml = (d.options || []).map(opt => 
+            `<option value="${opt.value}" ${Number(val) === Number(opt.value) ? 'selected' : ''}>${opt.label}</option>`
+          ).join('');
+          inputControl = `
+            <select id="inp_${d.key}" onchange="currentParamValues['${d.key}'] = Number(this.value)"
+                    class="brutalist-input w-full text-xs font-mono py-2 bg-[#0b0b0c] text-white">
+              ${optionsHtml}
+            </select>
+          `;
+        } else {
+          // float or int numeric
+          const step = d.step || (d.type === 'float' ? 0.01 : 1);
+          const min = d.min !== undefined ? d.min : '';
+          const max = d.max !== undefined ? d.max : '';
+
+          inputControl = `
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="changeParamNumeric('${d.key}', -${step}, ${min !== '' ? min : 'null'}, ${max !== '' ? max : 'null'})"
+                      class="w-9 h-9 border border-[#3c3a3e] bg-[#1a1a1c] hover:border-white text-white font-mono font-bold flex items-center justify-center transition">
+                -
+              </button>
+              <input type="number" id="inp_${d.key}" step="${step}" ${min !== '' ? `min="${min}"` : ''} ${max !== '' ? `max="${max}"` : ''}
+                     value="${val}"
+                     oninput="currentParamValues['${d.key}'] = ${d.type === 'float' ? 'parseFloat(this.value)' : 'parseInt(this.value)'} || 0"
+                     class="brutalist-input w-full text-center text-sm font-mono font-bold py-2 bg-[#0b0b0c]">
+              <button type="button" onclick="changeParamNumeric('${d.key}', ${step}, ${min !== '' ? min : 'null'}, ${max !== '' ? max : 'null'})"
+                      class="w-9 h-9 border border-[#3c3a3e] bg-[#1a1a1c] hover:border-white text-white font-mono font-bold flex items-center justify-center transition">
+                +
+              </button>
+            </div>
+          `;
+        }
+
+        html += `
+          <div class="bg-[#111113] border border-[#262629] p-4 flex flex-col justify-between space-y-3 hover:border-[#3c3a3e] transition">
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <div class="font-grotesk font-semibold text-xs sm:text-sm text-white flex items-center flex-wrap gap-1">
+                    <span>${d.label}</span>
+                    ${unitBadge}
+                  </div>
+                  <div class="font-mono text-[9px] text-[#ff6436] tracking-wider mt-0.5">${d.key}</div>
+                </div>
+              </div>
+              <p class="font-grotesk text-[11px] text-[#a2a2a2] mt-1.5 leading-relaxed">
+                ${d.desc || ''}
+              </p>
+            </div>
+
+            <div class="pt-2 border-t border-[#1e1e21]">
+              ${inputControl}
+            </div>
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      container.innerHTML = html;
+
+      // Event listener for boolean switches
+      filtered.filter(d => d.type === 'bool').forEach(d => {
+        const el = document.getElementById(`inp_${d.key}`);
+        const lbl = document.getElementById(`label_${d.key}`);
+        if (el && lbl) {
+          el.addEventListener('change', () => {
+            lbl.textContent = el.checked ? 'AKTIF (TRUE)' : 'NONAKTIF (FALSE)';
+            lbl.className = el.checked ? 'ml-2 font-mono text-xs text-[#00ff88] uppercase' : 'ml-2 font-mono text-xs text-[#a2a2a2] uppercase';
+          });
+        }
+      });
+    }
+
+    function changeParamNumeric(key, delta, min, max) {
+      const el = document.getElementById(`inp_${key}`);
+      if (!el) return;
+      let val = parseFloat(el.value) || 0;
+      val = parseFloat((val + delta).toFixed(4));
+      if (min !== null && val < min) val = min;
+      if (max !== null && val > max) val = max;
+      el.value = val;
+      currentParamValues[key] = val;
+    }
+
+    async function onPresetSelected() {
+      const select = document.getElementById('presetSelect');
+      const presetId = select.value;
+      if (!presetId) return;
+
+      try {
+        const res = await fetch('/api/parameters/preset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ preset_id: presetId, restart_mt5: false })
+        });
+        const d = await res.json();
+        if (d.success && d.parameters) {
+          currentParamValues = { ...currentParamValues, ...d.parameters };
+          renderParameterCards();
+          alert(`Preset '${select.options[select.selectedIndex].text}' telah dimuat ke form! Silakan review dan klik 'Simpan & Terapkan'.`);
+        }
+      } catch (e) {
+        alert("Gagal memuat preset: " + e.message);
+      }
+    }
+
+    async function saveParameters() {
+      if (isSavingParams) return;
+      isSavingParams = true;
+
+      const btn = document.getElementById('btnSaveParameters');
+      const spinner = document.getElementById('saveParamSpinner');
+      const btnText = document.getElementById('saveParamText');
+      const restartMT5 = document.getElementById('checkRestartMT5').checked;
+
+      if (spinner) spinner.classList.remove('hidden');
+      if (btnText) btnText.textContent = "MENYIMPAN & MENERAPKAN...";
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+      try {
+        const res = await fetch('/api/parameters/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            parameters: currentParamValues,
+            restart_mt5: restartMT5
+          })
+        });
+        const d = await res.json();
+        if (d.success) {
+          alert("BERHASIL: " + d.message);
+          closeParametersModal();
+          fetchStatus();
+        } else {
+          alert("Gagal: " + (d.message || "Gagal menyimpan parameter"));
+        }
+      } catch (e) {
+        alert("Error menyimpan parameter: " + e.message);
+      } finally {
+        isSavingParams = false;
+        if (spinner) spinner.classList.add('hidden');
+        if (btnText) btnText.textContent = "SIMPAN & TERAPKAN KE MT5 →";
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
       }
     }
   </script>

@@ -5,6 +5,16 @@ InpShowPanel=true
 InpMaxSlippage=20
 InpOrderComment=EA RV 1JT 24H MG
 InpCloseBufferPoints=10.0
+
+; === MULTI TIMEFRAME (M1 + M5 + H4) ===
+InpMTFEnabled=true
+InpMTFConfirmTF=5
+InpMTFTrendTF=240
+InpMTFUseEMA200=true
+InpMTFUseSlope=true
+InpMTFSlopeMin=10.0
+
+; === MONEY MANAGEMENT & LOT ===
 InpBaseLot=0.01
 InpLotMode=0
 InpLotMultiplier=1.50
@@ -12,17 +22,19 @@ InpLotAddFlat=0.00
 InpAutoLotByBalance=false
 InpRiskPer100USD=0.01
 InpEquityBaseUnit=500.0
+
+; === FILTER ATR & AVERAGING ===
 InpUseATRFilter=true
 InpATRPeriod=14
 InpATRAvgBars=20
-InpATRRatioMin=0.50
-InpATRRatioMax=2.00
-InpATRDistanceMultiplier=2.50
-InpMinAveragingDistance=700.0
-InpMaxAveragingDistance=2200.0
-InpAvoidHighATRSpike=true
+InpATRRatioMin=0.40
+InpATRRatioMax=2.50
+InpFixedAveragingDistancePoints=200.0
+InpAvoidHighATRSpike=false
 InpATRSpikeRatio=3.0
 InpATRSpikePauseBars=5
+
+; === ARAH ENTRY (EMA & STOCHASTIC) ===
 InpEMADirPeriod=100
 InpEMA200Period=200
 InpUseEMA200Filter=true
@@ -36,11 +48,15 @@ InpUseEMASlope=true
 InpEMASlopeBars=5
 InpEMASlopeMin=15.0
 InpFollowEMACooldownRules=true
+
+; === JAM TRADING ===
 InpTradingHourStart=0
 InpTradingHourEnd=24
+
+; === RISK MANAGEMENT & KILL SWITCHES ===
 InpUseDailyLossLimit=true
 InpDailyLossPercent=5.0
-InpUseDailyProfitTarget=true
+InpUseDailyProfitTarget=false
 InpDailyProfitTargetPercent=5.0
 InpUseMaxAccountDD=true
 InpMaxAccountDrawdown=15.0
@@ -55,12 +71,14 @@ InpBasketLossPercent=3.0
 InpCutLossPerBasketUSD=0.0
 InpUseMarginSafety=true
 InpMinMarginLevel=150.0
-InpUseReserveFreeMarginPercent=true
+InpReserveFreeMarginPercent=true
 InpReserveFreeMarginPercent=5.0
 InpReserveFreeMarginUSD=0.0
 InpUseSpreadFilter=true
 InpMaxSpreadPoints=300
 InpBasketCooldownMinutes=60
+
+; === BASKET & AVERAGING ===
 InpAveragingWaitClose=false
 InpMaxAveragingCycle=3
 InpCooldownCandles=5
@@ -68,13 +86,21 @@ InpMinSecondsBetweenAvg=10
 InpAllowBuySellTogether=false
 InpMaxTotalLotBasket=0.03
 InpMaxOpenOrdersBasket=3
-InpUseBrokerSL=true
+InpUseBrokerSL=false
 InpBrokerSL_ATR=3.0
+InpGridFollowHigherTF=true
+InpGridReverseOnTrendFlip=true
+
+; === TAKE PROFIT & TRAILING ===
 InpUseBasketTrailing=true
 InpTrailStartPoints=100
 InpTrailStopDistance=50
 InpDisableTrailTP=false
 InpUseATRBasedTP=true
-InpATRTPMultiplier=4.0
+InpATRTPMultiplier=2.5
 InpFixedTPPoints=3000.0
+InpUseProfitLock=true
+InpProfitLockStart=500.0
+InpProfitLockPoints=250.0
+
 InpManualUnlockAccount=false

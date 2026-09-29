@@ -20,6 +20,94 @@ void WebBridge_Init()
    EventSetTimer(1); // update tiap detik
 }
 
+#ifdef __ROYAL_QUANTUM__
+//+------------------------------------------------------------------+
+//| Build MTF JSON (M1, M5, H4)                                      |
+//+------------------------------------------------------------------+
+string WebBridge_BuildMTFJson()
+{
+   string sigM1 = MTFDirectionText(g_mtfM1);
+   string sigM5 = MTFDirectionText(g_mtfM5);
+   string sigH4 = MTFDirectionText(g_mtfH4);
+
+   string m1 = StringFormat("{\"tf\":\"M1\",\"signal\":\"%s\",\"direction\":%d,\"valid\":%s,\"close\":%.2f,\"ema_dir\":%.2f,\"ema_200\":%.2f,\"stoch\":%.1f,\"slope_pts\":%.1f,\"ema_ok\":%s,\"slope_ok\":%s}",
+                            sigM1, g_mtfM1.direction, (g_mtfM1.valid ? "true" : "false"),
+                            g_mtfM1.close, g_mtfM1.emaDir, g_mtfM1.ema200, g_mtfM1.stoch, g_mtfM1.slopePts,
+                            (g_mtfM1.emaOK ? "true" : "false"), (g_mtfM1.slopeOK ? "true" : "false"));
+
+   string m5 = StringFormat("{\"tf\":\"M5\",\"signal\":\"%s\",\"direction\":%d,\"valid\":%s,\"close\":%.2f,\"ema_dir\":%.2f,\"ema_200\":%.2f,\"stoch\":%.1f,\"slope_pts\":%.1f,\"ema_ok\":%s,\"slope_ok\":%s}",
+                            sigM5, g_mtfM5.direction, (g_mtfM5.valid ? "true" : "false"),
+                            g_mtfM5.close, g_mtfM5.emaDir, g_mtfM5.ema200, g_mtfM5.stoch, g_mtfM5.slopePts,
+                            (g_mtfM5.emaOK ? "true" : "false"), (g_mtfM5.slopeOK ? "true" : "false"));
+
+   string h4 = StringFormat("{\"tf\":\"H4\",\"signal\":\"%s\",\"direction\":%d,\"valid\":%s,\"close\":%.2f,\"ema_dir\":%.2f,\"ema_200\":%.2f,\"stoch\":%.1f,\"slope_pts\":%.1f,\"ema_ok\":%s,\"slope_ok\":%s}",
+                            sigH4, g_mtfH4.direction, (g_mtfH4.valid ? "true" : "false"),
+                            g_mtfH4.close, g_mtfH4.emaDir, g_mtfH4.ema200, g_mtfH4.stoch, g_mtfH4.slopePts,
+                            (g_mtfH4.emaOK ? "true" : "false"), (g_mtfH4.slopeOK ? "true" : "false"));
+
+   string summary = "WAIT";
+   if(g_mtfM1.valid && g_mtfM5.valid && g_mtfH4.valid)
+   {
+      if(g_mtfM1.direction > 0 && g_mtfM5.direction > 0 && g_mtfH4.direction > 0)
+         summary = "BUY_ALIGNED";
+      else if(g_mtfM1.direction < 0 && g_mtfM5.direction < 0 && g_mtfH4.direction < 0)
+         summary = "SELL_ALIGNED";
+      else
+         summary = "MIXED";
+   }
+
+   bool confirmed = MTFDirectionConfirmed(g_mtfM1.direction);
+
+   return StringFormat("{\"enabled\":%s,\"mode\":\"%s\",\"summary\":\"%s\",\"confirmed\":%s,\"m1\":%s,\"m5\":%s,\"h4\":%s}",
+                       (g_webMTFEnabled ? "true" : "false"),
+                       (g_webMTFEnabled ? "safe" : "scalper"),
+                       summary,
+                       (confirmed ? "true" : "false"),
+                       m1, m5, h4);
+}
+
+//+------------------------------------------------------------------+
+//| Build Active Parameters JSON                                     |
+//+------------------------------------------------------------------+
+string WebBridge_BuildParamsJson()
+{
+   string p1 = StringFormat("{\"InpBaseLot\":%.2f,\"InpLotMode\":%d,\"InpLotMultiplier\":%.2f,\"InpLotAddFlat\":%.2f,\"InpAutoLotByBalance\":%s,",
+                            InpBaseLot, InpLotMode, InpLotMultiplier, InpLotAddFlat, (InpAutoLotByBalance ? "true" : "false"));
+   string p2 = StringFormat("\"InpMTFEnabled\":%s,\"InpMTFUseEMA200\":%s,\"InpMTFUseSlope\":%s,\"InpMTFSlopeMin\":%.1f,",
+                            (InpMTFEnabled ? "true" : "false"), (InpMTFUseEMA200 ? "true" : "false"), (InpMTFUseSlope ? "true" : "false"), InpMTFSlopeMin);
+   string p3 = StringFormat("\"InpEMADirPeriod\":%d,\"InpEMA200Period\":%d,\"InpUseEMA200Filter\":%s,\"InpUseStochFilter\":%s,",
+                            InpEMADirPeriod, InpEMA200Period, (InpUseEMA200Filter ? "true" : "false"), (InpUseStochFilter ? "true" : "false"));
+   string p4 = StringFormat("\"InpStochK\":%d,\"InpStochD\":%d,\"InpStochSlowing\":%d,\"InpStochOversold\":%.1f,\"InpStochOverbought\":%.1f,",
+                            InpStochK, InpStochD, InpStochSlowing, InpStochOversold, InpStochOverbought);
+   string p5 = StringFormat("\"InpUseEMASlope\":%s,\"InpEMASlopeBars\":%d,\"InpEMASlopeMin\":%.1f,\"InpFollowEMACooldownRules\":%s,",
+                            (InpUseEMASlope ? "true" : "false"), InpEMASlopeBars, InpEMASlopeMin, (InpFollowEMACooldownRules ? "true" : "false"));
+   string p6 = StringFormat("\"InpTradingHourStart\":%d,\"InpTradingHourEnd\":%d,",
+                            InpTradingHourStart, InpTradingHourEnd);
+   string p7 = StringFormat("\"InpFixedAveragingDistancePoints\":%.1f,\"InpAvoidHighATRSpike\":%s,\"InpATRSpikeRatio\":%.1f,",
+                            InpFixedAveragingDistancePoints, (InpAvoidHighATRSpike ? "true" : "false"), InpATRSpikeRatio);
+   string p8 = StringFormat("\"InpMaxOpenOrdersBasket\":%d,\"InpMaxTotalLotBasket\":%.2f,\"InpMaxAveragingCycle\":%d,\"InpCooldownCandles\":%d,",
+                            InpMaxOpenOrdersBasket, InpMaxTotalLotBasket, InpMaxAveragingCycle, InpCooldownCandles);
+   string p9 = StringFormat("\"InpMinSecondsBetweenAvg\":%d,\"InpAllowBuySellTogether\":%s,\"InpAveragingWaitClose\":%s,",
+                            InpMinSecondsBetweenAvg, (InpAllowBuySellTogether ? "true" : "false"), (InpAveragingWaitClose ? "true" : "false"));
+   string p10 = StringFormat("\"InpUseBasketTrailing\":%s,\"InpTrailStartPoints\":%d,\"InpTrailStopDistance\":%d,\"InpDisableTrailTP\":%s,",
+                             (InpUseBasketTrailing ? "true" : "false"), InpTrailStartPoints, InpTrailStopDistance, (InpDisableTrailTP ? "true" : "false"));
+   string p11 = StringFormat("\"InpUseATRBasedTP\":%s,\"InpATRTPMultiplier\":%.1f,\"InpFixedTPPoints\":%.1f,",
+                             (InpUseATRBasedTP ? "true" : "false"), InpATRTPMultiplier, InpFixedTPPoints);
+   string p12 = StringFormat("\"InpUseDailyLossLimit\":%s,\"InpDailyLossPercent\":%.1f,\"InpUseDailyProfitTarget\":%s,\"InpDailyProfitTargetPercent\":%.1f,",
+                             (InpUseDailyLossLimit ? "true" : "false"), InpDailyLossPercent, (InpUseDailyProfitTarget ? "true" : "false"), InpDailyProfitTargetPercent);
+   string p13 = StringFormat("\"InpUseMaxAccountDD\":%s,\"InpMaxAccountDrawdown\":%.1f,\"InpUseBasketLossPercent\":%s,\"InpBasketLossPercent\":%.1f,",
+                             (InpUseMaxAccountDD ? "true" : "false"), InpMaxAccountDrawdown, (InpUseBasketLossPercent ? "true" : "false"), InpBasketLossPercent);
+   string p14 = StringFormat("\"InpCutLossPerBasketUSD\":%.2f,\"InpUseMarginSafety\":%s,\"InpMinMarginLevel\":%.1f,",
+                             InpCutLossPerBasketUSD, (InpUseMarginSafety ? "true" : "false"), InpMinMarginLevel);
+   string p15 = StringFormat("\"InpUseSpreadFilter\":%s,\"InpMaxSpreadPoints\":%d,\"InpBasketCooldownMinutes\":%d,",
+                             (InpUseSpreadFilter ? "true" : "false"), InpMaxSpreadPoints, InpBasketCooldownMinutes);
+   string p16 = StringFormat("\"InpGridFollowHigherTF\":%s,\"InpGridReverseOnTrendFlip\":%s,\"InpUseProfitLock\":%s,\"InpProfitLockStart\":%.1f,\"InpProfitLockPoints\":%.1f}",
+                             (InpGridFollowHigherTF ? "true" : "false"), (InpGridReverseOnTrendFlip ? "true" : "false"), (InpUseProfitLock ? "true" : "false"), InpProfitLockStart, InpProfitLockPoints);
+
+   return p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16;
+}
+#endif
+
 //+------------------------------------------------------------------+
 //| Export status akun & order ke JSON                               |
 //+------------------------------------------------------------------+
@@ -95,7 +183,6 @@ void WebBridge_ExportStatus()
       double dProfit = HistoryDealGetDouble(dTicket, DEAL_PROFIT);
       string dSymbol = HistoryDealGetString(dTicket, DEAL_SYMBOL);
 
-      // Hanya ambil deal exit (penutupan posisi) atau deal yang memiliki profit riil
       if(entry != DEAL_ENTRY_OUT && entry != DEAL_ENTRY_INOUT && dProfit == 0.0)
          continue;
       if(StringLen(dSymbol) == 0 && dProfit == 0.0)
@@ -121,6 +208,18 @@ void WebBridge_ExportStatus()
       histJson += h;
    }
    histJson += "]";
+
+#ifdef __ROYAL_QUANTUM__
+   string mtfPart = "\"mtf\": " + WebBridge_BuildMTFJson() + ",\n";
+   string paramsPart = "\"parameters\": " + WebBridge_BuildParamsJson() + ",\n";
+   string modeVal = (g_webMTFEnabled ? "safe" : "scalper");
+   string blockReasonVal = g_entryBlockReason;
+#else
+   string mtfPart = "\"mtf\": null,\n";
+   string paramsPart = "\"parameters\": null,\n";
+   string modeVal = "scalper";
+   string blockReasonVal = "NONE";
+#endif
 
    string json = StringFormat(
       "{\n"
@@ -152,6 +251,8 @@ void WebBridge_ExportStatus()
       "  \"history_total\": %d,\n"
       "  \"history_profit_sum\": %.2f,\n"
       "  \"history\": %s,\n"
+      "  %s"
+      "  %s"
       "  \"updated_at\": %I64d\n"
       "}",
       login, server, currency,
@@ -162,12 +263,14 @@ void WebBridge_ExportStatus()
       (g_dailyLossHit ? "true" : "false"),
       (g_accountLocked ? "true" : "false"),
       (g_webPaused ? "true" : "false"),
-      (g_webMTFEnabled ? "safe" : "scalper"),
-      g_entryBlockReason,
+      modeVal,
+      blockReasonVal,
       (TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) ? "true" : "false"),
       buyCount, totalBuyLots, sellCount, totalSellLots,
       totalPos, posJson,
       exportedDeals, historyProfitSum, histJson,
+      mtfPart,
+      paramsPart,
       (long)TimeCurrent()
    );
 
@@ -262,6 +365,24 @@ void WebBridge_ProcessCommand()
       g_dailyTargetHit = false;
       g_dailyLossHit   = false;
       Print("[WebBridge] Statistik harian di-RESET");
+   }
+
+   // 7. Set Mode (Safe MTF vs Scalper M1)
+   int idxMode = StringFind(content, "\"set_mode\"");
+   if(idxMode >= 0)
+   {
+#ifdef __ROYAL_QUANTUM__
+      if(StringFind(content, "\"safe\"") >= 0)
+      {
+         g_webMTFEnabled = true;
+         Print("[WebBridge] Mode diubah ke AMAN (MTF H4/M5)");
+      }
+      else if(StringFind(content, "\"scalper\"") >= 0)
+      {
+         g_webMTFEnabled = false;
+         Print("[WebBridge] Mode diubah ke SCALPER M1 (Aktif)");
+      }
+#endif
    }
 }
 
