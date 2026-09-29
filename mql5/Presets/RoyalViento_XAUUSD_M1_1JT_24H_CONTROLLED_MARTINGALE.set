@@ -8,6 +8,7 @@ InpCloseBufferPoints=10.0
 
 ; === MULTI TIMEFRAME (M1 + M5 + H4) ===
 InpMTFEnabled=true
+InpMTFEntryTF=1
 InpMTFConfirmTF=5
 InpMTFTrendTF=240
 InpMTFUseEMA200=true
@@ -71,9 +72,7 @@ InpBasketLossPercent=3.0
 InpCutLossPerBasketUSD=0.0
 InpUseMarginSafety=true
 InpMinMarginLevel=150.0
-InpReserveFreeMarginPercent=true
-InpReserveFreeMarginPercent=5.0
-InpReserveFreeMarginUSD=0.0
+InpReserveFreeMarginUSD=100.0
 InpUseSpreadFilter=true
 InpMaxSpreadPoints=300
 InpBasketCooldownMinutes=60

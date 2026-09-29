@@ -400,8 +400,14 @@ int      g_atrSpikePauseLeft   = 0;
 //+------------------------------------------------------------------+
 int ATR_Init()
   {
-   hATR = iATR(_Symbol, InpTF, InpATRPeriod);
-   return (hATR != INVALID_HANDLE) ? INIT_SUCCEEDED : INIT_FAILED;
+   ENUM_TIMEFRAMES tf = (InpTF > 0) ? InpTF : PERIOD_M1;
+   for(int attempt = 0; attempt < 10; attempt++)
+     {
+      hATR = iATR(_Symbol, tf, InpATRPeriod);
+      if(hATR != INVALID_HANDLE) return INIT_SUCCEEDED;
+      Sleep(500);
+     }
+   return INIT_FAILED;
   }
 
 //+------------------------------------------------------------------+
@@ -516,25 +522,45 @@ input int      InpTradingHourEnd     = 24;  // Jam akhir trading (0-23, waktu se
 //+------------------------------------------------------------------+
 int EntryManager_Init()
   {
-   // Entry engine remains on the selected Entry TF; default is M1.
-   hEMADir = iMA(_Symbol, InpMTFEntryTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
-   hEMA200 = iMA(_Symbol, InpMTFEntryTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
-   hStoch  = iStochastic(_Symbol, InpMTFEntryTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
+   ENUM_TIMEFRAMES entryTF   = (InpMTFEntryTF > 0) ? InpMTFEntryTF : ((InpTF > 0) ? InpTF : PERIOD_M1);
+   ENUM_TIMEFRAMES confirmTF = (InpMTFConfirmTF > 0) ? InpMTFConfirmTF : PERIOD_M5;
+   ENUM_TIMEFRAMES trendTF   = (InpMTFTrendTF > 0) ? InpMTFTrendTF : PERIOD_H4;
 
-   if(hEMADir==INVALID_HANDLE || hEMA200==INVALID_HANDLE || hStoch==INVALID_HANDLE)
-      return INIT_FAILED;
+   for(int attempt = 0; attempt < 10; attempt++)
+     {
+      if(hEMADir == INVALID_HANDLE)
+         hEMADir = iMA(_Symbol, entryTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
+      if(hEMA200 == INVALID_HANDLE)
+         hEMA200 = iMA(_Symbol, entryTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
+      if(hStoch == INVALID_HANDLE)
+         hStoch  = iStochastic(_Symbol, entryTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
 
-   // MTF confirmation/trend handles. Always initialized so dynamic mode switching works seamlessly.
-   hMTFDirM5   = iMA(_Symbol, InpMTFConfirmTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
-   hMTF200M5   = iMA(_Symbol, InpMTFConfirmTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
-   hMTFStochM5 = iStochastic(_Symbol, InpMTFConfirmTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
-   hMTFDirH4   = iMA(_Symbol, InpMTFTrendTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
-   hMTF200H4   = iMA(_Symbol, InpMTFTrendTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
-   hMTFStochH4 = iStochastic(_Symbol, InpMTFTrendTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
-   if(hMTFDirM5==INVALID_HANDLE || hMTF200M5==INVALID_HANDLE || hMTFStochM5==INVALID_HANDLE ||
-      hMTFDirH4==INVALID_HANDLE || hMTF200H4==INVALID_HANDLE || hMTFStochH4==INVALID_HANDLE)
-      return INIT_FAILED;
-   return INIT_SUCCEEDED;
+      if(hMTFDirM5 == INVALID_HANDLE)
+         hMTFDirM5   = iMA(_Symbol, confirmTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
+      if(hMTF200M5 == INVALID_HANDLE)
+         hMTF200M5   = iMA(_Symbol, confirmTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
+      if(hMTFStochM5 == INVALID_HANDLE)
+         hMTFStochM5 = iStochastic(_Symbol, confirmTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
+
+      if(hMTFDirH4 == INVALID_HANDLE)
+         hMTFDirH4   = iMA(_Symbol, trendTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
+      if(hMTF200H4 == INVALID_HANDLE)
+         hMTF200H4   = iMA(_Symbol, trendTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
+      if(hMTFStochH4 == INVALID_HANDLE)
+         hMTFStochH4 = iStochastic(_Symbol, trendTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
+
+      if(hEMADir != INVALID_HANDLE && hEMA200 != INVALID_HANDLE && hStoch != INVALID_HANDLE &&
+         hMTFDirM5 != INVALID_HANDLE && hMTF200M5 != INVALID_HANDLE && hMTFStochM5 != INVALID_HANDLE &&
+         hMTFDirH4 != INVALID_HANDLE && hMTF200H4 != INVALID_HANDLE && hMTFStochH4 != INVALID_HANDLE)
+        {
+         return INIT_SUCCEEDED;
+        }
+      Sleep(500);
+     }
+
+   PrintFormat("EntryManager_Init: Gagal membuat handle! err=%d (hDir=%d, h200=%d, hStoch=%d, hM5=%d, hH4=%d)",
+      GetLastError(), hEMADir, hEMA200, hStoch, hMTFDirM5, hMTFDirH4);
+   return INIT_FAILED;
   }
 
 //+------------------------------------------------------------------+
@@ -544,15 +570,15 @@ void MTFResetState(RQMTFState &st)
    st.stoch=0; st.slopePts=0; st.emaOK=false; st.slopeOK=false;
   }
 
-bool MTFReadState(ENUM_TIMEFRAMES tf,int hDir,int h200,int hStoch,RQMTFState &st)
+bool MTFReadState(ENUM_TIMEFRAMES tf,int hDir,int h200,int hStochHandle,RQMTFState &st)
   {
    MTFResetState(st);
-   if(hDir==INVALID_HANDLE || h200==INVALID_HANDLE || hStoch==INVALID_HANDLE) return false;
+   if(hDir==INVALID_HANDLE || h200==INVALID_HANDLE || hStochHandle==INVALID_HANDLE) return false;
 
    double d[1], e[1], k[1];
    if(CopyBuffer(hDir,0,0,1,d)<=0) return false;
    if(CopyBuffer(h200,0,0,1,e)<=0) return false;
-   if(CopyBuffer(hStoch,0,0,1,k)<=0) return false;
+   if(CopyBuffer(hStochHandle,0,0,1,k)<=0) return false;
    double c=iClose(_Symbol,tf,0);
    if(c<=0) return false;
 

@@ -17,8 +17,10 @@ cd "/root/.wine/drive_c/Program Files/MetaTrader 5"
 wine metaeditor64.exe /compile:"MQL5\Experts\RoyalQuantum_EA_v2.36_SingleEntryHistory.mq5" /log:"MQL5\Experts\compile_rq.log" || true
 wine metaeditor64.exe /compile:"MQL5\Experts\RoyalViento_Clone_EA_v2_04.mq5" /log:"MQL5\Experts\compile.log" || true
 cp "MQL5/Experts/RoyalViento_Clone_EA_v2_04.ex5" "MQL5/Experts/RoyalViento_v2_04_IDR_SAFE/RoyalViento_Clone_EA_v2_04.ex5" 2>/dev/null || true
-cd /root/dashboard
+cp scripts/start_mt5_trading.sh /root/start_mt5_trading.sh 2>/dev/null || true
+chmod +x /root/start_mt5_trading.sh 2>/dev/null || true
 
-# Restart Dashboard
+# Restart Dashboard and MT5 Trading Services
 systemctl restart mt5-dashboard
-echo "=== Update Berhasil & Layanan Dashboard Direstart ==="
+systemctl restart mt5-trading
+echo "=== Update Berhasil & Layanan Direstart ==="
