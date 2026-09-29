@@ -520,11 +520,36 @@ input int      InpTradingHourStart   = 0;   // Jam mulai trading (0-23, waktu se
 input int      InpTradingHourEnd     = 24;  // Jam akhir trading (0-23, waktu server MT5)
 
 //+------------------------------------------------------------------+
+void MTFEnsureHandles()
+  {
+   ENUM_TIMEFRAMES confirmTF = (InpMTFConfirmTF > 0) ? InpMTFConfirmTF : PERIOD_M5;
+   ENUM_TIMEFRAMES trendTF   = (InpMTFTrendTF > 0) ? InpMTFTrendTF : PERIOD_H4;
+
+   if(hMTFDirM5 == INVALID_HANDLE)
+      hMTFDirM5   = iMA(_Symbol, confirmTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
+   if(hMTF200M5 == INVALID_HANDLE)
+      hMTF200M5   = iMA(_Symbol, confirmTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
+   if(hMTFStochM5 == INVALID_HANDLE)
+      hMTFStochM5 = iStochastic(_Symbol, confirmTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
+
+   if(hMTFDirH4 == INVALID_HANDLE)
+      hMTFDirH4   = iMA(_Symbol, trendTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
+   if(hMTF200H4 == INVALID_HANDLE)
+      hMTF200H4   = iMA(_Symbol, trendTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
+   if(hMTFStochH4 == INVALID_HANDLE)
+      hMTFStochH4 = iStochastic(_Symbol, trendTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
+  }
+
 int EntryManager_Init()
   {
    ENUM_TIMEFRAMES entryTF   = (InpMTFEntryTF > 0) ? InpMTFEntryTF : ((InpTF > 0) ? InpTF : PERIOD_M1);
    ENUM_TIMEFRAMES confirmTF = (InpMTFConfirmTF > 0) ? InpMTFConfirmTF : PERIOD_M5;
    ENUM_TIMEFRAMES trendTF   = (InpMTFTrendTF > 0) ? InpMTFTrendTF : PERIOD_H4;
+
+   datetime dummyTimes[];
+   CopyTime(_Symbol, entryTF, 0, 200, dummyTimes);
+   CopyTime(_Symbol, confirmTF, 0, 200, dummyTimes);
+   CopyTime(_Symbol, trendTF, 0, 200, dummyTimes);
 
    for(int attempt = 0; attempt < 10; attempt++)
      {
@@ -535,32 +560,19 @@ int EntryManager_Init()
       if(hStoch == INVALID_HANDLE)
          hStoch  = iStochastic(_Symbol, entryTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
 
-      if(hMTFDirM5 == INVALID_HANDLE)
-         hMTFDirM5   = iMA(_Symbol, confirmTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
-      if(hMTF200M5 == INVALID_HANDLE)
-         hMTF200M5   = iMA(_Symbol, confirmTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
-      if(hMTFStochM5 == INVALID_HANDLE)
-         hMTFStochM5 = iStochastic(_Symbol, confirmTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
-
-      if(hMTFDirH4 == INVALID_HANDLE)
-         hMTFDirH4   = iMA(_Symbol, trendTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
-      if(hMTF200H4 == INVALID_HANDLE)
-         hMTF200H4   = iMA(_Symbol, trendTF, InpEMA200Period, 0, MODE_EMA, PRICE_CLOSE);
-      if(hMTFStochH4 == INVALID_HANDLE)
-         hMTFStochH4 = iStochastic(_Symbol, trendTF, InpStochK, InpStochD, InpStochSlowing, MODE_SMA, STO_LOWHIGH);
-
-      if(hEMADir != INVALID_HANDLE && hEMA200 != INVALID_HANDLE && hStoch != INVALID_HANDLE &&
-         hMTFDirM5 != INVALID_HANDLE && hMTF200M5 != INVALID_HANDLE && hMTFStochM5 != INVALID_HANDLE &&
-         hMTFDirH4 != INVALID_HANDLE && hMTF200H4 != INVALID_HANDLE && hMTFStochH4 != INVALID_HANDLE)
-        {
-         return INIT_SUCCEEDED;
-        }
+      if(hEMADir != INVALID_HANDLE && hEMA200 != INVALID_HANDLE && hStoch != INVALID_HANDLE)
+         break;
       Sleep(500);
      }
 
-   PrintFormat("EntryManager_Init: Gagal membuat handle! err=%d (hDir=%d, h200=%d, hStoch=%d, hM5=%d, hH4=%d)",
-      GetLastError(), hEMADir, hEMA200, hStoch, hMTFDirM5, hMTFDirH4);
-   return INIT_FAILED;
+   if(hEMADir == INVALID_HANDLE || hEMA200 == INVALID_HANDLE || hStoch == INVALID_HANDLE)
+     {
+      PrintFormat("EntryManager_Init: Gagal membuat handle M1! err=%d", GetLastError());
+      return INIT_FAILED;
+     }
+
+   MTFEnsureHandles();
+   return INIT_SUCCEEDED;
   }
 
 //+------------------------------------------------------------------+
@@ -608,6 +620,7 @@ bool MTFReadState(ENUM_TIMEFRAMES tf,int hDir,int h200,int hStochHandle,RQMTFSta
 
 void MTFUpdateStates()
   {
+   MTFEnsureHandles();
    MTFResetState(g_mtfM1); MTFResetState(g_mtfM5); MTFResetState(g_mtfH4);
    MTFReadState(InpMTFEntryTF,hEMADir,hEMA200,hStoch,g_mtfM1);
    MTFReadState(InpMTFConfirmTF,hMTFDirM5,hMTF200M5,hMTFStochM5,g_mtfM5);
