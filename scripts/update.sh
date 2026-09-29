@@ -13,9 +13,11 @@ cp mql5/Presets/*.set "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Prese
 
 # Recompile EAs in Wine
 export DISPLAY=:99
-wine "/root/.wine/drive_c/Program Files/MetaTrader 5/metaeditor64.exe" /compile:"C:\Program Files\MetaTrader 5\MQL5\Experts\RoyalQuantum_EA_v2.36_SingleEntryHistory.mq5" /log:"C:\Program Files\MetaTrader 5\MQL5\Experts\compile_quantum.log" || true
-wine "/root/.wine/drive_c/Program Files/MetaTrader 5/metaeditor64.exe" /compile:"C:\Program Files\MetaTrader 5\MQL5\Experts\RoyalViento_Clone_EA_v2_04.mq5" /log:"C:\Program Files\MetaTrader 5\MQL5\Experts\compile.log" || true
-cp "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Experts/RoyalViento_Clone_EA_v2_04.ex5" "/root/.wine/drive_c/Program Files/MetaTrader 5/MQL5/Experts/RoyalViento_v2_04_IDR_SAFE/RoyalViento_Clone_EA_v2_04.ex5" 2>/dev/null || true
+cd "/root/.wine/drive_c/Program Files/MetaTrader 5"
+wine metaeditor64.exe /compile:"MQL5\Experts\RoyalQuantum_EA_v2.36_SingleEntryHistory.mq5" /log:"MQL5\Experts\compile_rq.log" || true
+wine metaeditor64.exe /compile:"MQL5\Experts\RoyalViento_Clone_EA_v2_04.mq5" /log:"MQL5\Experts\compile.log" || true
+cp "MQL5/Experts/RoyalViento_Clone_EA_v2_04.ex5" "MQL5/Experts/RoyalViento_v2_04_IDR_SAFE/RoyalViento_Clone_EA_v2_04.ex5" 2>/dev/null || true
+cd /root/dashboard
 
 # Restart Dashboard
 systemctl restart mt5-dashboard
