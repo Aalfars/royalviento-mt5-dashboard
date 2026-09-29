@@ -520,10 +520,23 @@ input int      InpTradingHourStart   = 0;   // Jam mulai trading (0-23, waktu se
 input int      InpTradingHourEnd     = 24;  // Jam akhir trading (0-23, waktu server MT5)
 
 //+------------------------------------------------------------------+
+ENUM_TIMEFRAMES NormalizeTF(int tf, ENUM_TIMEFRAMES defaultTF)
+  {
+   if(tf == 1 || tf == (int)PERIOD_M1) return PERIOD_M1;
+   if(tf == 5 || tf == (int)PERIOD_M5) return PERIOD_M5;
+   if(tf == 15 || tf == (int)PERIOD_M15) return PERIOD_M15;
+   if(tf == 30 || tf == (int)PERIOD_M30) return PERIOD_M30;
+   if(tf == 60 || tf == 16385) return PERIOD_H1;
+   if(tf == 240 || tf == 16388) return PERIOD_H4;
+   if(tf == 1440 || tf == 16408) return PERIOD_D1;
+   if(tf > 0) return (ENUM_TIMEFRAMES)tf;
+   return defaultTF;
+  }
+
 void MTFEnsureHandles()
   {
-   ENUM_TIMEFRAMES confirmTF = (InpMTFConfirmTF > 0) ? InpMTFConfirmTF : PERIOD_M5;
-   ENUM_TIMEFRAMES trendTF   = (InpMTFTrendTF > 0) ? InpMTFTrendTF : PERIOD_H4;
+   ENUM_TIMEFRAMES confirmTF = NormalizeTF(InpMTFConfirmTF, PERIOD_M5);
+   ENUM_TIMEFRAMES trendTF   = NormalizeTF(InpMTFTrendTF, PERIOD_H4);
 
    if(hMTFDirM5 == INVALID_HANDLE)
       hMTFDirM5   = iMA(_Symbol, confirmTF, InpEMADirPeriod, 0, MODE_EMA, PRICE_CLOSE);
@@ -542,9 +555,9 @@ void MTFEnsureHandles()
 
 int EntryManager_Init()
   {
-   ENUM_TIMEFRAMES entryTF   = (InpMTFEntryTF > 0) ? InpMTFEntryTF : ((InpTF > 0) ? InpTF : PERIOD_M1);
-   ENUM_TIMEFRAMES confirmTF = (InpMTFConfirmTF > 0) ? InpMTFConfirmTF : PERIOD_M5;
-   ENUM_TIMEFRAMES trendTF   = (InpMTFTrendTF > 0) ? InpMTFTrendTF : PERIOD_H4;
+   ENUM_TIMEFRAMES entryTF   = NormalizeTF(InpMTFEntryTF, NormalizeTF(InpTF, PERIOD_M1));
+   ENUM_TIMEFRAMES confirmTF = NormalizeTF(InpMTFConfirmTF, PERIOD_M5);
+   ENUM_TIMEFRAMES trendTF   = NormalizeTF(InpMTFTrendTF, PERIOD_H4);
 
    datetime dummyTimes[];
    CopyTime(_Symbol, entryTF, 0, 200, dummyTimes);
@@ -622,9 +635,9 @@ void MTFUpdateStates()
   {
    MTFEnsureHandles();
    MTFResetState(g_mtfM1); MTFResetState(g_mtfM5); MTFResetState(g_mtfH4);
-   MTFReadState(InpMTFEntryTF,hEMADir,hEMA200,hStoch,g_mtfM1);
-   MTFReadState(InpMTFConfirmTF,hMTFDirM5,hMTF200M5,hMTFStochM5,g_mtfM5);
-   MTFReadState(InpMTFTrendTF,hMTFDirH4,hMTF200H4,hMTFStochH4,g_mtfH4);
+   MTFReadState(NormalizeTF(InpMTFEntryTF, NormalizeTF(InpTF, PERIOD_M1)),hEMADir,hEMA200,hStoch,g_mtfM1);
+   MTFReadState(NormalizeTF(InpMTFConfirmTF, PERIOD_M5),hMTFDirM5,hMTF200M5,hMTFStochM5,g_mtfM5);
+   MTFReadState(NormalizeTF(InpMTFTrendTF, PERIOD_H4),hMTFDirH4,hMTF200H4,hMTFStochH4,g_mtfH4);
   }
 
 bool MTFDirectionConfirmed(int direction)
