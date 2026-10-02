@@ -25,6 +25,10 @@ if IS_WINDOWS:
     COPIER_MASTER_FILE = os.path.join(COMMON_FILES_DIR, "copier_master.json")
     COPIER_SLAVE_STATUS_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_status.json")
     COPIER_SLAVE_COMMAND_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_command.json")
+    COPIER_SETTINGS_FILE = os.path.join(COMMON_FILES_DIR, "copier_settings.json")
+    COPIER_PRESET_PATHS = [
+        os.path.join(BASE_DIR, "mql5", "Presets", "RoyalCopier_Exness.set")
+    ]
     CANDLES_FILE = os.path.join(COMMON_FILES_DIR, "web_candles.json")
 else:
     CONFIG_FILE = "/root/dashboard/config.json"
@@ -44,6 +48,11 @@ else:
     COPIER_MASTER_FILE = os.path.join(COMMON_FILES_DIR, "copier_master.json")
     COPIER_SLAVE_STATUS_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_status.json")
     COPIER_SLAVE_COMMAND_FILE = os.path.join(COMMON_FILES_DIR, "copier_slave_command.json")
+    COPIER_SETTINGS_FILE = os.path.join(COMMON_FILES_DIR, "copier_settings.json")
+    COPIER_PRESET_PATHS = [
+        "/root/dashboard/mql5/Presets/RoyalCopier_Exness.set",
+        "/root/.wine/drive_c/Program Files/MetaTrader 5 Exness/MQL5/Presets/RoyalCopier_Exness.set"
+    ]
     CANDLES_FILE = os.path.join(COMMON_FILES_DIR, "web_candles.json")
 
 # Parameter definitions and metadata for GUI Configuration
@@ -923,13 +932,30 @@ PRESET_TEMPLATES = {
 }
 
 def load_config():
+    default_cfg = {
+        "pin": "1234",
+        "daily_target_usd": 50.0,
+        "accounts": [],
+        "active_account_id": "",
+        "custom_parameters": {},
+        "copier_config": {
+            "daily_loss_limit_usd": 25.0,
+            "daily_profit_target_usd": 0.0,
+            "auto_close_on_halt": True,
+            "fixed_lot": 0.01,
+            "max_open_positions": 3
+        }
+    }
     if os.path.exists(CONFIG_FILE):
         try:
             with open(CONFIG_FILE, "r") as f:
-                return json.load(f)
+                data = json.load(f)
+                if isinstance(data, dict):
+                    default_cfg.update(data)
+                    return default_cfg
         except Exception:
             pass
-    return {"pin": "1234", "daily_target_usd": 50.0, "accounts": [], "active_account_id": ""}
+    return default_cfg
 
 def save_config(cfg):
     try:
@@ -1020,8 +1046,62 @@ def save_set_file(filepath, updated_params):
         print(f"Error saving .set file {filepath}: {e}")
         return False
 
+def sync_custom_parameters_to_presets():
+    """Sinkronisasi parameter kustom yang tersimpan di config.json ke file preset MT5 dan Copier."""
+    try:
+        cfg = load_config()
+        # 1. Master EA Parameters
+        custom_params = cfg.get("custom_parameters")
+        if custom_params and isinstance(custom_params, dict) and len(custom_params) > 0:
+            for path in PRESET_PATHS:
+                save_set_file(path, custom_params)
+
+        # 2. Copier Settings
+        copier_cfg = cfg.get("copier_config")
+        if copier_cfg and isinstance(copier_cfg, dict):
+            copier_set_map = {
+                "InpDailyLossLimitUSD": float(copier_cfg.get("daily_loss_limit_usd", 25.0)),
+                "InpDailyProfitTargetUSD": float(copier_cfg.get("daily_profit_target_usd", 0.0)),
+                "InpAutoCloseOnHalt": bool(copier_cfg.get("auto_close_on_halt", True)),
+                "InpFixedLot": float(copier_cfg.get("fixed_lot", 0.01)),
+                "InpMaxOpenPositions": int(copier_cfg.get("max_open_positions", 3))
+            }
+            for path in COPIER_PRESET_PATHS:
+                save_set_file(path, copier_set_map)
+
+            try:
+                os.makedirs(os.path.dirname(COPIER_SETTINGS_FILE), exist_ok=True)
+                with open(COPIER_SETTINGS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(copier_cfg, f, indent=2)
+            except Exception:
+                pass
+    except Exception as e:
+        print(f"Note on syncing parameters: {e}")
+
+# Inisialisasi sync saat startup
+sync_custom_parameters_to_presets()
+
 def get_current_parameters():
-    # 1. Try reading live parameters from status file
+    # 1. Prioritaskan parameter kustom yang disimpan user di config.json agar tidak pernah ter-reset
+    cfg = load_config()
+    custom = cfg.get("custom_parameters")
+    if custom and isinstance(custom, dict) and len(custom) > 0:
+        merged = {}
+        for d in PARAMETER_DEFINITIONS:
+            merged[d["key"]] = custom.get(d["key"], d["default"])
+        return merged
+
+    # 2. Fall back ke preset files jika config.json belum menyimpan custom
+    for p in PRESET_PATHS:
+        if os.path.exists(p):
+            parsed = parse_set_file(p)
+            if parsed:
+                merged = {}
+                for d in PARAMETER_DEFINITIONS:
+                    merged[d["key"]] = parsed.get(d["key"], d["default"])
+                return merged
+
+    # 3. Fall back ke status file dari MT5 running EA
     if os.path.exists(STATUS_FILE):
         try:
             with open(STATUS_FILE, "r", encoding="utf-8", errors="ignore") as f:
@@ -1031,14 +1111,7 @@ def get_current_parameters():
         except Exception:
             pass
 
-    # 2. Fall back to preset files
-    for p in PRESET_PATHS:
-        if os.path.exists(p):
-            parsed = parse_set_file(p)
-            if parsed:
-                return parsed
-
-    # 3. Fall back to defaults from definitions
+    # 4. Fall back ke defaults dari definisi
     defaults = {}
     for d in PARAMETER_DEFINITIONS:
         defaults[d["key"]] = d["default"]
@@ -1193,27 +1266,38 @@ def get_status():
         status_data["parameters"] = get_current_parameters()
 
     # Exness Copier Telemetry
+    copier_cfg = cfg.get("copier_config", {})
     copier_data = {
         "active": False,
         "is_halted": False,
+        "is_target_hit": False,
         "is_paused": False,
         "today_closed_profit": 0.0,
         "floating_profit": 0.0,
-        "daily_loss_limit_usd": 25.0,
+        "daily_loss_limit_usd": float(copier_cfg.get("daily_loss_limit_usd", 25.0)),
+        "daily_profit_target_usd": float(copier_cfg.get("daily_profit_target_usd", 0.0)),
+        "loss_baseline": 0.0,
+        "effective_pnl": 0.0,
+        "auto_close_on_halt": bool(copier_cfg.get("auto_close_on_halt", True)),
         "balance": 0.0,
         "equity": 0.0,
         "margin": 0.0,
         "free_margin": 0.0,
-        "fixed_lot": 0.01,
+        "fixed_lot": float(copier_cfg.get("fixed_lot", 0.01)),
+        "max_open_positions": int(copier_cfg.get("max_open_positions", 3)),
         "copied_total": 0,
         "closed_total": 0,
         "positions_count": 0,
         "positions": [],
+        "history_total": 0,
+        "history_profit_sum": 0.0,
+        "history": [],
         "slave_account": None,
         "slave_server": None,
         "slave_symbol": "XAUUSDm",
         "status": "OFFLINE",
-        "exness_running": is_exness_mt5_running()
+        "exness_running": is_exness_mt5_running(),
+        "configured_settings": copier_cfg
     }
     if os.path.exists(COPIER_SLAVE_STATUS_FILE):
         try:
@@ -1223,6 +1307,7 @@ def get_status():
                 copier_data["active"] = True
         except Exception:
             pass
+    copier_data["configured_settings"] = copier_cfg
     copier_data["exness_running"] = is_exness_mt5_running()
     status_data["copier"] = copier_data
 
@@ -1308,13 +1393,18 @@ def update_parameters():
         else:
             sanitized[k] = v
 
-    # 1. Save to preset files
+    # 1. Save to config.json (Authoritative storage to prevent resets)
+    cfg = load_config()
+    cfg["custom_parameters"] = sanitized
+    save_config(cfg)
+
+    # 2. Save to preset files
     saved_paths = []
     for path in PRESET_PATHS:
         if save_set_file(path, sanitized):
             saved_paths.append(path)
 
-    # 2. Write dynamic parameters command to MT5 if running
+    # 3. Write dynamic parameters command to MT5 if running
     try:
         os.makedirs(os.path.dirname(COMMAND_FILE), exist_ok=True)
         with open(COMMAND_FILE, "w") as f:
@@ -1325,7 +1415,7 @@ def update_parameters():
     except Exception as e:
         print(f"Error writing to COMMAND_FILE: {e}")
 
-    # 3. Optional restart of MT5 to cleanly load .set parameters
+    # 4. Optional restart of MT5 to cleanly load .set parameters
     restarted = False
     if restart_mt5:
         try:
@@ -1334,11 +1424,11 @@ def update_parameters():
         except Exception as e:
             print(f"Note: Could not restart mt5-trading service (expected in dev environment): {e}")
 
-    msg = "Semua parameter berhasil disimpan ke preset MT5!"
+    msg = "Semua parameter berhasil disimpan permanen ke konfigurasi & preset MT5!"
     if restarted:
         msg += " MT5 sedang dimuat ulang dengan parameter baru..."
     else:
-        msg += " Parameter akan aktif penuh saat MT5 dimulai ulang."
+        msg += " Parameter aktif di konfigurasi dan akan dimuat ulang penuh saat MT5 restart."
 
     return jsonify({
         "success": True,
@@ -1361,6 +1451,12 @@ def apply_preset():
 
     target_preset = PRESET_TEMPLATES[preset_id]
     preset_params = target_preset["params"]
+
+    # Save to config.json
+    cfg = load_config()
+    cfg["custom_parameters"] = preset_params
+    cfg["active_preset"] = preset_id
+    save_config(cfg)
 
     # Save to all preset paths
     for path in PRESET_PATHS:
@@ -1666,6 +1762,15 @@ def get_copier_status():
     if not session.get("authenticated", False):
         return jsonify({"authenticated": False}), 401
 
+    cfg = load_config()
+    copier_cfg = cfg.get("copier_config", {
+        "daily_loss_limit_usd": 25.0,
+        "daily_profit_target_usd": 0.0,
+        "auto_close_on_halt": True,
+        "fixed_lot": 0.01,
+        "max_open_positions": 3
+    })
+
     master_info = {}
     if os.path.exists(COPIER_MASTER_FILE):
         try:
@@ -1677,20 +1782,33 @@ def get_copier_status():
     slave_info = {
         "active": False,
         "is_halted": False,
+        "is_target_hit": False,
         "is_paused": False,
         "today_closed_profit": 0.0,
         "floating_profit": 0.0,
-        "daily_loss_limit_usd": 25.0,
+        "daily_loss_limit_usd": float(copier_cfg.get("daily_loss_limit_usd", 25.0)),
+        "daily_profit_target_usd": float(copier_cfg.get("daily_profit_target_usd", 0.0)),
+        "loss_baseline": 0.0,
+        "effective_pnl": 0.0,
+        "auto_close_on_halt": bool(copier_cfg.get("auto_close_on_halt", True)),
         "balance": 0.0,
         "equity": 0.0,
         "margin": 0.0,
         "free_margin": 0.0,
-        "fixed_lot": 0.01,
+        "fixed_lot": float(copier_cfg.get("fixed_lot", 0.01)),
+        "max_open_positions": int(copier_cfg.get("max_open_positions", 3)),
         "copied_total": 0,
         "closed_total": 0,
         "positions_count": 0,
         "positions": [],
-        "status": "OFFLINE"
+        "history_total": 0,
+        "history_profit_sum": 0.0,
+        "history": [],
+        "slave_account": None,
+        "slave_server": None,
+        "slave_symbol": "XAUUSDm",
+        "status": "OFFLINE",
+        "configured_settings": copier_cfg
     }
     if os.path.exists(COPIER_SLAVE_STATUS_FILE):
         try:
@@ -1701,11 +1819,13 @@ def get_copier_status():
         except Exception:
             pass
 
+    slave_info["configured_settings"] = copier_cfg
     slave_info["exness_running"] = is_exness_mt5_running()
 
     return jsonify({
         "master": master_info,
         "slave": slave_info,
+        "settings": copier_cfg,
         "timestamp": int(time.time())
     })
 
@@ -1717,7 +1837,7 @@ def copier_command():
     data = request.json or {}
     action = data.get("action", "")
 
-    if action in ("pause", "resume", "reset_halt", "close_all"):
+    if action in ("pause", "resume", "reset_halt", "reset_kill_switch", "reset_profit_target", "reset_target", "close_all"):
         try:
             os.makedirs(os.path.dirname(COPIER_SLAVE_COMMAND_FILE), exist_ok=True)
             with open(COPIER_SLAVE_COMMAND_FILE, "w", encoding="utf-8") as f:
@@ -1726,12 +1846,63 @@ def copier_command():
             action_names = {
                 "pause": "Copier di-Pause (tidak membuka order baru)",
                 "resume": "Copier di-Resume (siap copy sinyal)",
-                "reset_halt": "Daily Loss Halt di-Reset",
+                "reset_halt": "Daily Loss Kill Switch di-Reset (EA kembali aktif)",
+                "reset_kill_switch": "Daily Loss Kill Switch di-Reset (EA kembali aktif)",
+                "reset_profit_target": "Daily Profit Target di-Reset (Siap entry order baru)",
+                "reset_target": "Daily Profit Target di-Reset (Siap entry order baru)",
                 "close_all": "Semua posisi Exness diperintahkan tutup!"
             }
             return jsonify({"success": True, "message": action_names.get(action, "Perintah berhasil dikirim!")})
         except Exception as e:
             return jsonify({"success": False, "message": f"Gagal mengirim perintah: {str(e)}"}), 500
+
+    elif action == "set_settings":
+        try:
+            cfg = load_config()
+            copier_cfg = cfg.get("copier_config", {})
+            if "daily_loss_limit_usd" in data:
+                copier_cfg["daily_loss_limit_usd"] = float(data["daily_loss_limit_usd"])
+            if "daily_profit_target_usd" in data:
+                copier_cfg["daily_profit_target_usd"] = float(data["daily_profit_target_usd"])
+            if "auto_close_on_halt" in data:
+                copier_cfg["auto_close_on_halt"] = bool(data["auto_close_on_halt"])
+            if "fixed_lot" in data:
+                copier_cfg["fixed_lot"] = float(data["fixed_lot"])
+            if "max_open_positions" in data:
+                copier_cfg["max_open_positions"] = int(data["max_open_positions"])
+
+            cfg["copier_config"] = copier_cfg
+            save_config(cfg)
+
+            # Write settings to copier_settings.json in FILE_COMMON
+            os.makedirs(os.path.dirname(COPIER_SETTINGS_FILE), exist_ok=True)
+            with open(COPIER_SETTINGS_FILE, "w", encoding="utf-8") as f:
+                json.dump(copier_cfg, f, indent=2)
+
+            # Send command to running Slave EA
+            os.makedirs(os.path.dirname(COPIER_SLAVE_COMMAND_FILE), exist_ok=True)
+            cmd_payload = {"action": "set_settings", "timestamp": int(time.time())}
+            cmd_payload.update(copier_cfg)
+            with open(COPIER_SLAVE_COMMAND_FILE, "w", encoding="utf-8") as f:
+                json.dump(cmd_payload, f)
+
+            # Also sync to preset file
+            for path in COPIER_PRESET_PATHS:
+                save_set_file(path, {
+                    "InpDailyLossLimitUSD": copier_cfg["daily_loss_limit_usd"],
+                    "InpDailyProfitTargetUSD": copier_cfg["daily_profit_target_usd"],
+                    "InpAutoCloseOnHalt": copier_cfg["auto_close_on_halt"],
+                    "InpFixedLot": copier_cfg["fixed_lot"],
+                    "InpMaxOpenPositions": copier_cfg["max_open_positions"]
+                })
+
+            return jsonify({
+                "success": True,
+                "message": "Pengaturan Copier & Safety Kill Switch berhasil disimpan dan diterapkan!",
+                "settings": copier_cfg
+            })
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Gagal menyimpan pengaturan copier: {str(e)}"}), 500
 
     elif action == "restart_exness":
         try:
@@ -1755,6 +1926,30 @@ def copier_command():
             return jsonify({"success": False, "message": f"Gagal menjalankan MT5 Exness: {str(e)}"}), 500
 
     return jsonify({"success": False, "message": "Perintah copier tidak dikenal"}), 400
+
+@app.route("/api/copier/settings", methods=["GET", "POST"])
+def api_copier_settings():
+    if not session.get("authenticated", False):
+        return jsonify({"authenticated": False}), 401
+
+    if request.method == "GET":
+        cfg = load_config()
+        return jsonify({
+            "success": True,
+            "settings": cfg.get("copier_config", {
+                "daily_loss_limit_usd": 25.0,
+                "daily_profit_target_usd": 0.0,
+                "auto_close_on_halt": True,
+                "fixed_lot": 0.01,
+                "max_open_positions": 3
+            })
+        })
+    else:
+        # POST: pass data to copier_command
+        data = request.json or {}
+        data["action"] = "set_settings"
+        # Temporarily inject data to request
+        return copier_command()
 
 @app.route("/api/candles", methods=["GET"])
 def api_candles():

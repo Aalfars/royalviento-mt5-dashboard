@@ -17,6 +17,9 @@ mkdir -p "/root/.wine/drive_c/Program Files/MetaTrader 5 Exness/MQL5/Experts/"
 cp mql5/Experts/RoyalCopier_Slave.mq5 "/root/.wine/drive_c/Program Files/MetaTrader 5 Exness/MQL5/Experts/" 2>/dev/null || true
 cp mql5/Presets/RoyalCopier_Exness.set "/root/.wine/drive_c/Program Files/MetaTrader 5 Exness/MQL5/Presets/" 2>/dev/null || true
 
+# Re-sync user customized parameters from config.json to preserve user settings
+python3 -c "import app; app.sync_custom_parameters_to_presets()" 2>/dev/null || true
+
 # Recompile EAs in Wine
 export DISPLAY=:99
 cd "/root/.wine/drive_c/Program Files/MetaTrader 5"

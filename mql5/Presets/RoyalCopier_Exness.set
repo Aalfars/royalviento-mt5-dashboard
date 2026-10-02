@@ -10,6 +10,8 @@ InpMaxOpenPositions=3
 
 InpDailyLossLimitUSD=25.0
 InpAutoCloseOnHalt=true
+InpDailyProfitTargetUSD=0.0
 
 InpCheckIntervalMs=200
 InpSlippagePoints=50
+
